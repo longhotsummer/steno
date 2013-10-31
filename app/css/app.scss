@@ -11,9 +11,13 @@ body {
 }
 
 #text-panel {
+  margin-top: 10px;
+}
+
+#button-panel {
   margin-top: 20px;
 }
 
-#source_text {
+#doc_source_text, #doc_xml {
   width: 100%;
 }

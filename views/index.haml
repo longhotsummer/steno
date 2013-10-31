@@ -1,4 +1,4 @@
-- form_tag '/parse', method: 'post', class: 'form-horizontal' do
+- form_tag '/', method: 'post', class: 'form-horizontal', id: 'form' do
 
   #metadata-panel
     .row
@@ -6,31 +6,37 @@
         .form-group
           %label.col-sm-3.control-label Full title
           .col-sm-9
-            = text_field_tag 'doc[title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+            = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
         .form-group
           %label.col-sm-3.control-label Short name
           .col-sm-6
-            = text_field_tag 'doc[short_name]', placeholder: 'short-name', class: 'form-control'
+            = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
         .form-group
           %label.col-sm-3.control-label Gazette
           .col-sm-6
-            = text_field_tag 'doc[pub][name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+            = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
           %label.col-sm-1.control-label no.
           .col-sm-2
-            = text_field_tag 'doc[pub][number]', placeholder: '1234', class: 'form-control'
+            = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
       .col-xs-6
         .form-group
           %label.col-sm-2.control-label Locale
           .col-sm-3
-            = text_field_tag 'doc[locale]', placeholder: 'Cape Town', class: 'form-control'
+            = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
         .form-group
           %label.col-sm-2.control-label Published
           .col-sm-4
-            = text_field_tag 'doc[pub][date]', type: 'date', class: 'form-control'
+            = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+
+  #button-panel
+    .row
+      .col-xs-6
+        #buttons.pull-right
+          %button#parse_btn.btn.btn-primary(type="submit") Parse
 
   #text-panel
     .row
       .col-xs-6
-        %textarea#source_text(name="source_text")
+        %textarea#doc_source_text.form-control(name="doc[source_text]" rows="20")
       .col-xs-6
-        second
+        %textarea#doc_xml.form-control(name="doc[xml]" rows="20")
