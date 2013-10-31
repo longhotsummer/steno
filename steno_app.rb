@@ -5,6 +5,7 @@ require 'padrino-helpers'
 class StenoApp < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :haml, format: :html5
+  set :protect_from_csrf, false
 
   register Padrino::Helpers
   register Sinatra::AssetPack

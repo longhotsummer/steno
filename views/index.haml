@@ -1,1 +1,36 @@
-%h2 The template
+- form_tag '/parse', method: 'post', class: 'form-horizontal' do
+
+  #metadata-panel
+    .row
+      .col-xs-6
+        .form-group
+          %label.col-sm-3.control-label Full title
+          .col-sm-9
+            = text_field_tag 'doc[title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+        .form-group
+          %label.col-sm-3.control-label Short name
+          .col-sm-6
+            = text_field_tag 'doc[short_name]', placeholder: 'short-name', class: 'form-control'
+        .form-group
+          %label.col-sm-3.control-label Gazette
+          .col-sm-6
+            = text_field_tag 'doc[pub][name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+          %label.col-sm-1.control-label no.
+          .col-sm-2
+            = text_field_tag 'doc[pub][number]', placeholder: '1234', class: 'form-control'
+      .col-xs-6
+        .form-group
+          %label.col-sm-2.control-label Locale
+          .col-sm-3
+            = text_field_tag 'doc[locale]', placeholder: 'Cape Town', class: 'form-control'
+        .form-group
+          %label.col-sm-2.control-label Published
+          .col-sm-4
+            = text_field_tag 'doc[pub][date]', type: 'date', class: 'form-control'
+
+  #text-panel
+    .row
+      .col-xs-6
+        %textarea#source_text(name="source_text")
+      .col-xs-6
+        second
