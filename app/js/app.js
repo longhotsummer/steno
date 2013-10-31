@@ -19,8 +19,34 @@ var Steno = {
   update: function(data) {
     console.log(data);
 
-    Steno.sourceTextEd.setValue(data.source_text);
     $('#doc_xml').val(data.xml);
+
+    var posn = Steno.sourceTextEd.getCursorPosition();
+
+    Steno.sourceTextEd.setValue(data.source_text);
+    Steno.sourceTextEd.clearSelection();
+
+    if (Steno.setParseErrors(data.parse_errors)) {
+      // errors
+      Steno.sourceTextEd.gotoLine(data.parse_errors[0].line, data.parse_errors[0].column);
+      Steno.sourceTextEd.focus();
+    } else {
+      // no errors
+      Steno.sourceTextEd.gotoLine(posn.row+1, posn.column);
+    }
+  },
+
+  setParseErrors: function(errors) {
+    errors = $.map(errors, function(e) { 
+      if (e.line && e.column) {
+        return {row: e.line-1, column: e.column, text: e.message, type: "error"};
+      } else {
+        return {};
+      }
+    });
+    Steno.sourceTextEd.getSession().setAnnotations(errors);
+
+    return (errors.length > 0);
   },
 
   submitForm: function(e) {

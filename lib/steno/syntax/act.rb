@@ -172,7 +172,7 @@ module Act
 
     def definitions
       # Parse the definitions section using the definitions grammar
-      @definitions ||= TextActParser.new.parse_definitions(section_content.text_value)
+      @definitions ||= Steno::Parser.new.parse_definitions(section_content.text_value)
     end
   end
 

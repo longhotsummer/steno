@@ -56,6 +56,7 @@ module Steno
     # Returns true if successful, false if there were errors.
     def parse!
       @parse_errors = []
+      @xml = nil
 
       preprocess!
 
