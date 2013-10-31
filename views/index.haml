@@ -37,6 +37,8 @@
   #text-panel
     .row
       .col-xs-6
-        %textarea#doc_source_text.form-control(name="doc[source_text]" rows="20")
+        %pre#doc_source_text
       .col-xs-6
         %textarea#doc_xml.form-control(name="doc[xml]" rows="20")
+
+  = javascript_include_tag '/js/ace/ace.js'
