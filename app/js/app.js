@@ -23,18 +23,26 @@ var Steno = {
     $('#doc_xml').val(data.xml);
 
     // update the source text
-    var posn = Steno.sourceTextEd.getCursorPosition();
-    Steno.sourceTextEd.setValue(data.source_text);
-    Steno.sourceTextEd.clearSelection();
+    var ed = Steno.sourceTextEd;
+    var posn = ed.getCursorPosition();
+    var sourceChanged = ed.getValue() != data.source_text;
+
+    if (sourceChanged) {
+      ed.setValue(data.source_text);
+      ed.clearSelection();
+    }
 
     if (Steno.setParseErrors(data.parse_errors)) {
       // errors
-      Steno.sourceTextEd.gotoLine(data.parse_errors[0].line, data.parse_errors[0].column);
-      Steno.sourceTextEd.focus();
+      ed.gotoLine(data.parse_errors[0].line, data.parse_errors[0].column);
+      ed.focus();
     } else {
       // no errors
-      Steno.sourceTextEd.gotoLine(posn.row+1, posn.column);
+      if (sourceChanged) {
+        ed.gotoLine(posn.row+1, posn.column);
+      }
     }
+    ed.renderer.scrollCursorIntoView();
 
     // update the HTML
     $('#doc_html').html(data.html);
