@@ -35,7 +35,7 @@ describe Steno::Document do
         <FRBRManifestation>
           <FRBRthis value="/za/by-law/locale/1980/name/main/eng@"/>
           <FRBRuri value="/za/by-law/locale/1980/name/eng@"/>
-          <FRBRdate date="2013-10-31" name="Generation"/>
+          <FRBRdate date="#{Time.now.strftime('%Y-%m-%d')}" name="Generation"/>
           <FRBRauthor href="#openbylaws" as="#author"/>
         </FRBRManifestation>
       </identification>

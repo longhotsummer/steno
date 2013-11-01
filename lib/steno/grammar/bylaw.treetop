@@ -1,6 +1,6 @@
 grammar Bylaw
   rule bylaw
-    preamble
+    preamble?
     chapter+ <Bylaw>
   end
 

@@ -1,13 +1,13 @@
 require 'steno/parser'
 
-describe BylawParser do
+describe Steno::Parser do
   def parse(rule, s)
-    subject.parse(s, root: rule)
+    subject.parse_bylaw(s, rule)
   end
 
   def should_parse(rule, s)
     parser = subject
-    tree = parser.parse(s, root: rule)
+    tree = parser.parse_bylaw(s, rule)
 
     if not tree
       raise Exception.new(parser.failure_reason || "Couldn't match to grammar") if tree.nil?
@@ -68,6 +68,28 @@ EOS
     it 'should handle basic numbered statements' do
       should_parse :numbered_statement, '(1) foo bar'
       should_parse :numbered_statement, '(1a) foo bar'
+    end
+  end
+
+  describe 'bylaw' do
+    it 'should support an optional preamble' do
+      node = parse :bylaw, <<EOS
+PREAMBLE
+foo
+1. Section
+(1) hello
+EOS
+
+      node.elements.first.text_value.should == "PREAMBLE\nfoo\n"
+    end
+
+    it 'should support no preamble' do
+      node = parse :bylaw, <<EOS
+1. Section
+bar
+EOS
+
+      node.elements.first.text_value.should == ""
     end
   end
 end

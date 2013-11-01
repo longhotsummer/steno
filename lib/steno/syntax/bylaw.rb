@@ -41,13 +41,21 @@ module Bylaw
             b.TLCRole(id: 'author', href: '/ontology/role/author', showAs: 'Author')
           }
         }
-        b.preamble { |b|
-          preamble.to_xml(b)
-        }
+
+        if preamble.text_value != ""
+          b.preamble { |b|
+            preamble.to_xml(b)
+          }
+        end
+
         b.body { |b|
           elements[1].elements.each { |e| e.to_xml(b) }
         }
       }
+    end
+
+    def preamble
+      elements.first
     end
   end
 end
