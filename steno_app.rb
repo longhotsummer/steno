@@ -19,7 +19,8 @@ class StenoApp < Sinatra::Base
     ]
 
     css :app, [
-      '/css/app.css'
+      '/css/act.css',
+      '/css/app.css',
     ]
   end
   
@@ -32,7 +33,7 @@ class StenoApp < Sinatra::Base
     doc = Steno::Document.new(params[:doc])
 
     doc.parse!
-    doc.render! if doc.validates?
+    doc.render!
 
     content_type "application/json"
     return doc.to_json

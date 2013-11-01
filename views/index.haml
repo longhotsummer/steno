@@ -28,17 +28,33 @@
           .col-sm-4
             = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
 
+  #text-panel
+    .row
+      .col-xs-6
+        %ul.nav.nav-tabs
+          %li.active
+            %a(href="#tab-source") Plain text source
+
+        .tab-content
+          #tab-source.tab-pane.active
+            %pre#doc_source_text
+
+      .col-xs-6
+        %ul.nav.nav-tabs
+          %li.active
+            %a(href="#tab-html" data-toggle="tab") HTML
+          %li
+            %a(href="#tab-xml" data-toggle="tab") XML
+        .tab-content
+          #tab-html.tab-pane.active
+            #doc_html.an-container
+          #tab-xml.tab-pane
+            %textarea#doc_xml.form-control(name="doc[xml]" rows="20")
+
   #button-panel
     .row
       .col-xs-6
         #buttons.pull-right
           %button#parse_btn.btn.btn-primary(type="submit") Parse
-
-  #text-panel
-    .row
-      .col-xs-6
-        %pre#doc_source_text
-      .col-xs-6
-        %textarea#doc_xml.form-control(name="doc[xml]" rows="20")
 
   = javascript_include_tag '/js/ace/ace.js'

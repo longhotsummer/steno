@@ -57,7 +57,7 @@ module Steno
             sublist_count += 1
 
             # list intro
-            num = prev.at_xpath('a:num', a: AkomaNtosoBuilder::AN)
+            num = prev.at_xpath('a:num', a: AN)
             if intro = num.next_element
               intro.name = 'listIntroduction'
               sublist << intro

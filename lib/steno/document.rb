@@ -4,6 +4,7 @@ require 'time'
 require 'logging'
 require 'steno/akoma_ntoso_builder'
 require 'steno/parser'
+require 'steno/transforms'
 
 module Steno
   class Metadata
@@ -99,7 +100,7 @@ module Steno
     end
 
     def validates?
-      validate!  if @valid.nil?
+      validate! if @valid.nil?
 
       @valid
     end
@@ -116,7 +117,13 @@ module Steno
     end
 
     def render!
-      # TODO: transform to html
+      if xml.present?
+        @html = Steno::Transforms.new.act_to_html(builder.parse_xml(xml), '/root/')
+      else
+        @html = nil
+      end
+
+      @html
     end
 
     def to_json

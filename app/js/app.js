@@ -19,10 +19,11 @@ var Steno = {
   update: function(data) {
     console.log(data);
 
+    // update the XML
     $('#doc_xml').val(data.xml);
 
+    // update the source text
     var posn = Steno.sourceTextEd.getCursorPosition();
-
     Steno.sourceTextEd.setValue(data.source_text);
     Steno.sourceTextEd.clearSelection();
 
@@ -34,6 +35,9 @@ var Steno = {
       // no errors
       Steno.sourceTextEd.gotoLine(posn.row+1, posn.column);
     }
+
+    // update the HTML
+    $('#doc_html').html(data.html);
   },
 
   setParseErrors: function(errors) {
