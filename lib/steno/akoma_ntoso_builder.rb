@@ -35,7 +35,8 @@ module Steno
       s.gsub!([65532].pack('U*'), '')
 
       # line endings
-      s.gsub!(/\r/, '')
+      s.gsub!(/\r\n/, "\n")
+      s.gsub!(/\r/, "\n")
 
       # change weird quotes to normal ones
       s.gsub!(/‘‘|’’/, '"')
