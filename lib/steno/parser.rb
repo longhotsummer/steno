@@ -53,8 +53,11 @@ module Steno
     end
 
     def to_json(g=nil)
+      msg = self.message
+      msg = msg[0..200] + '...' if msg.length > 200
+
       {
-        message: self.message,
+        message: msg,
         line: self.line,
         column: self.column,
       }.to_json(g)
