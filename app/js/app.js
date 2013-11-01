@@ -1,8 +1,10 @@
 var Steno = {
   sourceTextEd: null,
+  syncScrolling: true,
 
   init: function() {
     $('#form').on('submit', Steno.submitForm);
+    $('#doc_html').on('scroll', Steno.htmlScroll);
 
     var ed;
     Steno.sourceTextEd = ed = ace.edit("doc_source_text");
@@ -81,7 +83,21 @@ var Steno = {
     }
 
     return false;
-  }
+  },
+
+  // The HTML section scrolled, if we're syncing scrolling,
+  // handle it.
+  htmlScroll: function() {
+    if (Steno.syncScrolling) {
+      var $html = $('#doc_html');
+
+      var perc = $html.scrollTop() / $html[0].scrollHeight;
+      var line = Steno.sourceTextEd.getSession().getLength() * perc;
+
+      Steno.sourceTextEd.scrollToLine(line, false, true);
+    }
+  },
+
 };
 
 $(function() {
