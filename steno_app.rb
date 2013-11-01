@@ -1,6 +1,12 @@
 require 'sinatra'
 require 'sinatra/assetpack'
 require 'padrino-helpers'
+require 'log4r'
+
+# Setup logging
+log = Log4r::Logger.new('Steno')
+log.add Log4r::StderrOutputter.new('stderr')
+log.outputters.last.formatter = Log4r::PatternFormatter.new(pattern: '%d %c %m')
 
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/document'
@@ -8,7 +14,9 @@ require 'steno/document'
 class StenoApp < Sinatra::Base
   set :root, File.dirname(__FILE__)
   set :haml, format: :html5
-  set :protect_from_csrf, false
+
+  disable :protect_from_csrf
+  enable :logging
 
   register Padrino::Helpers
   register Sinatra::AssetPack

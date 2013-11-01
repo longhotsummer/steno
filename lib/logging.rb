@@ -7,6 +7,6 @@ module Logging
   def logger
     return @logger if @logger
     
-    @logger = Log4r::Logger.new(self.class.name)
+    @logger = Log4r::Logger[self.class.name] || Log4r::Logger.new(self.class.name)
    end
 end
