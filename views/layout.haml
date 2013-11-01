@@ -3,6 +3,11 @@
   %head
     %meta(charset="utf-8")
     %meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
+    %title
+      - if content_for? :title
+        = content_for :title
+      - else
+        Steno
 
     = stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css'
     = stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap-theme.min.css'
