@@ -1,19 +1,32 @@
 var Steno = {
   sourceTextEd: null,
+  xmlEd: null,
   syncScrolling: true,
 
   init: function() {
-    $('#form').on('submit', Steno.submitForm);
-    $('#doc_html').on('scroll', Steno.htmlScroll);
+    $('#source-form').on('submit', Steno.submitForm);
+    $('#doc-html').on('scroll', Steno.htmlScroll);
 
+    // source text editor
     var ed;
-    Steno.sourceTextEd = ed = ace.edit("doc_source_text");
+    Steno.sourceTextEd = ed = ace.edit("doc-source-text");
 
     ed.setTheme("ace/theme/chrome");
     ed.setShowPrintMargin(false);
 
     var sess = ed.getSession();
     sess.setMode("ace/mode/text");
+    sess.setUseWrapMode(false);
+
+    // xml editor
+    Steno.xmlEd = ed = ace.edit("doc-xml");
+
+    ed.setTheme("ace/theme/chrome");
+    ed.setShowPrintMargin(false);
+    ed.setReadOnly(true);
+
+    sess = ed.getSession();
+    sess.setMode("ace/mode/xml");
     sess.setUseWrapMode(false);
   },
 
@@ -22,10 +35,12 @@ var Steno = {
     console.log(data);
 
     // update the XML
-    $('#doc_xml').val(data.xml);
+    var ed = Steno.xmlEd;
+    ed.setValue(data.xml);
+    ed.clearSelection();
 
     // update the source text
-    var ed = Steno.sourceTextEd;
+    ed = Steno.sourceTextEd;
     var posn = ed.getCursorPosition();
     var sourceChanged = ed.getValue() != data.source_text;
 
@@ -47,7 +62,7 @@ var Steno = {
     ed.renderer.scrollCursorIntoView();
 
     // update the HTML
-    $('#doc_html').html(data.html);
+    $('#doc-html').html(data.html);
   },
 
   setParseErrors: function(errors) {
@@ -65,7 +80,7 @@ var Steno = {
 
   submitForm: function(e) {
     try {
-      $('#parse_btn').addClass('disabled');
+      $('#parse-btn').addClass('disabled');
 
       data = $(this).serializeArray();
       data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
@@ -75,7 +90,7 @@ var Steno = {
         data: data,
         success: Steno.update,
         complete: function() {
-          $('#parse_btn').removeClass('disabled');
+          $('#parse-btn').removeClass('disabled');
         }
       });
     } catch (e) {
@@ -88,8 +103,9 @@ var Steno = {
   // The HTML section scrolled, if we're syncing scrolling,
   // handle it.
   htmlScroll: function() {
+    // TODO: scroll all the others, too
     if (Steno.syncScrolling) {
-      var $html = $('#doc_html');
+      var $html = $('#doc-html');
 
       var perc = $html.scrollTop() / $html[0].scrollHeight;
       var line = Steno.sourceTextEd.getSession().getLength() * perc;
