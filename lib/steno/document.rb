@@ -42,7 +42,6 @@ module Steno
     def initialize(hash=nil)
       if hash
         @meta = Metadata.new(hash["meta"]) if hash["meta"]
-
         @source_text = hash["source_text"]
         @xml = hash["xml"]
       end
@@ -79,6 +78,8 @@ module Steno
 
       postprocess!
 
+      apply_metadata! if @meta
+
       true
     end
 
@@ -87,8 +88,6 @@ module Steno
       logger.info("Postprocessing xml...")
 
       self.xml = builder.postprocess(xml)
-
-      apply_metadata! if @meta
     end
 
     def validate!
@@ -109,7 +108,13 @@ module Steno
       doc = builder.parse_xml(xml)
 
       doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRalias', a: Steno::AN)['value'] = \
-        @meta.title if @meta.title.present?
+        @meta.title
+
+      pub = doc.at_xpath('//a:act/a:meta/a:publication', a: Steno::AN)
+      pub["number"] = @meta.pub_number
+      pub["showAs"] = pub["name"] = @meta.pub_name
+      # TODO: YYYY-MM-DD
+      pub["date"] = @meta.pub_date
 
       # TODO: other metadata
 

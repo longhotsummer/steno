@@ -9,9 +9,11 @@
       - else
         Steno
 
-    = stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css'
-    = stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap-theme.min.css'
-    = stylesheet_link_tag '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css'
+    =# stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css'
+    =# stylesheet_link_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap-theme.min.css'
+    = stylesheet_link_tag '/css/bootstrap/bootstrap.min.css'
+    = stylesheet_link_tag '/css/bootstrap/bootstrap-theme.min.css'
+    =# stylesheet_link_tag '//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css'
     = css :app
   %body
     /[if lt IE 7]
@@ -32,6 +34,8 @@
     #wrapper
       = yield
 
-      = javascript_include_tag '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
-      = javascript_include_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js'
+      =# javascript_include_tag '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'
+      =# javascript_include_tag '//netdna.bootstrapcdn.com/bootstrap/3.0.1/js/bootstrap.min.js'
+      = javascript_include_tag '/js/jquery-1.10.2.min.js'
+      = javascript_include_tag '/js/bootstrap-2.3.2.min.js'
       = js :app

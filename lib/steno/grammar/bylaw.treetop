@@ -40,11 +40,11 @@ grammar Bylaw
   rule section_title
     # Section title
     # 1. Section content
-    #content eol
-    #section_title_prefix space
-
-    section_title_prefix space
     content eol
+    section_title_prefix space
+
+    #section_title_prefix space
+    #content eol
   end
 
   rule section_content

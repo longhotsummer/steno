@@ -4,7 +4,7 @@ var Steno = {
   syncScrolling: true,
 
   init: function() {
-    $('#source-form').on('submit', Steno.submitForm);
+    $('#parse-btn').on('click', Steno.parseSource);
     $('#doc-html').on('scroll', Steno.htmlScroll);
 
     // source text editor
@@ -31,7 +31,7 @@ var Steno = {
   },
 
   // refresh the forms based on data received from the server
-  update: function(data) {
+  updateSource: function(data) {
     console.log(data);
 
     // update the XML
@@ -78,17 +78,17 @@ var Steno = {
     return (errors.length > 0);
   },
 
-  submitForm: function(e) {
+  parseSource: function(e) {
     try {
       $('#parse-btn').addClass('disabled');
 
-      data = $(this).serializeArray();
+      var data = $('#source-form').serializeArray();
       data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
 
       $.ajax('/parse', {
         method: 'POST',
         data: data,
-        success: Steno.update,
+        success: Steno.updateSource,
         complete: function() {
           $('#parse-btn').removeClass('disabled');
         }

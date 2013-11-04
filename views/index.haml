@@ -2,43 +2,11 @@
   %li.active
     %a(href="#source-step" data-toggle="tab") 1. Parse plain text
   %li
-    %a(href="#metadata-step" data-toggle="tab") 2. Describe metadata
+    %a(href="#export-step" data-toggle="tab") 2. Save and export
 
 .tab-content
   #source-step.tab-pane.active
     - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
-      #text-panel
-        .row
-          .col-xs-6
-            %ul.nav.nav-tabs
-              %li.active
-                %a(href="#tab-source") Plain text source
-
-            .tab-content
-              #tab-source.tab-pane.active
-                %pre#doc-source-text
-
-          .col-xs-6
-            %ul.nav.nav-tabs
-              %li.active
-                %a(href="#html-tab" data-toggle="tab") Preview
-              %li
-                %a(href="#xml-tab" data-toggle="tab") XML
-            .tab-content
-              #html-tab.tab-pane.active
-                #doc-html.an-container
-              #xml-tab.tab-pane
-                %pre#doc-xml
-
-      .button-panel
-        .row
-          .col-xs-6
-            .buttons.pull-right
-              %button#parse-btn.btn.btn-default(type="submit") Parse
-
-
-  #metadata-step.tab-pane
-    - form_tag '/', method: 'post', class: 'form-horizontal', id: 'metadata-form' do
       #metadata-panel
         .row
           .col-xs-6
@@ -66,10 +34,37 @@
               %label.col-sm-2.control-label Published
               .col-sm-4
                 = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+
+      #text-panel
+        .row
+          .col-xs-6
+            %ul.nav.nav-tabs
+              %li.active
+                %a(href="#tab-source") Plain text source
+
+            .tab-content
+              #tab-source.tab-pane.active
+                %pre#doc-source-text
+
+          .col-xs-6
+            %ul.nav.nav-tabs
+              %li.active
+                %a(href="#html-tab" data-toggle="tab") Preview
+              %li
+                %a(href="#xml-tab" data-toggle="tab") XML
+            .tab-content
+              #html-tab.tab-pane.active
+                #doc-html.an-container
+              #xml-tab.tab-pane
+                %pre#doc-xml
+
       .button-panel
         .row
           .col-xs-6
             .buttons.pull-right
-              %button#metadata-save-btn.btn.btn-primary(type="submit") Save
+              %button#parse-btn.btn.btn-default Parse
+
+  #export-step.tab-pane.active
+    Export...
 
 = javascript_include_tag '/js/ace/ace.js'
