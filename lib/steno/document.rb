@@ -7,87 +7,15 @@ require 'steno/parser'
 require 'steno/transforms'
 
 module Steno
-  class Metadata
-    attr_accessor :title
-    attr_accessor :short_name
-
-    attr_accessor :pub_name
-    attr_accessor :pub_number
-    attr_accessor :pub_date
-
-    FIELDS = %w(title short_name pub_name pub_number pub_date)
-
-    def initialize(hash=nil)
-      # load values from hash
-      if hash
-        FIELDS.each do |attr|
-          self.send("#{attr}=", hash[attr]) if hash[attr]
-        end
-
-        self.pub_date = Time.parse(pub_date) if pub_date.present?
-      end
-    end
-  end
-
   class Document
     include Logging
 
     attr_accessor :source_text
     attr_accessor :xml
-    attr_accessor :html
 
-    attr_reader :parse_errors
     attr_reader :validate_errors
 
-    def initialize(hash=nil)
-      if hash
-        @meta = Metadata.new(hash["meta"]) if hash["meta"]
-        @source_text = hash["source_text"]
-        @xml = hash["xml"]
-      end
-    end
-
-    # Clean up the source text
-    def preprocess!
-      self.source_text = builder.preprocess(source_text)
-    end
-
-    # Parse the plain text source into XML, validate and post-process it.
-    # Returns true if successful, false if there were errors.
-    def parse!
-      @parse_errors = []
-      @xml = nil
-
-      preprocess!
-
-      root = :bylaw
-      logger.info("Parsing #{root}...")
-
-      parser = Steno::Parser.new
-      begin
-        tree = parser.parse_bylaw(source_text, root)
-
-        # transform the AST into AkomaNtoso XML
-        self.xml = builder.xml_from_syntax_tree(tree)
-      rescue Steno::ParseError => e
-        @parse_errors << e
-        return false
-      end
-
-      return false unless validate!
-
-      postprocess!
-
-      apply_metadata! if @meta
-
-      true
-    end
-
-    # post-process the XML
-    def postprocess!
-      logger.info("Postprocessing xml...")
-
-      self.xml = builder.postprocess(xml)
+    def initialize
     end
 
     def validate!
@@ -104,41 +32,33 @@ module Steno
       @valid
     end
 
-    def apply_metadata!
+    def apply_metadata(metadata)
       doc = builder.parse_xml(xml)
 
-      doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRalias', a: Steno::AN)['value'] = \
-        @meta.title
+      ident = doc.at_xpath('//a:act/a:meta/a:identification', a: Steno::AN)
+      ident.at_xpath('a:FRBRWork/a:FRBRalias', a: Steno::AN)['value'] = metadata.title
+
+      doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRthis', a: Steno::AN)['value'] = metadata.uri
+      doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRuri', a: Steno::AN)['value'] = "#{metadata.uri}/main"
 
       pub = doc.at_xpath('//a:act/a:meta/a:publication', a: Steno::AN)
-      pub["number"] = @meta.pub_number
-      pub["showAs"] = pub["name"] = @meta.pub_name
-      # TODO: YYYY-MM-DD
-      pub["date"] = @meta.pub_date
+      pub["number"] = metadata.pub_number
+      pub["showAs"] = pub["name"] = metadata.pub_name
+      pub["date"] = metadata.date
+
 
       # TODO: other metadata
 
       self.xml = builder.to_xml(doc)
     end
 
-    def render!
-      if xml.present?
-        @html = Steno::Transforms.new.act_to_html(builder.parse_xml(xml), '/root/')
-      else
-        @html = nil
-      end
-
-      @html
+    def render
+      xml.present? ? Steno::Transforms.new.act_to_html(builder.parse_xml(xml), '/root/') : nil
     end
 
-    def to_json
-      {
-        "source_text" => source_text,
-        "html" => html,
-        "xml" => xml,
-        "parse_errors" => parse_errors,
-        "validate_errors" => validate_errors
-      }.to_json
+    def render_toc
+      # XXX
+      "TODO"
     end
 
     protected

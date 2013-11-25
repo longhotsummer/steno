@@ -5,11 +5,11 @@ var Steno = {
 
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
-    $('#doc-html').on('scroll', Steno.htmlScroll);
+    $('#source-doc-html').on('scroll', Steno.htmlScroll);
 
     // source text editor
     var ed;
-    Steno.sourceTextEd = ed = ace.edit("doc-source-text");
+    Steno.sourceTextEd = ed = ace.edit("source-doc-text");
 
     ed.setTheme("ace/theme/chrome");
     ed.setShowPrintMargin(false);
@@ -23,24 +23,20 @@ var Steno = {
 
     ed.setTheme("ace/theme/chrome");
     ed.setShowPrintMargin(false);
-    ed.setReadOnly(true);
 
     sess = ed.getSession();
     sess.setMode("ace/mode/xml");
     sess.setUseWrapMode(false);
   },
 
-  // refresh the forms based on data received from the server
-  updateSource: function(data) {
+  /**
+   * Update based on a parse of the source text
+   */
+  parsedSource: function(data) {
     console.log(data);
 
-    // update the XML
-    var ed = Steno.xmlEd;
-    ed.setValue(data.xml);
-    ed.clearSelection();
-
     // update the source text
-    ed = Steno.sourceTextEd;
+    var ed = Steno.sourceTextEd;
     var posn = ed.getCursorPosition();
     var sourceChanged = ed.getValue() != data.source_text;
 
@@ -55,14 +51,20 @@ var Steno = {
       ed.focus();
     } else {
       // no errors
+      // kick of a background render
+      Steno.renderSourceOutput(data.xml);
+
       if (sourceChanged) {
         ed.gotoLine(posn.row+1, posn.column);
       }
     }
     ed.renderer.scrollCursorIntoView();
 
-    // update the HTML
-    $('#doc-html').html(data.html);
+    // update the XML
+    ed = Steno.xmlEd;
+    ed.setValue(data.xml);
+    ed.clearSelection();
+
   },
 
   setParseErrors: function(errors) {
@@ -78,6 +80,9 @@ var Steno = {
     return (errors.length > 0);
   },
 
+  /**
+   * Parse the source text of the document.
+   */
   parseSource: function(e) {
     try {
       $('#parse-btn').addClass('disabled');
@@ -88,7 +93,7 @@ var Steno = {
       $.ajax('/parse', {
         method: 'POST',
         data: data,
-        success: Steno.updateSource,
+        success: Steno.parsedSource,
         complete: function() {
           $('#parse-btn').removeClass('disabled');
         }
@@ -105,7 +110,7 @@ var Steno = {
   htmlScroll: function() {
     // TODO: scroll all the others, too
     if (Steno.syncScrolling) {
-      var $html = $('#doc-html');
+      var $html = $('#source-doc-html');
 
       var perc = $html.scrollTop() / $html[0].scrollHeight;
       var line = Steno.sourceTextEd.getSession().getLength() * perc;
@@ -114,6 +119,19 @@ var Steno = {
     }
   },
 
+  /**
+   * Render the source-to-xml output
+   */
+  renderSourceOutput: function(xml) {
+    $.ajax('/render', {
+      method: 'POST',
+      data: {'doc[xml]': xml},
+      success: function(data) {
+        // update the HTML
+        $('#source-doc-html').html(data.html);
+      },
+    });
+  },
 };
 
 $(function() {

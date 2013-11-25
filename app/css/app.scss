@@ -7,23 +7,16 @@ body {
   padding: 10px;
 }
 
-#metadata-panel {
-}
-
-#text-panel {
-  margin-top: 20px;
-}
-
 .button-panel {
   margin-top: 10px;
 }
 
-#doc-source-text, #doc-xml, #doc-html {
+#source-doc-text, #doc-xml, #source-doc-html, #source-doc-toc {
   width: 100%;
   height: 400px;
 }
 
-#doc-html {
+#source-doc-html {
   overflow: scroll;
   border: 1px solid #ccc;
   padding: 10px;

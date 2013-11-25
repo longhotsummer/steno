@@ -1,70 +1,90 @@
-%ul.nav.nav-tabs
-  %li.active
-    %a(href="#source-step" data-toggle="tab") 1. Parse plain text
-  %li
-    %a(href="#export-step" data-toggle="tab") 2. Save and export
+#metadata-step.step
+  - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
+    %h2
+      %span.num 1.
+      Metadata &amp; Settings
+    .row
+      .col-xs-6
+        .form-group
+          %label.col-sm-3.control-label Full title
+          .col-sm-9
+            = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+        .form-group
+          %label.col-sm-3.control-label Short name
+          .col-sm-6
+            = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
+        .form-group
+          %label.col-sm-3.control-label Gazette
+          .col-sm-6
+            = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+          %label.col-sm-1.control-label no.
+          .col-sm-2
+            = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
+      .col-xs-6
+        .form-group
+          %label.col-sm-2.control-label Locale
+          .col-sm-3
+            = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
+        .form-group
+          %label.col-sm-2.control-label Published
+          .col-sm-4
+            = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
 
-.tab-content
-  #source-step.tab-pane.active
-    - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
-      #metadata-panel
-        .row
-          .col-xs-6
-            .form-group
-              %label.col-sm-3.control-label Full title
-              .col-sm-9
-                = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
-            .form-group
-              %label.col-sm-3.control-label Short name
-              .col-sm-6
-                = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
-            .form-group
-              %label.col-sm-3.control-label Gazette
-              .col-sm-6
-                = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
-              %label.col-sm-1.control-label no.
-              .col-sm-2
-                = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
-          .col-xs-6
-            .form-group
-              %label.col-sm-2.control-label Locale
-              .col-sm-3
-                = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
-            .form-group
-              %label.col-sm-2.control-label Published
-              .col-sm-4
-                = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+  #text-step.step
+    %h2
+      %span.num 2.
+      Parse Plaintext
+    .row
+      .col-xs-6
+        %ul.nav.nav-tabs
+          %li.active
+            %a(href="#") Plain text source
 
-      #text-panel
-        .row
-          .col-xs-6
-            %ul.nav.nav-tabs
-              %li.active
-                %a(href="#tab-source") Plain text source
+        .tab-content
+          .tab-pane.active
+            %pre#source-doc-text
 
-            .tab-content
-              #tab-source.tab-pane.active
-                %pre#doc-source-text
+      .col-xs-6
+        %ul.nav.nav-tabs
+          %li.active
+            %a(href="#text-html-tab" data-toggle="tab") HTML
+          %li
+            %a(href="#text-toc-tab" data-toggle="tab") Table of Contents
+        .tab-content
+          #text-html-tab.tab-pane.active
+            #source-doc-html.an-container
+          #text-toc-tab.tab-pane
+            #source-doc-toc.an-container
 
-          .col-xs-6
-            %ul.nav.nav-tabs
-              %li.active
-                %a(href="#html-tab" data-toggle="tab") Preview
-              %li
-                %a(href="#xml-tab" data-toggle="tab") XML
-            .tab-content
-              #html-tab.tab-pane.active
-                #doc-html.an-container
-              #xml-tab.tab-pane
-                %pre#doc-xml
+    .button-panel
+      .row
+        .col-xs-6
+          .buttons.pull-right
+            %button#parse-btn.btn.btn-default Parse
 
-      .button-panel
-        .row
-          .col-xs-6
-            .buttons.pull-right
-              %button#parse-btn.btn.btn-default Parse
+  #xml-step.step
+    %h2
+      %span.num 3.
+      Check XML
+    .row
+      .col-xs-6
+        #xml-tab.tab-pane
+          %pre#doc-xml
+      .col-xs-6
+        %ul.nav.nav-tabs
+          %li.active
+            %a(href="#xml-html-tab" data-toggle="tab") HTML
+          %li
+            %a(href="#xml-toc-tab" data-toggle="tab") Table of Contents
+        .tab-content
+          #xml-html-tab.tab-pane.active
+            #xml-doc-html.an-container
+          #xml-toc-tab.tab-pane
+            #xml-doc-toc.an-container
 
-  #export-step.tab-pane.active
-    Export...
+  #export-step.step
+    %h2
+      %span.num 4.
+      Save &amp; Export
 
 = javascript_include_tag '/js/ace/ace.js'
