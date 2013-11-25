@@ -17,7 +17,7 @@ module Steno
     attr_accessor :pub_number
     attr_accessor :pub_date
 
-    FIELDS = %w(title short_name pub_name pub_number pub_date, locale)
+    FIELDS = %w(title short_name pub_name pub_number pub_date locale)
 
     def initialize(hash=nil)
       # load values from hash

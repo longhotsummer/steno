@@ -36,18 +36,27 @@ module Steno
       doc = builder.parse_xml(xml)
 
       ident = doc.at_xpath('//a:act/a:meta/a:identification', a: Steno::AN)
+
+      # work
+      ident.at_xpath('a:FRBRWork/a:FRBRthis', a: Steno::AN)['value'] = "#{metadata.uri}/main"
+      ident.at_xpath('a:FRBRWork/a:FRBRuri', a: Steno::AN)['value'] = metadata.uri
       ident.at_xpath('a:FRBRWork/a:FRBRalias', a: Steno::AN)['value'] = metadata.title
+      ident.at_xpath('a:FRBRWork/a:FRBRdate', a: Steno::AN)['date'] = metadata.date
 
-      doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRthis', a: Steno::AN)['value'] = metadata.uri
-      doc.at_xpath('//a:act/a:meta/a:identification/a:FRBRWork/a:FRBRuri', a: Steno::AN)['value'] = "#{metadata.uri}/main"
+      # expression
+      ident.at_xpath('a:FRBRExpression/a:FRBRthis', a: Steno::AN)['value'] = "#{metadata.uri}/main/eng@"
+      ident.at_xpath('a:FRBRExpression/a:FRBRuri', a: Steno::AN)['value'] = "#{metadata.uri}/eng@"
+      ident.at_xpath('a:FRBRExpression/a:FRBRdate', a: Steno::AN)['date'] = metadata.date
 
+      # manifestation
+      ident.at_xpath('a:FRBRManifestation/a:FRBRthis', a: Steno::AN)['value'] = "#{metadata.uri}/main/eng@"
+      ident.at_xpath('a:FRBRManifestation/a:FRBRuri', a: Steno::AN)['value'] = "#{metadata.uri}/eng@"
+
+      # publication info
       pub = doc.at_xpath('//a:act/a:meta/a:publication', a: Steno::AN)
       pub["number"] = metadata.pub_number
       pub["showAs"] = pub["name"] = metadata.pub_name
       pub["date"] = metadata.date
-
-
-      # TODO: other metadata
 
       self.xml = builder.to_xml(doc)
     end
