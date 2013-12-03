@@ -1,4 +1,8 @@
+require 'steno/parser_helpers'
+
 grammar Bylaw
+  include Steno::ParserHelpers
+
   rule bylaw
     preamble?
     chapter+ <Bylaw>
@@ -38,13 +42,23 @@ grammar Bylaw
   end
 
   rule section_title
+    section_title_1 / section_1_title
+  end
+
+  rule section_title_1
+    &{ |s| options[:section_number_after_title] }
     # Section title
     # 1. Section content
     content eol
     section_title_prefix space
+  end
 
-    #section_title_prefix space
-    #content eol
+  rule section_1_title
+    !{ |s| options[:section_number_after_title] }
+    # 1. Section title
+    # content
+    section_title_prefix space
+    content eol
   end
 
   rule section_content

@@ -1,17 +1,17 @@
 require 'spec_helper'
-require 'steno/document'
+require 'steno/document_parser'
 
-describe Steno::Document do
+describe Steno::DocumentParser do
   it 'should handle a basic parse' do
-    subject.source_text = "PREAMBLE\nfoo\n1. Stuff\n(1) hello"
-    subject.parse!.should be_true
+    doc = subject.parse("PREAMBLE\nfoo\n1. Stuff\n(1) hello")
 
     subject.parse_errors.should == []
-    subject.validate_errors.should == []
 
-    subject.validates?.should be_true
+    doc.validate!
+    doc.validate_errors.should == []
+    doc.validates?.should be_true
 
-    subject.xml.should == <<XML
+    doc.xml.should == <<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <act contains="originalVersion">

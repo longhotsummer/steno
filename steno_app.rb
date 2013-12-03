@@ -57,6 +57,10 @@ class StenoApp < Sinatra::Base
   post "/parse" do
     parser = Steno::DocumentParser.new
     parser.metadata = Steno::Metadata.new(params[:doc][:meta])
+    parser.options = {
+      section_number_after_title: params[:doc][:options][:section_number_after_title].present?
+    }
+
     doc = parser.parse(params[:doc][:source_text])
 
     content_type "application/json"

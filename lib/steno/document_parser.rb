@@ -3,6 +3,7 @@ require 'time'
 
 require 'logging'
 require 'steno/akoma_ntoso_builder'
+require 'steno/document'
 require 'steno/parser'
 require 'steno/transforms'
 
@@ -49,6 +50,7 @@ module Steno
     attr_accessor :metadata
     attr_reader :source_text
     attr_reader :parse_errors
+    attr_accessor :options
 
     def initialize
     end
@@ -65,6 +67,7 @@ module Steno
       logger.info("Parsing #{root}...")
 
       parser = Steno::Parser.new
+      parser.options = @options || {}
       begin
         tree = parser.parse_bylaw(@source_text, root)
 

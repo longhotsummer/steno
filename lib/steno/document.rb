@@ -3,7 +3,6 @@ require 'time'
 
 require 'logging'
 require 'steno/akoma_ntoso_builder'
-require 'steno/parser'
 require 'steno/transforms'
 
 module Steno

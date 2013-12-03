@@ -91,5 +91,29 @@ EOS
 
       node.elements.first.text_value.should == ""
     end
+
+    it 'should handle section numbers after title' do
+      subject.options = {section_number_after_title: true}
+      node = parse :bylaw, <<EOS
+Section
+1. (1) hello
+EOS
+
+      section = node.elements[1].elements[0].elements[1].elements[0].elements[1].elements[0]
+      section.section_title.content.text_value.should == "Section"
+      section.section_title.section_title_prefix.number_letter.text_value.should == "1"
+    end
+
+    it 'should handle section numbers before title' do
+      subject.options = {section_number_after_title: false}
+      node = parse :bylaw, <<EOS
+1. Section
+(1) hello
+EOS
+
+      section = node.elements[1].elements[0].elements[1].elements[0].elements[1].elements[0]
+      section.section_title.content.text_value.should == "Section"
+      section.section_title.section_title_prefix.number_letter.text_value.should == "1"
+    end
   end
 end

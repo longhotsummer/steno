@@ -8,8 +8,12 @@ module Steno
     Treetop.load(File.dirname(__FILE__) + "/grammar/act.treetop")
     Treetop.load(File.dirname(__FILE__) + "/grammar/bylaw.treetop")
 
+    attr_accessor :options
+
     def parse_act(source)
       parser = ActParser.new
+      parser.options = options
+
       tree = parser.parse(source)
 
       error_from_parser(parser) if tree.nil?
@@ -19,6 +23,8 @@ module Steno
 
     def parse_definitions(source)
       parser = BylawParser.new
+      parser.options = options
+
       tree = parser.parse(source, root: :definitions_section)
 
       error_from_parser(parser) if tree.nil?
@@ -28,6 +34,8 @@ module Steno
 
     def parse_bylaw(source, root=:bylaw)
       parser = BylawParser.new
+      parser.options = options
+
       tree = parser.parse(source, root: root)
 
       error_from_parser(parser) if tree.nil?
