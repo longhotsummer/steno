@@ -21,22 +21,26 @@ module Steno
       tree
     end
 
-    def parse_definitions(source)
+    def parse_definitions(source, opts={})
       parser = BylawParser.new
       parser.options = options
 
-      tree = parser.parse(source, root: :definitions_section)
+      opts[:root] = :definitions_section
+
+      tree = parser.parse(source, opts)
 
       error_from_parser(parser) if tree.nil?
 
       tree
     end
 
-    def parse_bylaw(source, root=:bylaw)
+    def parse_bylaw(source, root=:bylaw, opts={})
       parser = BylawParser.new
       parser.options = options
 
-      tree = parser.parse(source, root: root)
+      opts[:root] = root
+
+      tree = parser.parse(source, opts)
 
       error_from_parser(parser) if tree.nil?
 
