@@ -26,19 +26,19 @@
             .form-group
               %label.col-sm-3.control-label Gazette
               .col-sm-6
-                = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+                = text_field_tag 'doc[meta][pub_name]', value: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
               %label.col-sm-1.control-label no.
               .col-sm-2
                 = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
           .col-xs-6
             .form-group
-              %label.col-sm-2.control-label Locale
+              %label.col-sm-2.control-label Region
               .col-sm-3
-                = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
+                = select_tag 'doc[meta][region]', options: Steno::Region::REGIONS.map { |r| [r.name, r.code] }, selected: Steno::Region::REGIONS.first.code, class: 'form-control'
             .form-group
               %label.col-sm-2.control-label Published
               .col-sm-4
-                = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+                = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control', value: '2010-01-01'
 
       %fieldset
         %legend Settings

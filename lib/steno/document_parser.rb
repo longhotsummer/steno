@@ -6,19 +6,20 @@ require 'steno/akoma_ntoso_builder'
 require 'steno/document'
 require 'steno/parser'
 require 'steno/transforms'
+require 'steno/region'
 
 module Steno
   class Metadata
     attr_accessor :title
     attr_accessor :short_name
 
-    attr_accessor :locale
+    attr_accessor :region
 
     attr_accessor :pub_name
     attr_accessor :pub_number
     attr_accessor :pub_date
 
-    FIELDS = %w(title short_name pub_name pub_number pub_date locale)
+    FIELDS = %w(title short_name pub_name pub_number pub_date region)
 
     def initialize(hash=nil)
       # load values from hash
@@ -40,7 +41,7 @@ module Steno
     end
 
     def uri
-      "/za/by-law/#{@locale || 'locale'}/#{year || 'year'}/#{@short_name}"
+      "/za/by-law/#{@region || 'region'}/#{year || 'year'}/#{@short_name}"
     end
   end
 

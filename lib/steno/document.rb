@@ -57,6 +57,14 @@ module Steno
       pub["showAs"] = pub["name"] = metadata.pub_name
       pub["date"] = metadata.date
 
+      # council
+      council = doc.at_css('#council')
+      council['href'] = "/ontology/organization/za/council.#{metadata.region}"
+
+      if region = Steno::Region.for_code(metadata.region)
+        council['showAs'] = region.council
+      end
+
       self.xml = builder.to_xml(doc)
     end
 
