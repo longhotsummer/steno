@@ -21,7 +21,7 @@ var Steno = {
 
     var sess = ed.getSession();
     sess.setMode("ace/mode/text");
-    sess.setUseWrapMode(false);
+    sess.setUseWrapMode(true);
 
     // xml editor
     Steno.xmlEd = ed = ace.edit("doc-xml");
@@ -31,7 +31,7 @@ var Steno = {
 
     sess = ed.getSession();
     sess.setMode("ace/mode/xml");
-    sess.setUseWrapMode(false);
+    sess.setUseWrapMode(true);
   },
 
   /**
