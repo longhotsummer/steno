@@ -8,8 +8,13 @@ var Steno = {
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
     $('#source-doc-html').on('scroll', Steno.htmlScroll);
-    $('#metadata-step a.btn').on('click', function() {
+    $('#metadata-step button.next-step').on('click', function(e) {
+      e.preventDefault();
       $('ul.steps li:eq(1) a').tab('show');
+    });
+    $('#text-step button.next-step').on('click', function() {
+      e.preventDefault();
+      $('ul.steps li:eq(2) a').tab('show');
     });
 
     // source text editor
@@ -89,25 +94,24 @@ var Steno = {
    * Parse the source text of the document.
    */
   parseSource: function(e) {
-    try {
-      $('#parse-btn').addClass('disabled');
+    e.preventDefault();
 
-      var data = $('#source-form').serializeArray();
-      data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
+    var btn = $('#parse-btn').addClass('disabled');
+    var btnText = btn.html();
+    btn.html('<i class="fa fa-cog fa-spin">');
 
-      $.ajax('/parse', {
-        method: 'POST',
-        data: data,
-        success: Steno.parsedSource,
-        complete: function() {
-          $('#parse-btn').removeClass('disabled');
-        }
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    var data = $('#source-form').serializeArray();
+    data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
 
-    return false;
+    $.ajax('/parse', {
+      method: 'POST',
+      data: data,
+      success: Steno.parsedSource,
+      complete: function() {
+        btn.html(btnText);
+        $('#parse-btn').removeClass('disabled');
+      }
+    });
   },
 
   // The HTML section scrolled, if we're syncing scrolling,

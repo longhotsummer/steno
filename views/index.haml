@@ -65,7 +65,7 @@
       .row.step-buttons
         .col-xs-6
           .col-xs-9.col-xs-offset-3
-            %a.btn.btn-primary(href="#text-step") Looks good, next step
+            %button.btn.btn-primary.next-step Looks good, next step
            
 
   #text-step.tab-pane
@@ -95,7 +95,10 @@
       .row
         .col-xs-6
           .buttons.pull-right
-            %button#parse-btn.btn.btn-default Parse
+            %button#parse-btn.btn.btn-default Parse text
+        .col-xs-6
+          .buttons.pull-right
+            %button.btn.btn-primary.next-step Looks good, next step
 
   #xml-step.tab-pane
     .row
