@@ -39,7 +39,7 @@ module Steno
       s.gsub!(/\r/, "\n")
 
       # change weird quotes to normal ones
-      s.gsub!(/‘‘|’’/, '"')
+      s.gsub!(/‘‘|’’|''/, '"')
 
       # nuke any line to do with Sabinet and the government printer
       s.gsub!(/^.*Sabinet.*Government Printer.*$/i, '')
@@ -201,7 +201,7 @@ module Steno
           owner = find_up(text, 'subsection')
           next if owner and owner.at_xpath(".//a:def[@refersTo='##{term_id}']", a: AN)
 
-          while posn = (text.content =~ /\b#{term}\b/)
+          while posn = (text.content =~ /\b#{Regexp::escape(term)}\b/)
             # <p>A delegation under subsection (1) shall not prevent the <term refersTo="#term-Minister" id="trm357">Minister</term> from exercising the power himself or herself.</p>
             node = doc.create_element('term', term, refersTo: "##{term_id}", id: "trm#{i}")
 
