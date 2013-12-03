@@ -1,3 +1,5 @@
+//= require bootstrap
+
 var Steno = {
   sourceTextEd: null,
   xmlEd: null,

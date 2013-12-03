@@ -1,7 +1,11 @@
 require 'sinatra'
-require 'sinatra/assetpack'
 require 'padrino-helpers'
 require 'log4r'
+require 'compass'
+require 'sprockets'
+require 'sprockets-helpers'
+require 'sprockets-sass'
+require 'bootstrap-sass'
 
 # Setup logging
 log = Log4r::Logger.new('Steno')
@@ -13,26 +17,38 @@ require 'steno/document'
 require 'steno/document_parser'
 
 class StenoApp < Sinatra::Base
-  set :root, File.dirname(__FILE__)
-  set :haml, format: :html5
+  set :root,          File.dirname(__FILE__)
+  set :sprockets,     Sprockets::Environment.new(root)
+  set :precompile,    [ /\w+\.(?!js|css).+/, /app.(css|js)$/ ]
+  set :assets_prefix, '/assets'
+  set :digest_assets, false
 
+  set :haml,          format: :html5
   disable :protect_from_csrf
   enable :logging
 
   register Padrino::Helpers
-  register Sinatra::AssetPack
 
-  assets do
-    js :app, [
-      '/js/app.js',
-    ]
-
-    css :app, [
-      '/css/act.css',
-      '/css/app.css',
-    ]
+  configure do
+    # Setup Sprockets
+    %w{javascripts stylesheets images}.each do |type|
+      sprockets.append_path File.join(root, 'assets', type)
+      sprockets.append_path Compass::Frameworks['bootstrap'].templates_directory + "/../vendor/assets/#{type}"
+    end
+ 
+    # Configure Sprockets::Helpers (if necessary)
+    Sprockets::Helpers.configure do |config|
+      config.environment = sprockets
+      config.prefix      = assets_prefix
+      config.digest      = digest_assets
+      config.public_path = public_folder
+      config.debug       = true if development?
+    end
   end
-  
+
+  helpers do
+    include Sprockets::Helpers
+  end
 
   get "/" do
     haml :index

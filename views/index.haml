@@ -2,7 +2,7 @@
   %li.active
     %a(href="#metadata-step" data-toggle="tab") 1. By-law Info
   %li
-    %a(href="#text-step" data-toggle="tab") 2. Parse Plaintext
+    %a(href="#text-step" data-toggle="tab") 2. Parse by-law
   %li
     %a(href="#xml-step" data-toggle="tab") 3. Check XML
   %li
@@ -11,38 +11,62 @@
 .tab-content
   #metadata-step.tab-pane.active
     - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
-      .row
-        .col-xs-6
-          .form-group
-            %label.col-sm-3.control-label Full title
-            .col-sm-9
-              = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
-          .form-group
-            %label.col-sm-3.control-label Short name
-            .col-sm-6
-              = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
-          .form-group
-            %label.col-sm-3.control-label Gazette
-            .col-sm-6
-              = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
-            %label.col-sm-1.control-label no.
-            .col-sm-2
-              = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
-        .col-xs-6
-          .form-group
-            %label.col-sm-2.control-label Locale
-            .col-sm-3
-              = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
-          .form-group
-            %label.col-sm-2.control-label Published
-            .col-sm-4
-              = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+      %fieldset
+        %legend By-law information
+        .row
+          .col-xs-6
+            .form-group
+              %label.col-sm-3.control-label Full title
+              .col-sm-9
+                = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+            .form-group
+              %label.col-sm-3.control-label Short name
+              .col-sm-6
+                = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
+            .form-group
+              %label.col-sm-3.control-label Gazette
+              .col-sm-6
+                = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+              %label.col-sm-1.control-label no.
+              .col-sm-2
+                = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
+          .col-xs-6
+            .form-group
+              %label.col-sm-2.control-label Locale
+              .col-sm-3
+                = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
+            .form-group
+              %label.col-sm-2.control-label Published
+              .col-sm-4
+                = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+
+      %fieldset
+        %legend Settings
+        .row
+          .col-xs-6
+            .form-group#section-title-formats
+              %label.col-sm-3.control-label Section title format
+              .col-sm-9
+                %label.form-control
+                  = radio_button_tag 'doc[opts][section_number_after_title]', value: '', checked: true
+                  .format
+                    1. Definitions
+                    %br
+                    %span.text In this by-law, ...
+
+                %label.form-control
+                  = radio_button_tag 'doc[opts][section_number_after_title]', value: 'true'
+                  .format
+                    Definitions
+                    %br
+                    1. 
+                    %span.text In this by-law, ...
 
       .row.step-buttons
         .col-xs-6
           .col-xs-9.col-xs-offset-3
             %a.btn.btn-primary(href="#text-step") Looks good, next step
-       
+           
 
   #text-step.tab-pane
     .row
@@ -94,4 +118,4 @@
     %p
       Save &amp; Export
 
-= javascript_include_tag '/js/ace/ace.js'
+= javascript_tag 'ace/ace.js'

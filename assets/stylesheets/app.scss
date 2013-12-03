@@ -1,4 +1,7 @@
-//= require 'act.css'
+@import "bootstrap";
+@import "bootstrap/theme";
+@import "act.scss";
+
 body {
   margin-top: 50px;
 }
@@ -24,4 +27,16 @@ body {
 
 .tab-content {
   margin-top: 10px;
+}
+
+#section-title-formats {
+  label {
+    display: block;
+    height: auto;
+    @include box-shadow(0px 0px 0px);
+  }
+
+  input[type=radio] { float: left }
+  .format { margin-left: 25px }
+  .text { font-weight: normal }
 }
