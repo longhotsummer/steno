@@ -1,39 +1,50 @@
-#metadata-step.step
-  - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
-    %h2
-      %span.num 1.
-      Metadata &amp; Settings
-    .row
-      .col-xs-6
-        .form-group
-          %label.col-sm-3.control-label Full title
-          .col-sm-9
-            = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
-        .form-group
-          %label.col-sm-3.control-label Short name
-          .col-sm-6
-            = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
-        .form-group
-          %label.col-sm-3.control-label Gazette
-          .col-sm-6
-            = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
-          %label.col-sm-1.control-label no.
-          .col-sm-2
-            = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
-      .col-xs-6
-        .form-group
-          %label.col-sm-2.control-label Locale
-          .col-sm-3
-            = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
-        .form-group
-          %label.col-sm-2.control-label Published
-          .col-sm-4
-            = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+%ul.steps.nav.nav-pills
+  %li.active
+    %a(href="#metadata-step" data-toggle="tab") 1. By-law Info
+  %li
+    %a(href="#text-step" data-toggle="tab") 2. Parse Plaintext
+  %li
+    %a(href="#xml-step" data-toggle="tab") 3. Check XML
+  %li
+    %a(href="#export-step" data-toggle="tab") 4. Save &amp; Export
 
-  #text-step.step
-    %h2
-      %span.num 2.
-      Parse Plaintext
+.tab-content
+  #metadata-step.tab-pane.active
+    - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
+      .row
+        .col-xs-6
+          .form-group
+            %label.col-sm-3.control-label Full title
+            .col-sm-9
+              = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+          .form-group
+            %label.col-sm-3.control-label Short name
+            .col-sm-6
+              = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
+          .form-group
+            %label.col-sm-3.control-label Gazette
+            .col-sm-6
+              = text_field_tag 'doc[meta][pub_name]', placeholder: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+            %label.col-sm-1.control-label no.
+            .col-sm-2
+              = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
+        .col-xs-6
+          .form-group
+            %label.col-sm-2.control-label Locale
+            .col-sm-3
+              = text_field_tag 'doc[meta][locale]', placeholder: 'Cape Town', class: 'form-control'
+          .form-group
+            %label.col-sm-2.control-label Published
+            .col-sm-4
+              = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control'
+
+      .row.step-buttons
+        .col-xs-6
+          .col-xs-9.col-xs-offset-3
+            %a.btn.btn-primary(href="#text-step") Looks good, next step
+       
+
+  #text-step.tab-pane
     .row
       .col-xs-6
         %ul.nav.nav-tabs
@@ -56,16 +67,13 @@
           #text-toc-tab.tab-pane
             #source-doc-toc.an-container
 
-    .button-panel
+    .step-buttons
       .row
         .col-xs-6
           .buttons.pull-right
             %button#parse-btn.btn.btn-default Parse
 
-  #xml-step.step
-    %h2
-      %span.num 3.
-      Check XML
+  #xml-step.tab-pane
     .row
       .col-xs-6
         #xml-tab.tab-pane
@@ -82,9 +90,8 @@
           #xml-toc-tab.tab-pane
             #xml-doc-toc.an-container
 
-  #export-step.step
-    %h2
-      %span.num 4.
+  #export-step.tab-pane
+    %p
       Save &amp; Export
 
 = javascript_include_tag '/js/ace/ace.js'

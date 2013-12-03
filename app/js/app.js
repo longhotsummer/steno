@@ -6,6 +6,9 @@ var Steno = {
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
     $('#source-doc-html').on('scroll', Steno.htmlScroll);
+    $('#metadata-step a.btn').on('click', function() {
+      $('ul.steps li:eq(1) a').tab('show');
+    });
 
     // source text editor
     var ed;
