@@ -12,7 +12,7 @@ var Steno = {
       e.preventDefault();
       $('ul.steps li:eq(1) a').tab('show');
     });
-    $('#text-step button.next-step').on('click', function() {
+    $('#text-step button.next-step').on('click', function(e) {
       e.preventDefault();
       $('ul.steps li:eq(2) a').tab('show');
     });
@@ -122,7 +122,7 @@ var Steno = {
       var $html = $('#source-doc-html');
 
       var perc = $html.scrollTop() / $html[0].scrollHeight;
-      var line = Steno.sourceTextEd.getSession().getLength() * perc;
+      var line = Math.floor(Steno.sourceTextEd.getSession().getLength() * perc);
 
       Steno.sourceTextEd.scrollToLine(line, false, true);
     }
