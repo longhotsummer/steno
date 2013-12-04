@@ -7,7 +7,8 @@ var Steno = {
 
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
-    $('#source-doc-html').on('scroll', Steno.htmlScroll);
+    $('#render-btn').on('click', Steno.checkAndRenderXml);
+
     $('#metadata-step button.next-step').on('click', function(e) {
       e.preventDefault();
       $('ul.steps li:eq(1) a').tab('show');
@@ -16,27 +17,54 @@ var Steno = {
       e.preventDefault();
       $('ul.steps li:eq(2) a').tab('show');
     });
+    $('#xml-step button.next-step').on('click', function(e) {
+      e.preventDefault();
+      $('ul.steps li:eq(3) a').tab('show');
+    });
 
-    // source text editor
-    var ed;
-    Steno.sourceTextEd = ed = ace.edit("source-doc-text");
+    // editors
+    Steno.sourceTextEd = Steno.createEditor('#text-step .editor', 'ace/mode/text');
+    Steno.xmlEd = Steno.createEditor("#xml-step .editor", 'ace/mode/xml');
 
+    Steno.initSyncScrolling($('#source-doc-html'), Steno.sourceTextEd);
+    Steno.initSyncScrolling($('#xml-doc-html'), Steno.xmlEd);
+  },
+
+  /**
+   * Create a new editor, using the controls inside
+   * +container+.
+   *
+   * Returns the ACE editor object.
+   */
+  createEditor: function(container, mode) {
+    var ed = ace.edit($('pre', container)[0]);
     ed.setTheme("ace/theme/chrome");
     ed.setShowPrintMargin(false);
 
     var sess = ed.getSession();
-    sess.setMode("ace/mode/text");
+    sess.setMode(mode);
     sess.setUseWrapMode(true);
 
-    // xml editor
-    Steno.xmlEd = ed = ace.edit("doc-xml");
+    // setup search bindings
+    $('.editor-controls input[name=search]', container).on('keyup', function(event) {
+      // enter key
+      if (event.keyCode == 13) {
+        ed.findNext();
+        return;
+      }
 
-    ed.setTheme("ace/theme/chrome");
-    ed.setShowPrintMargin(false);
+      var needle = $(this).val();
+      ed.find(
+        needle, {
+        backwards: false,
+        start: {row: 0, column: 0},
+        });
+    });
 
-    sess = ed.getSession();
-    sess.setMode("ace/mode/xml");
-    sess.setUseWrapMode(true);
+    $('.editor-controls .find-next', container).on('click', ed.findNext.bind(ed));
+    $('.editor-controls .find-prev', container).on('click', ed.findPrevious.bind(ed));
+
+    return ed;
   },
 
   /**
@@ -90,16 +118,26 @@ var Steno = {
     return (errors.length > 0);
   },
 
+  setValidateErrors: function(errors) {
+    errors = $.map(errors, function(e) { 
+      if (e.line) {
+        return {row: e.line-1, column: e.column, text: e.message, type: "error"};
+      } else {
+        return {};
+      }
+    });
+    Steno.xmlEd.getSession().setAnnotations(errors);
+
+    return (errors.length > 0);
+  },
+
   /**
    * Parse the source text of the document.
    */
   parseSource: function(e) {
     e.preventDefault();
 
-    var btn = $('#parse-btn').addClass('disabled');
-    var btnText = btn.html();
-    btn.html('<i class="fa fa-cog fa-spin">');
-
+    var btn = $('#parse-btn').attr('disabled', 'disabled').addClass('spin');
     var data = $('#source-form').serializeArray();
     data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
 
@@ -108,24 +146,21 @@ var Steno = {
       data: data,
       success: Steno.parsedSource,
       complete: function() {
-        btn.html(btnText);
-        $('#parse-btn').removeClass('disabled');
+        btn.removeClass('spin').attr('disabled', null);
       }
     });
   },
 
-  // The HTML section scrolled, if we're syncing scrolling,
-  // handle it.
-  htmlScroll: function() {
-    // TODO: scroll all the others, too
-    if (Steno.syncScrolling) {
-      var $html = $('#source-doc-html');
-
-      var perc = $html.scrollTop() / $html[0].scrollHeight;
-      var line = Math.floor(Steno.sourceTextEd.getSession().getLength() * perc);
-
-      Steno.sourceTextEd.scrollToLine(line, false, true);
-    }
+  // Synchronise scrolling between the DOM container +node+
+  // and the ACE editor +editor+.
+  initSyncScrolling: function(node, editor) {
+    node.on('scroll', function() {
+      if (Steno.syncScrolling) {
+        var perc = node.scrollTop() / node[0].scrollHeight;
+        var line = Math.floor(editor.getSession().getLength() * perc);
+        editor.scrollToLine(line, false, true);
+      }
+    });
   },
 
   /**
@@ -137,9 +172,53 @@ var Steno = {
       data: {'doc[xml]': xml},
       success: function(data) {
         // update the HTML
-        $('#source-doc-html').html(data.html);
-        $('#source-doc-toc').html(data.toc);
+        $('#source-doc-html, #xml-doc-html').html(data.html);
+        $('#source-doc-toc, #xml-doc-toc').html(data.toc);
       },
+    });
+  },
+
+  /**
+   * Validate and render the XML editor contents.
+   */
+  checkAndRenderXml: function() {
+    var xml = Steno.xmlEd.getValue();
+
+    Steno.renderXml();
+
+    $.ajax('/validate', {
+      method: 'POST',
+      data: {'doc[xml]': xml},
+      success: function(data) {
+        console.log(data);
+        if (Steno.setValidateErrors(data.validate_errors)) {
+          // errors
+          Steno.xmlEd.gotoLine(data.validate_errors[0].line, data.validate_errors[0].column);
+          Steno.xmlEd.focus();
+        }
+      }
+    });
+  },
+
+  /**
+   * Render the XML editor contents.
+   */
+  renderXml: function() {
+    var xml = Steno.xmlEd.getValue();
+
+    var btn = $('#render-btn').attr('disabled', 'disabled').addClass('spin');
+
+    $.ajax('/render', {
+      method: 'POST',
+      data: {'doc[xml]': xml},
+      success: function(data) {
+        // update the HTML
+        $('#xml-doc-html').html(data.html);
+        $('#xml-doc-toc').html(data.toc);
+      },
+      complete: function() {
+        btn.removeClass('spin').attr('disabled', null);
+      }
     });
   },
 };

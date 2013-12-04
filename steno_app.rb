@@ -95,7 +95,7 @@ class StenoApp < Sinatra::Base
 
     content_type "application/json"
     {
-      "validation_errors" => doc.validation_errors,
+      "validate_errors" => doc.validate_errors,
       "validates" => doc.validates?
     }.to_json
   end

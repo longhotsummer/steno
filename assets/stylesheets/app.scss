@@ -16,12 +16,14 @@ body {
   margin-top: 10px;
 }
 
-#source-doc-text, #doc-xml, #source-doc-html, #source-doc-toc {
+#source-doc-text, #source-doc-html, #source-doc-toc,
+#doc-xml, #xml-doc-html, #xml-doc-toc {
   width: 100%;
   height: 550px;
 }
 
-#source-doc-html, #source-doc-toc {
+#source-doc-html, #source-doc-toc,
+#xml-doc-html, #xml-doc-toc {
   overflow: scroll;
   border: 1px solid #ccc;
   padding: 10px;
@@ -41,4 +43,21 @@ body {
   input[type=radio] { float: left }
   .format { margin-left: 25px }
   .text { font-weight: normal }
+}
+
+.with-spinner {
+  i { margin-right: 10px; display: none }
+
+  &.spin {
+    i { display: inline-block }
+  }
+}
+
+.editor {
+  .editor-controls {
+    background-color: #ebebeb;
+    border-radius: 5px 5px 0px 0px;
+    padding: 9px 5px 8px;
+    height: 51px;
+  }
 }

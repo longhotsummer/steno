@@ -25,9 +25,19 @@ module Steno
     def validate!
       @validate_errors = []
 
-      # TODO: validate XML
-      # TODO: error handling
-      @valid = true
+
+      schema = Dir.chdir(File.dirname(__FILE__) + "/../schemas") { Nokogiri::XML::Schema(File.read('akomantoso20.xsd')) }
+      errors = schema.validate(xml_doc)
+
+      @validate_errors = errors.map do |e|
+        {
+          message: e.to_s,
+          line: e.line,
+          column: e.column,
+        }
+      end
+
+      @valid = @validate_errors.empty?
     end
 
     def validates?
