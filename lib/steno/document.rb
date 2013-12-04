@@ -70,12 +70,7 @@ module Steno
     end
 
     def render
-      xml_doc && Slaw::Render::Transforms.new.act_to_html(xml_doc, '/root/')
-    end
-
-    def render_toc
-      # XXX
-      "TODO"
+      xml_doc && Slaw::Render::HTMLRenderer.new.render_act(xml_doc, '/root/')
     end
 
     # Serialise the XML for this document

@@ -2,6 +2,7 @@
 @import "bootstrap/theme";
 @import "font-awesome.min";
 @import "act.scss";
+@import "toc.scss";
 
 body {
   margin-top: 50px;
@@ -20,7 +21,7 @@ body {
   height: 550px;
 }
 
-#source-doc-html {
+#source-doc-html, #source-doc-toc {
   overflow: scroll;
   border: 1px solid #ccc;
   padding: 10px;

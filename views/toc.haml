@@ -1,0 +1,3 @@
+%ol
+  - items = toc_items(@doc)
+  = partial 'toc_container', engine: :haml, locals: {items: items}

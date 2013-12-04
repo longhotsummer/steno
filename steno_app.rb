@@ -15,6 +15,7 @@ log.outputters.last.formatter = Log4r::PatternFormatter.new(pattern: '%d %c %m')
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/document'
 require 'steno/document_parser'
+require 'steno/helpers'
 
 class StenoApp < Sinatra::Base
   set :root,          File.dirname(__FILE__)
@@ -48,6 +49,7 @@ class StenoApp < Sinatra::Base
 
   helpers do
     include Sprockets::Helpers
+    include Steno::Helpers
   end
 
   get "/" do
@@ -75,10 +77,13 @@ class StenoApp < Sinatra::Base
     doc = Steno::Document.new
     doc.xml = (params[:doc] || {})[:xml]
 
+    @doc = doc.xml_doc
+    toc_html = haml(:toc, layout: false)
+
     content_type "application/json"
     {
       "html" => doc.render,
-      "toc"  => doc.render_toc
+      "toc"  => toc_html,
     }.to_json
   end
 

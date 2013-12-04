@@ -1,0 +1,14 @@
+- for child in items
+  %li{class: child.name}
+    - case child.name
+    - when "chapter"
+      Chapter #{h child.num} - #{h child.heading}
+    - when "part"
+      Part #{h child.num} - #{h child.heading}
+    - when "section"
+      #{h child.num}. #{h child.heading}
+
+    - kids = child.toc_children
+    - if kids and not kids.empty?
+      %ol
+        = partial 'toc_container', engine: :haml, locals: {items: kids}

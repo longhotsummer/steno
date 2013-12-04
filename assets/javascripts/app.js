@@ -138,6 +138,7 @@ var Steno = {
       success: function(data) {
         // update the HTML
         $('#source-doc-html').html(data.html);
+        $('#source-doc-toc').html(data.toc);
       },
     });
   },
