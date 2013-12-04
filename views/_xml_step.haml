@@ -1,18 +1,14 @@
 #xml-step.tab-pane
   .row
-    .col-xs-6.col-xs-offset-6
+    .col-xs-6
+      = partial 'editor', engine: :haml, locals: {id: 'doc-xml'}
+
+    .col-xs-6
       %ul.nav.nav-tabs
         %li.active
           %a(href="#xml-html-tab" data-toggle="tab") HTML
         %li
           %a(href="#xml-toc-tab" data-toggle="tab") Table of Contents
-
-  .row
-    .col-xs-6
-      .tab-content
-        %pre#doc-xml
-
-    .col-xs-6
       .tab-content
         #xml-html-tab.tab-pane.active
           #xml-doc-html.an-container

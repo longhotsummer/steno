@@ -23,26 +23,46 @@ var Steno = {
       $('ul.steps li:eq(3) a').tab('show');
     });
 
-    // source text editor
-    var ed;
-    Steno.sourceTextEd = ed = ace.edit("source-doc-text");
+    // editors
+    Steno.sourceTextEd = Steno.createEditor('#text-step .editor', 'ace/mode/text');
+    Steno.xmlEd = Steno.createEditor("#xml-step .editor", 'ace/mode/xml');
+  },
 
+  /**
+   * Create a new editor, using the controls inside
+   * +container+.
+   *
+   * Returns the ACE editor object.
+   */
+  createEditor: function(container, mode) {
+    var ed = ace.edit($('pre', container)[0]);
     ed.setTheme("ace/theme/chrome");
     ed.setShowPrintMargin(false);
 
     var sess = ed.getSession();
-    sess.setMode("ace/mode/text");
+    sess.setMode(mode);
     sess.setUseWrapMode(true);
 
-    // xml editor
-    Steno.xmlEd = ed = ace.edit("doc-xml");
+    // setup search bindings
+    $('.editor-controls input[name=search]', container).on('keyup', function(event) {
+      // enter key
+      if (event.keyCode == 13) {
+        ed.findNext();
+        return;
+      }
 
-    ed.setTheme("ace/theme/chrome");
-    ed.setShowPrintMargin(false);
+      var needle = $(this).val();
+      ed.find(
+        needle, {
+        backwards: false,
+        start: {row: 0, column: 0},
+        });
+    });
 
-    sess = ed.getSession();
-    sess.setMode("ace/mode/xml");
-    sess.setUseWrapMode(true);
+    $('.editor-controls .find-next', container).on('click', ed.findNext.bind(ed));
+    $('.editor-controls .find-prev', container).on('click', ed.findPrevious.bind(ed));
+
+    return ed;
   },
 
   /**

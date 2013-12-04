@@ -52,3 +52,12 @@ body {
     i { display: inline-block }
   }
 }
+
+.editor {
+  .editor-controls {
+    background-color: #ebebeb;
+    border-radius: 5px 5px 0px 0px;
+    padding: 9px 5px 8px;
+    height: 51px;
+  }
+}

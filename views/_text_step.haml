@@ -1,18 +1,14 @@
 #text-step.tab-pane
   .row
-    .col-xs-6.col-xs-offset-6
+    .col-xs-6
+      = partial 'editor', engine: :haml, locals: {id: 'source-doc-text'}
+
+    .col-xs-6
       %ul.nav.nav-tabs
         %li.active
           %a(href="#text-html-tab" data-toggle="tab") HTML
         %li
           %a(href="#text-toc-tab" data-toggle="tab") Table of Contents
-
-  .row
-    .col-xs-6
-      .tab-content
-        %pre#source-doc-text
-
-    .col-xs-6
       .tab-content
         #text-html-tab.tab-pane.active
           #source-doc-html.an-container

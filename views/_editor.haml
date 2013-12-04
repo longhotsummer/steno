@@ -1,0 +1,14 @@
+.editor
+  .editor-controls
+    .row
+      .col-xs-5.col-xs-offset-7
+        .input-group
+          %input.form-control(type="text" name="search" placeholder="Find")
+          %span.input-group-btn
+            %button.btn.btn-default.find-next(title="Find next")
+              %i.fa.fa-angle-down
+          %span.input-group-btn
+            %button.btn.btn-default.find-prev(title="Find previous")
+              %i.fa.fa-angle-up
+
+  %pre{id: id}
