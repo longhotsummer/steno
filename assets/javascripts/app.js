@@ -7,7 +7,6 @@ var Steno = {
 
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
-    $('#source-doc-html').on('scroll', Steno.htmlScroll);
     $('#render-btn').on('click', Steno.checkAndRenderXml);
 
     $('#metadata-step button.next-step').on('click', function(e) {
@@ -26,6 +25,9 @@ var Steno = {
     // editors
     Steno.sourceTextEd = Steno.createEditor('#text-step .editor', 'ace/mode/text');
     Steno.xmlEd = Steno.createEditor("#xml-step .editor", 'ace/mode/xml');
+
+    Steno.initSyncScrolling($('#source-doc-html'), Steno.sourceTextEd);
+    Steno.initSyncScrolling($('#xml-doc-html'), Steno.xmlEd);
   },
 
   /**
@@ -149,18 +151,16 @@ var Steno = {
     });
   },
 
-  // The HTML section scrolled, if we're syncing scrolling,
-  // handle it.
-  htmlScroll: function() {
-    // TODO: scroll all the others, too
-    if (Steno.syncScrolling) {
-      var $html = $('#source-doc-html');
-
-      var perc = $html.scrollTop() / $html[0].scrollHeight;
-      var line = Math.floor(Steno.sourceTextEd.getSession().getLength() * perc);
-
-      Steno.sourceTextEd.scrollToLine(line, false, true);
-    }
+  // Synchronise scrolling between the DOM container +node+
+  // and the ACE editor +editor+.
+  initSyncScrolling: function(node, editor) {
+    node.on('scroll', function() {
+      if (Steno.syncScrolling) {
+        var perc = node.scrollTop() / node[0].scrollHeight;
+        var line = Math.floor(editor.getSession().getLength() * perc);
+        editor.scrollToLine(line, false, true);
+      }
+    });
   },
 
   /**
