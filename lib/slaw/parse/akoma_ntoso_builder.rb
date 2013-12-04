@@ -76,26 +76,14 @@ module Slaw
 
       # Run various postprocesses on the XML, and return
       # the updated XML.
-      def postprocess(xml)
-        doc = parse_xml(xml)
-
+      def postprocess(doc)
         normalise_headings(doc)
         find_short_title(doc)
         link_definitions(doc)
         nest_blocklists(doc)
-
-        to_xml(doc)
       end
 
       # recalculate ids for <term> elements
-      def renumber_terms_in_xml(xml)
-        doc = parse_xml(xml)
-
-        renumber_terms(doc)
-
-        to_xml(doc)
-      end
-
       def renumber_terms(doc)
         logger.info("Renumbering terms")
 
@@ -103,7 +91,6 @@ module Slaw
           term['id'] = "trm#{i}"
         end
       end
-
 
       # Change CAPCASE headings into Sentence case.
       def normalise_headings(doc)

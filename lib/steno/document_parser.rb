@@ -80,11 +80,12 @@ module Steno
         return nil
       end
 
-      xml = postprocess(xml)
-
       doc = Steno::Document.new
+      doc.xml_doc = builder.parse_xml(xml)
+
+      postprocess(doc.xml_doc)
+
       doc.source_text = @source_text
-      doc.xml = xml
       doc.apply_metadata(@metadata) if @metadata
 
       doc
@@ -96,10 +97,10 @@ module Steno
     end
 
     # post-process the XML
-    def postprocess(xml)
+    def postprocess(doc)
       logger.info("Postprocessing xml...")
 
-      builder.postprocess(xml)
+      builder.postprocess(doc)
     end
 
     def validate
