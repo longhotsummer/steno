@@ -93,7 +93,9 @@
       .row
         .col-xs-6
           .buttons.pull-right
-            %button#parse-btn.btn.btn-default Parse text
+            %button#parse-btn.btn.btn-default.with-spinner
+              %i.fa.fa-spinner.fa-spin
+              Parse text
         .col-xs-6
           .buttons.pull-right
             %button.btn.btn-primary.next-step Looks good, next step
@@ -123,7 +125,9 @@
       .row
         .col-xs-6
           .buttons.pull-right
-            %button#render-btn.btn.btn-default Update
+            %button#render-btn.btn.btn-default.with-spinner
+              %i.fa.fa-spinner.fa-spin
+              Update
         .col-xs-6
           .buttons.pull-right
             %button.btn.btn-primary.next-step Looks good, next step

@@ -102,10 +102,7 @@ var Steno = {
   parseSource: function(e) {
     e.preventDefault();
 
-    var btn = $('#parse-btn').addClass('disabled');
-    var btnText = btn.html();
-    btn.html('<i class="fa fa-spinner fa-spin">');
-
+    var btn = $('#parse-btn').attr('disabled', 'disabled').addClass('spin');
     var data = $('#source-form').serializeArray();
     data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
 
@@ -114,7 +111,7 @@ var Steno = {
       data: data,
       success: Steno.parsedSource,
       complete: function() {
-        btn.html(btnText).removeClass('disabled');
+        btn.removeClass('spin').attr('disabled', null);
       }
     });
   },
@@ -154,9 +151,7 @@ var Steno = {
   renderXml: function() {
     var xml = Steno.xmlEd.getValue();
 
-    var btn = $('#render-btn').addClass('disabled');
-    var btnText = btn.html();
-    btn.html('<i class="fa fa-spinner fa-spin">');
+    var btn = $('#render-btn').attr('disabled', 'disabled').addClass('spin');
 
     $.ajax('/render', {
       method: 'POST',
@@ -167,7 +162,7 @@ var Steno = {
         $('#xml-doc-toc').html(data.toc);
       },
       complete: function() {
-        btn.html(btnText).removeClass('disabled');
+        btn.removeClass('spin').attr('disabled', null);
       }
     });
   },

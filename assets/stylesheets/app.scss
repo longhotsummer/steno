@@ -44,3 +44,11 @@ body {
   .format { margin-left: 25px }
   .text { font-weight: normal }
 }
+
+.with-spinner {
+  i { margin-right: 10px; display: none }
+
+  &.spin {
+    i { display: inline-block }
+  }
+}
