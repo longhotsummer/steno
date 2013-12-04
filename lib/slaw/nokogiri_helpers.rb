@@ -4,7 +4,7 @@ class Nokogiri::XML::Node
   # Major AN elements such as chapters, parts and sections almost
   # always have numbers.
   def num
-    node = at_xpath('a:num', a: Steno::AN)
+    node = at_xpath('a:num', a: Slaw::AN)
     node ? node.text.gsub('.', '') : nil
   end
 end

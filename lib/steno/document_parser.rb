@@ -1,11 +1,12 @@
 require 'json'
 require 'time'
-
 require 'logging'
-require 'steno/akoma_ntoso_builder'
+
+require 'slaw/parse/akoma_ntoso_builder'
+require 'slaw/parse/parser'
+require 'slaw/render/transforms'
+
 require 'steno/document'
-require 'steno/parser'
-require 'steno/transforms'
 require 'steno/region'
 
 module Steno
@@ -67,23 +68,24 @@ module Steno
       root = :bylaw
       logger.info("Parsing #{root}...")
 
-      parser = Steno::Parser.new
+      parser = Slaw::Parse::Parser.new
       parser.options = @options || {}
       begin
         tree = parser.parse_bylaw(@source_text, root)
 
         # transform the AST into AkomaNtoso XML
         xml = builder.xml_from_syntax_tree(tree)
-      rescue Steno::ParseError => e
+      rescue Slaw::Parse::ParseError => e
         @parse_errors << e
         return nil
       end
 
-      xml = postprocess(xml)
-
       doc = Steno::Document.new
+      doc.xml_doc = builder.parse_xml(xml)
+
+      postprocess(doc.xml_doc)
+
       doc.source_text = @source_text
-      doc.xml = xml
       doc.apply_metadata(@metadata) if @metadata
 
       doc
@@ -95,10 +97,10 @@ module Steno
     end
 
     # post-process the XML
-    def postprocess(xml)
+    def postprocess(doc)
       logger.info("Postprocessing xml...")
 
-      builder.postprocess(xml)
+      builder.postprocess(doc)
     end
 
     def validate
@@ -112,7 +114,7 @@ module Steno
     protected
 
     def builder
-      @builder ||= Steno::AkomaNtosoBuilder.new
+      @builder ||= Slaw::Parse::AkomaNtosoBuilder.new
     end
   end
 end

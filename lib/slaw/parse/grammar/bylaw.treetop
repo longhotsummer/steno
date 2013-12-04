@@ -1,7 +1,7 @@
-require 'steno/parser_helpers'
+require 'slaw/parse/grammar_helpers'
 
 grammar Bylaw
-  include Steno::ParserHelpers
+  include Slaw::Parse::GrammarHelpers
 
   rule bylaw
     preamble?

@@ -1,4 +1,4 @@
-require 'steno/syntax/act'
+require 'slaw/parse/syntax/act'
 
 module Bylaw
   class Bylaw < Act::Act

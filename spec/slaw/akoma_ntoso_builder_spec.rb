@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-require 'steno/akoma_ntoso_builder'
+require 'slaw/parse/akoma_ntoso_builder'
 
-describe Steno::AkomaNtosoBuilder do
+describe Slaw::Parse::AkomaNtosoBuilder do
   describe '#nest_blocklists' do
     it 'should nest simple blocks' do
       doc = xml2doc(subsection(<<XML
