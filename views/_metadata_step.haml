@@ -1,0 +1,57 @@
+#metadata-step.tab-pane.active
+  - form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
+    %fieldset
+      %legend By-law information
+      .row
+        .col-xs-6
+          .form-group
+            %label.col-sm-3.control-label Full title
+            .col-sm-9
+              = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+          .form-group
+            %label.col-sm-3.control-label Short name
+            .col-sm-6
+              = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
+          .form-group
+            %label.col-sm-3.control-label Gazette
+            .col-sm-6
+              = text_field_tag 'doc[meta][pub_name]', value: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+            %label.col-sm-1.control-label no.
+            .col-sm-2
+              = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
+        .col-xs-6
+          .form-group
+            %label.col-sm-2.control-label Region
+            .col-sm-3
+              = select_tag 'doc[meta][region]', options: Steno::Region::REGIONS.map { |r| [r.name, r.code] }, selected: Steno::Region::REGIONS.first.code, class: 'form-control'
+          .form-group
+            %label.col-sm-2.control-label Published
+            .col-sm-4
+              = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control', value: '2010-01-01'
+
+    %fieldset
+      %legend Settings
+      .row
+        .col-xs-6
+          .form-group#section-title-formats
+            %label.col-sm-3.control-label Section title format
+            .col-sm-9
+              %label.form-control
+                = radio_button_tag 'doc[options][section_number_after_title]', value: '', checked: true
+                .format
+                  1. Definitions
+                  %br
+                  %span.text In this by-law, ...
+
+              %label.form-control
+                = radio_button_tag 'doc[options][section_number_after_title]', value: 'true'
+                .format
+                  Definitions
+                  %br
+                  1. 
+                  %span.text In this by-law, ...
+
+    .row.step-buttons
+      .col-xs-6
+        .col-xs-9.col-xs-offset-3
+          %button.btn.btn-primary.next-step Looks good, next step
