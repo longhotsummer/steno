@@ -70,21 +70,19 @@
 
   #text-step.tab-pane
     .row
-      .col-xs-6
-        %ul.nav.nav-tabs
-          %li.active
-            %a(href="#") Plain text source
-
-        .tab-content
-          .tab-pane.active
-            %pre#source-doc-text
-
-      .col-xs-6
+      .col-xs-6.col-xs-offset-6
         %ul.nav.nav-tabs
           %li.active
             %a(href="#text-html-tab" data-toggle="tab") HTML
           %li
             %a(href="#text-toc-tab" data-toggle="tab") Table of Contents
+
+    .row
+      .col-xs-6
+        .tab-content
+          %pre#source-doc-text
+
+      .col-xs-6
         .tab-content
           #text-html-tab.tab-pane.active
             #source-doc-html.an-container
@@ -102,20 +100,33 @@
 
   #xml-step.tab-pane
     .row
-      .col-xs-6
-        #xml-tab.tab-pane
-          %pre#doc-xml
-      .col-xs-6
+      .col-xs-6.col-xs-offset-6
         %ul.nav.nav-tabs
           %li.active
             %a(href="#xml-html-tab" data-toggle="tab") HTML
           %li
             %a(href="#xml-toc-tab" data-toggle="tab") Table of Contents
+
+    .row
+      .col-xs-6
+        .tab-content
+          %pre#doc-xml
+
+      .col-xs-6
         .tab-content
           #xml-html-tab.tab-pane.active
             #xml-doc-html.an-container
           #xml-toc-tab.tab-pane
-            #xml-doc-toc.an-container
+            #xml-doc-toc.toc
+
+    .step-buttons
+      .row
+        .col-xs-6
+          .buttons.pull-right
+            %button#render-btn.btn.btn-default Update
+        .col-xs-6
+          .buttons.pull-right
+            %button.btn.btn-primary.next-step Looks good, next step
 
   #export-step.tab-pane
     %p

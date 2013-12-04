@@ -16,12 +16,14 @@ body {
   margin-top: 10px;
 }
 
-#source-doc-text, #doc-xml, #source-doc-html, #source-doc-toc {
+#source-doc-text, #source-doc-html, #source-doc-toc,
+#doc-xml, #xml-doc-html, #xml-doc-toc {
   width: 100%;
   height: 550px;
 }
 
-#source-doc-html, #source-doc-toc {
+#source-doc-html, #source-doc-toc,
+#xml-doc-html, #xml-doc-toc {
   overflow: scroll;
   border: 1px solid #ccc;
   padding: 10px;

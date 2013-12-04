@@ -8,6 +8,8 @@ var Steno = {
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
     $('#source-doc-html').on('scroll', Steno.htmlScroll);
+    $('#render-btn').on('click', Steno.renderXml);
+
     $('#metadata-step button.next-step').on('click', function(e) {
       e.preventDefault();
       $('ul.steps li:eq(1) a').tab('show');
@@ -15,6 +17,10 @@ var Steno = {
     $('#text-step button.next-step').on('click', function(e) {
       e.preventDefault();
       $('ul.steps li:eq(2) a').tab('show');
+    });
+    $('#xml-step button.next-step').on('click', function(e) {
+      e.preventDefault();
+      $('ul.steps li:eq(3) a').tab('show');
     });
 
     // source text editor
@@ -98,7 +104,7 @@ var Steno = {
 
     var btn = $('#parse-btn').addClass('disabled');
     var btnText = btn.html();
-    btn.html('<i class="fa fa-cog fa-spin">');
+    btn.html('<i class="fa fa-spinner fa-spin">');
 
     var data = $('#source-form').serializeArray();
     data.push({name: 'doc[source_text]', value: Steno.sourceTextEd.getValue()});
@@ -108,8 +114,7 @@ var Steno = {
       data: data,
       success: Steno.parsedSource,
       complete: function() {
-        btn.html(btnText);
-        $('#parse-btn').removeClass('disabled');
+        btn.html(btnText).removeClass('disabled');
       }
     });
   },
@@ -137,9 +142,33 @@ var Steno = {
       data: {'doc[xml]': xml},
       success: function(data) {
         // update the HTML
-        $('#source-doc-html').html(data.html);
-        $('#source-doc-toc').html(data.toc);
+        $('#source-doc-html, #xml-doc-html').html(data.html);
+        $('#source-doc-toc, #xml-doc-toc').html(data.toc);
       },
+    });
+  },
+
+  /**
+   * Render the XML editor contents.
+   */
+  renderXml: function() {
+    var xml = Steno.xmlEd.getValue();
+
+    var btn = $('#render-btn').addClass('disabled');
+    var btnText = btn.html();
+    btn.html('<i class="fa fa-spinner fa-spin">');
+
+    $.ajax('/render', {
+      method: 'POST',
+      data: {'doc[xml]': xml},
+      success: function(data) {
+        // update the HTML
+        $('#xml-doc-html').html(data.html);
+        $('#xml-doc-toc').html(data.toc);
+      },
+      complete: function() {
+        btn.html(btnText).removeClass('disabled');
+      }
     });
   },
 };
