@@ -1,6 +1,6 @@
-require 'steno/parser'
+require 'slaw/parse/parser'
 
-describe Steno::Parser do
+describe Slaw::Parse::Parser do
   def parse(rule, s)
     subject.parse_bylaw(s, rule)
   end
