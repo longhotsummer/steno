@@ -8,7 +8,7 @@ var Steno = {
   init: function() {
     $('#parse-btn').on('click', Steno.parseSource);
     $('#source-doc-html').on('scroll', Steno.htmlScroll);
-    $('#render-btn').on('click', Steno.renderXml);
+    $('#render-btn').on('click', Steno.checkAndRenderXml);
 
     $('#metadata-step button.next-step').on('click', function(e) {
       e.preventDefault();
@@ -116,6 +116,19 @@ var Steno = {
     return (errors.length > 0);
   },
 
+  setValidateErrors: function(errors) {
+    errors = $.map(errors, function(e) { 
+      if (e.line) {
+        return {row: e.line-1, column: e.column, text: e.message, type: "error"};
+      } else {
+        return {};
+      }
+    });
+    Steno.xmlEd.getSession().setAnnotations(errors);
+
+    return (errors.length > 0);
+  },
+
   /**
    * Parse the source text of the document.
    */
@@ -162,6 +175,28 @@ var Steno = {
         $('#source-doc-html, #xml-doc-html').html(data.html);
         $('#source-doc-toc, #xml-doc-toc').html(data.toc);
       },
+    });
+  },
+
+  /**
+   * Validate and render the XML editor contents.
+   */
+  checkAndRenderXml: function() {
+    var xml = Steno.xmlEd.getValue();
+
+    Steno.renderXml();
+
+    $.ajax('/validate', {
+      method: 'POST',
+      data: {'doc[xml]': xml},
+      success: function(data) {
+        console.log(data);
+        if (Steno.setValidateErrors(data.validate_errors)) {
+          // errors
+          Steno.xmlEd.gotoLine(data.validate_errors[0].line, data.validate_errors[0].column);
+          Steno.xmlEd.focus();
+        }
+      }
     });
   },
 
