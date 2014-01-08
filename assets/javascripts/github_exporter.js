@@ -21,20 +21,26 @@
     // ensure we have an auth token and setup
     // the github client
     self.ensureAuth = function() {
-      // TODO: get token
-      
-      self.github = new Github({
-        token: 'f7bd636aee1ee9864e96d819eb2a58d73997f161',
-        auth: 'oauth'
-      });
+      var auth = new Steno.GithubAuth('7aeef0a6887e9e035a65', 'public_repo');
 
-      self.github.getUser().show(null, function(err, user) {
-        if (user) {
-          self.user = user;
-          self.repo = self.github.getRepo(self.user.login, 'za-by-laws');
-          self.ensureRepo();
+      auth.authenticate(function(token) {
+        if (token) {
+          self.github = new Github({
+            token: token,
+            auth: 'oauth'
+          });
+
+          self.github.getUser().show(null, function(err, user) {
+            if (user) {
+              self.user = user;
+              self.repo = self.github.getRepo(self.user.login, 'za-by-laws');
+              self.ensureRepo();
+            } else {
+              self.writeFailed('Error getting user info: ' + err.error);
+            }
+          });
         } else {
-          self.writeFailed('Error getting user info: ' + err.error);
+          self.writeFailed('You need to login with GitHub.');
         }
       });
     };

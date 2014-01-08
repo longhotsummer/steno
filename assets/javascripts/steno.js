@@ -2,6 +2,7 @@
 //= require github/github
 //= require_self
 //= require github_exporter
+//= require github_auth
 
 (function($, exports) {
   var Steno = exports.Steno = {};
