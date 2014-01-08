@@ -256,7 +256,7 @@
       var filedata = self.xmlEd.getValue();
       if (!filedata) {
         alert("There's nothing to export!");
-        $('ul.steps li:eq(0) a').tab('show');
+        $('ul.steps li:eq(1) a').tab('show');
         return;
       }
 

@@ -40,10 +40,10 @@
 
       // the popup will post a message when it's done
       var callback = function(e) {
-        $('window').off('message', callback);
+        $(window).off('message', callback);
 
         if (e.originalEvent.origin == 'http://steno.openbylaws.org.za') {
-          var token = e.originalEvent.data.authToken;
+          var token = e.originalEvent.data.token;
           if (token) {
             self.setToken(token);
             cb(self.getToken());
@@ -52,7 +52,7 @@
           }
         }
       };
-      $('window').on('message', callback);
+      $(window).on('message', callback);
 
       // create popup
       var wnd_settings = {
