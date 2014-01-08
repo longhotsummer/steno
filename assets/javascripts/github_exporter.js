@@ -30,6 +30,8 @@
             auth: 'oauth'
           });
 
+          self.parentRepo = self.github.getRepo('longhotsummer', 'za-by-laws');
+
           self.github.getUser().show(null, function(err, user) {
             if (user) {
               self.user = user;
@@ -47,7 +49,7 @@
 
     // ensure we have a repo by forking (idempotent)
     self.ensureRepo = function() {
-      self.github.getRepo('longhotsummer', 'za-by-laws').fork(function(err) {
+      self.parentRepo.fork(function(err) {
         if (!err) {
           self.waitForFork();
         } else {
@@ -89,15 +91,27 @@
         if (!err) {
           self.createPullRequest();
         } else {
-          self.writeFailed('Error writing to github: ' + err);
+          self.writeFailed('Error writing to github: ' + err.error);
         }
       });
     };
 
     // create the final pull request
     self.createPullRequest = function() {
-      // TODO
-      self.writeSucceeded();
+      var pull = {
+        title: self.commitmsg,
+        body: 'Pull request from steno.openbylaws.org.za',
+        base: 'steno-incoming',
+        head: self.user.login + ':' + self.branch
+      };
+
+      self.parentRepo.createPullRequest(pull, function(err, pullRequest) {
+        if (!err || err.error == 422) {
+          self.writeSucceeded();
+        } else {
+          self.writeFailed('Error creating pull request: ' + err.error);
+        }
+      });
     };
 
     self.writeSucceeded = function() {
