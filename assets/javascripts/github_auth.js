@@ -42,12 +42,14 @@
       var callback = function(e) {
         $('window').off('message', callback);
 
-        var token = e.originalEvent.data.authToken;
-        if (token) {
-          self.setToken(token);
-          cb(self.getToken());
-        } else {
-          cb(null);
+        if (e.originalEvent.origin == 'http://steno.openbylaws.org.za') {
+          var token = e.originalEvent.data.authToken;
+          if (token) {
+            self.setToken(token);
+            cb(self.getToken());
+          } else {
+            cb(null);
+          }
         }
       };
       $('window').on('message', callback);
