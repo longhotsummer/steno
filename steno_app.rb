@@ -106,7 +106,7 @@ class StenoApp < Sinatra::Base
     begin
       @token = cli.get_token(
         client_id: '7aeef0a6887e9e035a65',
-        client_secret: ENV['github_client_secret'],
+        client_secret: ENV['GITHUB_CLIENT_SECRET'],
         state: params[:state],
         code: params[:code]).token
     rescue Exception => e
