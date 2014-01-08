@@ -6,6 +6,7 @@ require 'sprockets'
 require 'sprockets-helpers'
 require 'sprockets-sass'
 require 'bootstrap-sass'
+require 'oauth2'
 
 # Setup logging
 log = Log4r::Logger.new('Steno')
@@ -98,5 +99,21 @@ class StenoApp < Sinatra::Base
       "validate_errors" => doc.validate_errors,
       "validates" => doc.validates?
     }.to_json
+  end
+
+  get "/auth/github/callback" do
+    cli = OAuth2::Client.new(nil, nil, token_url: 'https://github.com/login/oauth/access_token')
+    begin
+      @token = cli.get_token(
+        client_id: '7aeef0a6887e9e035a65',
+        client_secret: ENV['github_client_secret'],
+        state: params[:state],
+        code: params[:code]).token
+    rescue Exception => e
+      logger.info("Couldn't get token from github: #{e}")
+      @token = nil
+    end
+
+    haml :github_callback, layout: false
   end
 end
