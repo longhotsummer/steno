@@ -46,10 +46,10 @@ body {
 }
 
 .with-spinner {
-  i { margin-right: 10px; display: none }
+  i.fa-spinner { margin-right: 10px; display: none }
 
   &.spin {
-    i { display: inline-block }
+    i.fa-spinner { display: inline-block }
   }
 }
 

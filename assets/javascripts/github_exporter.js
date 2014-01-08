@@ -1,13 +1,14 @@
-(function() {
-  this.Steno.GithubExporter = function() {
+(function(exports) {
+  exports.Steno.GithubExporter = function() {
     var self = this;
 
-    self.exportToGithub = function(branch, filename, data, cb) {
+    self.exportToGithub = function(branch, filename, data, commitmsg, cb) {
       self.branch = branch;
       self.filename = filename;
       self.filedata = data;
+      self.commitmsg = commitmsg;
       self.cb = cb;
-      
+
       // kick everything off
       self.ensureAuth();
     };
@@ -27,10 +28,10 @@
         auth: 'oauth'
       });
 
-      self.github.getUser().show(function(err, user) {
+      self.github.getUser().show(null, function(err, user) {
         if (user) {
           self.user = user;
-          self.repo = github.getRepo(self.user.login, 'za-by-laws');
+          self.repo = self.github.getRepo(self.user.login, 'za-by-laws');
           self.ensureRepo();
         } else {
           self.writeFailed('Error getting user info: ' + err.error);
@@ -100,5 +101,13 @@
     self.writeFailed = function(msg) {
       self.cb(false, msg);
     };
+
+    // what was the url we exported to?
+    self.getExportedUrl = function() {
+      // https://github.com/longhotsummer/za-by-laws/blob/steno-2010-cape-town-short-name/incoming/2010-cape-town-short-name.xml
+      return ['https://github.com',
+              self.user.login, 'za-by-laws', 'blob',
+              self.branch, self.filename].join('/');
+    };
   };
-}).call(window);
+})(window);

@@ -1,10 +1,12 @@
+//= require github/underscore-min
+//= require github/github
 //= require_self
 //= require github_exporter
 
-(function() {
-  this.Steno = {};
+(function($, exports) {
+  var Steno = exports.Steno = {};
 
-  this.Steno.App = function() {
+  Steno.App = function() {
     var self = this;
 
     self.sourceTextEd = null;
@@ -229,16 +231,50 @@
     };
 
     self.exportToGitHub = function(event) {
-      var exporter = new self.GithubExporter();
+      var name = $('[name="doc[meta][title]"]').val();
+      if (!name) {
+        alert("Please give the document a title.");
+        return;
+      }
+
+      var shortname = $('[name="doc[meta][short_name]"]').val();
+      if (!shortname) {
+        alert("Please enter a short name for the document.");
+        return;
+      }
+
+      var region = $('[name="doc[meta][region]"').val();
+      if (!region) {
+        alert("Please choose a region for the document.");
+        return;
+      }
+
+      var filedata = self.xmlEd.getValue();
+      if (!filedata) {
+        alert("There's nothing to export!");
+        return;
+      }
+
+      var year = $('[name="doc[meta][pub_date]"').val().split(/-|\//)[0];
+
+      var branch    = ['steno', region, year, shortname].join('-');
+      var filename  = ['incoming', region, year, shortname + '.xml'].join('/');
+      var commitmsg = 'Steno export of ' + name + ' of ' + year;
+
+      var btn = $('#export-btn').attr('disabled', 'disabled').addClass('spin');
       
-      exporter.exportToGithub(branch, filename, filedata, function(success, msg) {
+      var exporter = new Steno.GithubExporter();
+      exporter.exportToGithub(branch, filename, filedata, commitmsg, function(success, msg) {
+        btn.removeClass('spin').attr('disabled', null);
+
         if (success) {
-          // TODO
+          var url = exporter.getExportedUrl();
+          $('#export-info').html('Saved to <a targe="_blank" href="' + url + '">' + url + '</a>.');
         } else {
-          // TODO
+          $('#export-info').text(msg);
         }
       });
     };
   };
-}).call(window);
+})(jQuery, window);
 

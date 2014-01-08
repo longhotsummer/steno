@@ -1,12 +1,15 @@
 #export-step.tab-pane
   %h4 
-    Save &amp; Export to GitHub
+    Save to GitHub
 
   %p
     Save the document to GitHub and ask for it to be reviewed.
   %p
     If the document already exists, it will be updated.
 
-  %button#btn-export.btn.btn-primary 
-    %i.fa.fa-github
+  %button#export-btn.btn.btn-primary.with-spinner
+    %i.fa.fa-spinner.fa-spin
+    %i.fa.fa-github.fa-lg
     Save to GitHub
+
+  #export-info
