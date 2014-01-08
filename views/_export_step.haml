@@ -1,3 +1,18 @@
 #export-step.tab-pane
-  %p
-    Save &amp; Export
+  .panel.panel-primary
+    .panel-heading
+      .panel-title Save to GitHub
+
+    .panel-body
+      %p
+        Save the document to GitHub and ask for it to be reviewed.
+      %p
+        If the document already exists, it will be updated.
+
+      %p#export-info
+
+      .text-center
+        %button#export-btn.btn.btn-primary.with-spinner
+          %i.fa.fa-spinner.fa-spin
+          %i.fa.fa-github.fa-lg
+          Save to GitHub
