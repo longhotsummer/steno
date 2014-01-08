@@ -270,7 +270,7 @@
 
         if (success) {
           var url = exporter.getExportedUrl();
-          $('#export-info').html('Saved to <a targe="_blank" href="' + url + '">' + url + '</a>.');
+          $('#export-info').html('Saved to <a target="_blank" href="' + url + '">' + url + '</a>.');
         } else {
           $('#export-info').text(msg);
         }
