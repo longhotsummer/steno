@@ -235,24 +235,28 @@
       var name = $('[name="doc[meta][title]"]').val();
       if (!name) {
         alert("Please give the document a title.");
+        $('ul.steps li:eq(0) a').tab('show');
         return;
       }
 
       var shortname = $('[name="doc[meta][short_name]"]').val();
       if (!shortname) {
         alert("Please enter a short name for the document.");
+        $('ul.steps li:eq(0) a').tab('show');
         return;
       }
 
       var region = $('[name="doc[meta][region]"').val();
       if (!region) {
         alert("Please choose a region for the document.");
+        $('ul.steps li:eq(0) a').tab('show');
         return;
       }
 
       var filedata = self.xmlEd.getValue();
       if (!filedata) {
         alert("There's nothing to export!");
+        $('ul.steps li:eq(0) a').tab('show');
         return;
       }
 
