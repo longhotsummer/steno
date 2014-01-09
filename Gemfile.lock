@@ -31,6 +31,7 @@ GEM
     multi_json (1.8.2)
     multi_xml (0.5.5)
     multipart-post (1.2.0)
+    newrelic_rpm (3.7.1.182)
     nokogiri (1.6.0)
       mini_portile (~> 0.5.0)
     oauth2 (0.9.2)
@@ -98,6 +99,7 @@ DEPENDENCIES
   compass
   haml
   log4r
+  newrelic_rpm (~> 3.7)
   nokogiri (~> 1.6.0)
   oauth2 (~> 0.9.2)
   padrino-helpers

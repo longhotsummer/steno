@@ -1,4 +1,6 @@
 require 'sinatra'
+require 'newrelic_rpm'
+
 require 'padrino-helpers'
 require 'log4r'
 require 'compass'
@@ -116,4 +118,9 @@ class StenoApp < Sinatra::Base
 
     haml :github_callback, layout: false
   end
+
+  get '/ping' do
+    'a-ok'
+  end
+  newrelic_ignore '/ping'
 end
