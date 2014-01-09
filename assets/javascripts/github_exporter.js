@@ -101,7 +101,7 @@
       var pull = {
         title: self.commitmsg,
         body: 'Pull request from steno.openbylaws.org.za',
-        base: 'steno-incoming',
+        base: 'master',
         head: self.user.login + ':' + self.branch
       };
 
