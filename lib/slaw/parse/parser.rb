@@ -1,21 +1,21 @@
 require 'treetop'
 
-require 'slaw/parse/syntax/act'
 require 'slaw/parse/syntax/bylaw'
 
 module Slaw
   module Parse
     class Parser
-      Treetop.load(File.dirname(__FILE__) + "/grammar/act.treetop")
       Treetop.load(File.dirname(__FILE__) + "/grammar/bylaw.treetop")
 
       attr_accessor :options
 
-      def parse_act(source)
-        parser = ActParser.new
+      def parse_bylaw(source, root=:bylaw, opts={})
+        parser = BylawParser.new
         parser.options = options
 
-        tree = parser.parse(source)
+        opts[:root] = root
+
+        tree = parser.parse(source, opts)
 
         error_from_parser(parser) if tree.nil?
 
@@ -27,19 +27,6 @@ module Slaw
         parser.options = options
 
         opts[:root] = :definitions_section
-
-        tree = parser.parse(source, opts)
-
-        error_from_parser(parser) if tree.nil?
-
-        tree
-      end
-
-      def parse_bylaw(source, root=:bylaw, opts={})
-        parser = BylawParser.new
-        parser.options = options
-
-        opts[:root] = root
 
         tree = parser.parse(source, opts)
 

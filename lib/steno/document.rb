@@ -80,7 +80,7 @@ module Steno
     end
 
     def render
-      xml_doc && Slaw::Render::HTMLRenderer.new.render_act(xml_doc, '/root/')
+      xml_doc && Slaw::Render::HTMLRenderer.new.render_bylaw(xml_doc, '/root/')
     end
 
     # Serialise the XML for this document
