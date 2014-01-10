@@ -21,10 +21,20 @@
         to better experience this site.
 
     %header#header
-      .navbar.navbar-default.navbar-fixed-top
+      .navbar.navbar-default.navbar-static-top
         .navbar-header
           %a.navbar-brand(href='/')
             Steno for Openbylaws.org.za
+
+        %ul.nav.navbar-nav.navbar-right
+          %li
+            %a(href="https://github.com/longhotsummer/steno" target="_blank")
+              %i.fa.fa-github.fa-lg
+              Steno on Github
+          %li
+            %a(href="https://github.com/longhotsummer/za-by-laws" target="_blank")
+              %i.fa.fa-github.fa-lg
+              ZA By-laws on Github
 
     #wrapper
       = yield
