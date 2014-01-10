@@ -103,14 +103,6 @@ module Steno
       builder.postprocess(doc)
     end
 
-    def validate
-      @validate_errors = []
-
-      # TODO: validate XML
-      # TODO: error handling
-      @valid = true
-    end
-
     protected
 
     def builder
