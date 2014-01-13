@@ -278,7 +278,7 @@
       var year = $('[name="doc[meta][pub_date]"').val().split(/-|\//)[0];
 
       var branch    = ['steno', region, year, shortname].join('-');
-      var filename  = [region, year, shortname + '.xml'].join('/');
+      var filename  = ['by-laws', region, year, shortname + '.xml'].join('/');
       var commitmsg = 'Steno export of ' + name + ' of ' + year;
 
       var btn = $('#export-btn').attr('disabled', 'disabled').addClass('spin');
