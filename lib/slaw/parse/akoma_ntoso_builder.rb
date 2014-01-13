@@ -79,6 +79,11 @@ module Slaw
       def postprocess(doc)
         normalise_headings(doc)
         find_short_title(doc)
+        sanitise(doc)
+      end
+
+      # Do sanitisations, such as finding and linking definitions
+      def sanitise(doc)
         link_definitions(doc)
         nest_blocklists(doc)
       end
@@ -154,6 +159,9 @@ module Slaw
           refs = doc.create_element('references', source: "#this")
           doc.at_xpath('//a:meta/a:identification', a: AN).after(refs)
         end
+
+        # nuke all existing term reference elements
+        refs.xpath('a:TLCTerm', a: AN).each { |el| el.remove }
 
         for id, term in terms
           # <TLCTerm id="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>

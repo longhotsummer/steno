@@ -90,6 +90,18 @@ class StenoApp < Sinatra::Base
     }.to_json
   end
 
+  post "/sanitise" do
+    doc = Steno::Document.new
+    doc.xml = params[:doc][:xml]
+
+    doc.postprocess!
+
+    content_type "application/json"
+    {
+      "xml" => doc.xml
+    }.to_json
+  end
+
   post "/validate" do
     doc = Steno::Document.new
     doc.xml = params[:doc][:xml]

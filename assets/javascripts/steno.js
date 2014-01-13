@@ -108,10 +108,17 @@
       }
       ed.renderer.scrollCursorIntoView();
 
+      self.setXml(data.xml);
+    };
+
+    self.setXml = function(xml) {
       // update the XML
-      ed = self.xmlEd;
-      ed.setValue(data.xml);
-      ed.clearSelection();
+      self.xmlEd.setValue(xml);
+      self.xmlEd.clearSelection();
+    };
+
+    self.getXml = function() {
+      return self.xmlEd.getValue();
     };
 
     self.setParseErrors = function(errors) {
@@ -191,20 +198,35 @@
      * Validate and render the XML editor contents.
      */
     self.checkAndRenderXml = function() {
-      var xml = self.xmlEd.getValue();
+      var btn = $('#render-btn').attr('disabled', 'disabled').addClass('spin');
 
-      self.renderXml();
-
-      $.ajax('/validate', {
+      $.ajax('/sanitise', {
         method: 'POST',
-        data: {'doc[xml]': xml},
+        data: {'doc[xml]': self.getXml()},
         success: function(data) {
           console.log(data);
-          if (self.setValidateErrors(data.validate_errors)) {
-            // errors
-            self.xmlEd.gotoLine(data.validate_errors[0].line, data.validate_errors[0].column);
-            self.xmlEd.focus();
-          }
+
+          self.setXml(data.xml);
+          self.renderXml();
+
+          $.ajax('/validate', {
+            method: 'POST',
+            data: {'doc[xml]': self.getXml()},
+            success: function(data) {
+              console.log(data);
+              if (self.setValidateErrors(data.validate_errors)) {
+                // errors
+                self.xmlEd.gotoLine(data.validate_errors[0].line, data.validate_errors[0].column);
+                self.xmlEd.focus();
+              }
+            },
+            complete: function() {
+              btn.removeClass('spin').attr('disabled', null);
+            }
+          });
+        },
+        error: function() {
+          btn.removeClass('spin').attr('disabled', null);
         }
       });
     };
@@ -213,20 +235,13 @@
      * Render the XML editor contents.
      */
     self.renderXml = function() {
-      var xml = self.xmlEd.getValue();
-
-      var btn = $('#render-btn').attr('disabled', 'disabled').addClass('spin');
-
       $.ajax('/render', {
         method: 'POST',
-        data: {'doc[xml]': xml},
+        data: {'doc[xml]': self.getXml()},
         success: function(data) {
           // update the HTML
           $('#xml-doc-html').html(data.html);
           $('#xml-doc-toc').html(data.toc);
-        },
-        complete: function() {
-          btn.removeClass('spin').attr('disabled', null);
         }
       });
     };
@@ -253,7 +268,7 @@
         return;
       }
 
-      var filedata = self.xmlEd.getValue();
+      var filedata = self.getXml();
       if (!filedata) {
         alert("There's nothing to export!");
         $('ul.steps li:eq(1) a').tab('show');

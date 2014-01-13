@@ -25,7 +25,6 @@ module Steno
     def validate!
       @validate_errors = []
 
-
       schema = Dir.chdir(File.dirname(__FILE__) + "/../schemas") { Nokogiri::XML::Schema(File.read('akomantoso20.xsd')) }
       errors = schema.validate(xml_doc)
 
@@ -79,6 +78,11 @@ module Steno
       end
     end
 
+    # Re-run post-processing on this document
+    def postprocess!
+      builder.sanitise(xml_doc)
+    end
+
     def render
       xml_doc && Slaw::Render::HTMLRenderer.new.render_bylaw(xml_doc, '/root/')
     end
@@ -95,5 +99,8 @@ module Steno
     end
 
     protected
+    def builder
+      @builder ||= Slaw::Parse::AkomaNtosoBuilder.new
+    end
   end
 end
