@@ -41,6 +41,9 @@ module Slaw
         # change weird quotes to normal ones
         s.gsub!(/‘‘|’’|''/, '"')
 
+        # tabs to spaces
+        s.gsub!(/\t/, ' ')
+
         # nuke any line to do with Sabinet and the government printer
         s.gsub!(/^.*Sabinet.*Government Printer.*$/i, '')
         s.gsub!(/^.*Provincial Gazette \d+.*$/i, '')
@@ -48,10 +51,17 @@ module Slaw
         s.gsub!(/^\s*\d+\s*$/, '')
 
         # get rid of page number lines
-        s.gsub!(/^[ \t]*page \d+ of \d+[ \t]*\n/i, '')
+        s.gsub!(/^ *page \d+ of \d+ *\n/i, '')
 
         # get rid of empty lines
-        s.gsub!(/^[ \t]*\n/, '')
+        s.gsub!(/^ *\n/, '')
+
+        # compress whitespace
+        s.gsub!(/ {2,}/, ' ')
+
+        # leading and trailing whitespace
+        s.gsub!(/^ +/, '')
+        s.gsub!(/ +$/, '')
 
         # often we find a section title munged onto the same line as its first statement
         # eg:
