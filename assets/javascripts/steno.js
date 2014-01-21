@@ -84,41 +84,42 @@
       console.log(data);
 
       // update the source text
-      var ed = self.sourceTextEd;
-      var posn = ed.getCursorPosition();
-      var sourceChanged = ed.getValue() != data.source_text;
+      self.setSourceText(data.source_text);
 
-      if (sourceChanged) {
-        ed.setValue(data.source_text);
-        ed.clearSelection();
-      }
-
-      if (self.setParseErrors(data.parse_errors)) {
-        // errors
-        ed.gotoLine(data.parse_errors[0].line, data.parse_errors[0].column);
-        ed.focus();
-      } else {
-        // no errors
-        // kick of a background render
+      if (!self.setParseErrors(data.parse_errors)) {
+        // no errors,/ kick of a background render
         self.renderSourceOutput(data.xml);
-
-        if (sourceChanged) {
-          ed.gotoLine(posn.row+1, posn.column);
-        }
       }
-      ed.renderer.scrollCursorIntoView();
+      self.sourceTextEd.renderer.scrollCursorIntoView();
+      self.sourceTextEd.focus();
 
       self.setXml(data.xml);
     };
 
     self.setXml = function(xml) {
-      // update the XML
-      self.xmlEd.setValue(xml);
-      self.xmlEd.clearSelection();
+      var ed = self.xmlEd;
+
+      if (ed.getValue() != xml) {
+        var posn = ed.getCursorPosition();
+        ed.setValue(xml);
+        ed.clearSelection();
+        ed.gotoLine(posn.row+1, posn.column);
+      }
     };
 
     self.getXml = function() {
       return self.xmlEd.getValue();
+    };
+
+    self.setSourceText = function(text) {
+      var ed = self.sourceTextEd;
+
+      if (ed.getValue() != text) {
+        var posn = ed.getCursorPosition();
+        ed.setValue(text);
+        ed.clearSelection();
+        ed.gotoLine(posn.row+1, posn.column);
+      }
     };
 
     self.setParseErrors = function(errors) {
@@ -131,7 +132,12 @@
       });
       self.sourceTextEd.getSession().setAnnotations(errors);
 
-      return (errors.length > 0);
+      if (errors.length > 0) {
+        self.sourceTextEd.gotoLine(errors[0].row+1, errors[0].column-1);
+        return true;
+      } else {
+        return false;
+      }
     };
 
     self.setValidateErrors = function(errors) {
@@ -144,7 +150,9 @@
       });
       self.xmlEd.getSession().setAnnotations(errors);
 
-      return (errors.length > 0);
+      if (errors.length > 0) {
+        self.xmlEd.gotoLine(errors[0].row+1, errors[0].column-1);
+      }
     };
 
     /**
@@ -183,6 +191,7 @@
      * Render the source-to-xml output
      */
     self.renderSourceOutput = function(xml) {
+      $('#text-step .render-label').show();
       $.ajax('/render', {
         method: 'POST',
         data: {'doc[xml]': xml},
@@ -191,6 +200,9 @@
           $('#source-doc-html, #xml-doc-html').html(data.html);
           $('#source-doc-toc, #xml-doc-toc').html(data.toc);
         },
+        complete: function() {
+          $('#text-step .render-label').hide();
+        }
       });
     };
 
@@ -214,11 +226,8 @@
             data: {'doc[xml]': self.getXml()},
             success: function(data) {
               console.log(data);
-              if (self.setValidateErrors(data.validate_errors)) {
-                // errors
-                self.xmlEd.gotoLine(data.validate_errors[0].line, data.validate_errors[0].column);
-                self.xmlEd.focus();
-              }
+              self.setValidateErrors(data.validate_errors);
+              self.xmlEd.focus();
             },
             complete: function() {
               btn.removeClass('spin').attr('disabled', null);
@@ -235,6 +244,7 @@
      * Render the XML editor contents.
      */
     self.renderXml = function() {
+      $('#xml-step .render-label').show();
       $.ajax('/render', {
         method: 'POST',
         data: {'doc[xml]': self.getXml()},
@@ -242,6 +252,9 @@
           // update the HTML
           $('#xml-doc-html').html(data.html);
           $('#xml-doc-toc').html(data.toc);
+        },
+        complete: function() {
+          $('#xml-step .render-label').hide();
         }
       });
     };
