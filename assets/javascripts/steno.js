@@ -33,7 +33,7 @@
       });
 
       // editors
-      self.sourceTextEd = self.createEditor('#text-step .editor', 'ace/mode/text');
+      self.sourceTextEd = self.createEditor('#text-step .editor', 'ace/mode/slaw');
       self.xmlEd = self.createEditor("#xml-step .editor", 'ace/mode/xml');
 
       self.initSyncScrolling($('#source-doc-html'), self.sourceTextEd);
@@ -48,7 +48,7 @@
      */
     self.createEditor = function(container, mode) {
       var ed = ace.edit($('pre', container)[0]);
-      ed.setTheme("ace/theme/chrome");
+      ed.setTheme("ace/theme/clouds");
       ed.setShowPrintMargin(false);
 
       var sess = ed.getSession();
