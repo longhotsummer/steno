@@ -35,7 +35,7 @@ EOS
         (b) bar
 EOS
       node.statement.content.text_value.should == "naked statement (c) blah"
-      node.blocklist.elements.first.num.should == "a"
+      node.blocklist.elements.first.num.should == "(a)"
     end
 
     it 'should handle a blocklist' do
@@ -46,7 +46,7 @@ EOS
         (c) three
         (i) four
 EOS
-      node.statement.num.should == "2"
+      node.statement.num.should == "(2)"
       node.statement.content.text_value.should == "title"
     end
 
@@ -59,8 +59,34 @@ EOS
 EOS
                   )
       node.statement.content.should be_nil
-      node.blocklist.elements.first.num.should == "a"
+      node.blocklist.elements.first.num.should == "(a)"
       node.blocklist.elements.first.content.text_value.should == "one"
+    end
+
+    context 'dotted numbers' do
+      it 'should handle dotted number subsection numbers' do
+        node = parse :subsection, <<EOS
+          9.9. foo
+EOS
+        node.statement.content.text_value.should == "foo"
+        node.statement.num.should == "9.9"
+      end
+
+      it 'should handle dotted number sublists' do
+        node = parse(:subsection, <<EOS
+          9.9 foo
+          9.9.1 item1
+          9.9.2 item2
+          9.9.2.1 item3
+EOS
+                    )
+        node.statement.content.text_value.should == "foo"
+        node.blocklist.elements.first.num.should == "9.9.1"
+        node.blocklist.elements.first.content.text_value.should == "item1"
+
+        node.blocklist.elements[2].num.should == "9.9.2.1"
+        node.blocklist.elements[2].content.text_value.should == "item3"
+      end
     end
   end
 

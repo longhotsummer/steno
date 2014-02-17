@@ -99,7 +99,25 @@ module Slaw
     end
 
     rule numbered_statement_prefix
-      '(' number_letter ')'
+      # there are two subsection handling syntaxes:
+      # 
+      # (1) foo
+      # (2A) foo
+      #
+      # and
+      #
+      # 8.2 for
+      # 8.3 bar
+      #
+      # The second is less common, but this allows us to handle it.
+      # Note that it is usually accompanied by a similar list number format:
+      #
+      # 8.2.1 item 1
+      # 8.2.2 item 2
+      #
+      # which aren't subsections, but lists, so force the space at the end
+      # of the number to catch this case.
+      ('(' number_letter ')' / dotted_number_2 '.'? space)
     end
 
     ##########
@@ -131,7 +149,7 @@ module Slaw
     end
 
     rule blocklist_item_prefix
-      '(' letter_ordinal ')'
+      ('(' letter_ordinal ')') / dotted_number_3
     end
 
     rule letter_ordinal
@@ -153,6 +171,14 @@ module Slaw
     # eg. 2, 2A, 2b
     rule number_letter
       number letter*
+    end
+
+    rule dotted_number_3
+      number '.' number ('.' number)+
+    end
+
+    rule dotted_number_2
+      number '.' number
     end
 
     rule number

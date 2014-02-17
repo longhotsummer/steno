@@ -207,7 +207,7 @@ module Slaw
 
       def to_xml(b, i, idprefix)
         if statement.is_a?(NumberedStatement)
-          attribs = {id: idprefix + statement.num}
+          attribs = {id: idprefix + statement.num.gsub(/[()]/, '')}
         else
           attribs = {id: idprefix + "subsection-#{i}"}
         end
@@ -215,7 +215,7 @@ module Slaw
         idprefix = attribs[:id] + "."
 
         b.subsection(attribs) { |b|
-          b.num("(#{statement.num})") if statement.is_a?(NumberedStatement)
+          b.num(statement.num) if statement.is_a?(NumberedStatement)
           
           b.content { |b| 
             if blocklist and blocklist.is_a?(Blocklist)
@@ -235,7 +235,15 @@ module Slaw
 
     class NumberedStatement < Treetop::Runtime::SyntaxNode
       def num
-        numbered_statement_prefix.number_letter.text_value
+        if numbered_statement_prefix.respond_to? :dotted_number_2
+          numbered_statement_prefix.dotted_number_2.text_value
+        else
+          numbered_statement_prefix.text_value
+        end
+      end
+
+      def parentheses?
+        !numbered_statement_prefix.respond_to? :dotted_number_2
       end
 
       def content
@@ -267,12 +275,12 @@ module Slaw
 
     class BlocklistItem < Treetop::Runtime::SyntaxNode
       def num
-        blocklist_item_prefix.letter_ordinal.text_value
+        blocklist_item_prefix.text_value
       end
 
       def to_xml(b, idprefix)
-        b.item(id: idprefix + num) { |b|
-          b.num("(#{num})")
+        b.item(id: idprefix + num.gsub(/[()]/, '')) { |b|
+          b.num(num)
           b.p(content.text_value)
         }
       end
