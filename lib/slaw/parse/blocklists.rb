@@ -137,6 +137,8 @@ module Slaw
           NumberingFormat.aa
         when /^\([a-z]+/i
           NumberingFormat.a
+        when /^\d+(\.\d+)+$/
+          NumberingFormat.new(:'i.i', item.num.count('.'))
         else
           NumberingFormat.unknown
         end
@@ -150,6 +152,10 @@ module Slaw
         def initialize(type, ordinal)
           @type = type
           @ordinal = ordinal
+        end
+
+        def eql?(other)
+          self.ordinal == other.ordinal
         end
 
         def <=>(other)

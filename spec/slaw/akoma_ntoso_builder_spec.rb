@@ -316,6 +316,49 @@ XML
 XML
       )
     end
+
+    # -------------------------------------------------------------------------
+
+    it 'should handle dotted numbers correctly' do
+      doc = xml2doc(subsection(<<XML
+            <blockList id="section-9.subsection-2.list2">
+              <item id="section-9.subsection-2.list2.9.2.1">
+                <num>9.2.1</num>
+                <p>is incapable of trading because of an illness, provided that:</p>
+              </item>
+              <item id="section-9.subsection-2.list2.9.2.1.1">
+                <num>9.2.1.1</num>
+                <p>proof from a medical practitioner is provided to the City which certifies that the permit-holder is unable to trade; and</p>
+              </item>
+              <item id="section-9.subsection-2.list2.9.2.1.2">
+                <num>9.2.1.2</num>
+                <p>the dependent or assistant is only permitted to replace the permit-</p>
+              </item>
+            </blockList>
+XML
+      ))
+
+      subject.nest_blocklists(doc)
+      doc.to_s.should == subsection(<<XML
+            <blockList id="section-9.subsection-2.list2">
+              <item id="section-9.subsection-2.list2.9.2.1">
+                <num>9.2.1</num>
+                <blockList id="section-9.subsection-2.list2.9.2.1.list0">
+                  <listIntroduction>is incapable of trading because of an illness, provided that:</listIntroduction>
+                  <item id="section-9.subsection-2.list2.9.2.1.list0.9.2.1.1">
+                    <num>9.2.1.1</num>
+                    <p>proof from a medical practitioner is provided to the City which certifies that the permit-holder is unable to trade; and</p>
+                  </item>
+                  <item id="section-9.subsection-2.list2.9.2.1.list0.9.2.1.2">
+                    <num>9.2.1.2</num>
+                    <p>the dependent or assistant is only permitted to replace the permit-</p>
+                  </item>
+                </blockList>
+              </item>
+            </blockList>
+XML
+      )
+    end
   end
 
   describe '#unwrap_lines' do
