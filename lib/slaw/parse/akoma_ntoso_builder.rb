@@ -73,7 +73,35 @@ module Slaw
         # whitespace on either side
         s.strip!
 
+        s = unwrap_lines(s)
+
         s
+      end
+
+      # Preprocessor that finds likely candidates for unnecessarily wrapped lines
+      # and unwraps them
+      def unwrap_lines(s)
+        lines = s.split(/\n/)
+        output = []
+        start_re = /^[a-z]/
+        end_re   = /[a-z0-9]$/
+
+        prev = nil
+        lines.each_with_index do |line, i|
+          if i == 0
+            output << line
+          else
+            prev = output[-1]
+
+            if line =~ start_re and prev =~ end_re
+              output[-1] = prev + ' ' + line
+            else
+              output << line
+            end
+          end
+        end
+
+        output.join("\n")
       end
 
       def parse_xml(xml)
