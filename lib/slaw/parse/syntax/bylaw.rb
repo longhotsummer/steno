@@ -175,7 +175,7 @@ module Slaw
 
           idprefix = "#{id}."
 
-          if definitions?
+          if definitions? and definitions
             definitions.to_xml(b, idprefix)
           else
             subsections.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
@@ -190,9 +190,13 @@ module Slaw
 
       def definitions
         # Parse the definitions section using the definitions grammar
-        @definitions ||= Slaw::Parse::Parser.new.parse_definitions(
-            section_content.input[0...section_content.interval.last],
-            index: section_content.interval.first)
+        begin
+          @definitions ||= Slaw::Parse::Parser.new.parse_definitions(
+              section_content.input[0...section_content.interval.last],
+              index: section_content.interval.first)
+        rescue Slaw::Parse::ParseError
+          nil
+        end
       end
     end
 
