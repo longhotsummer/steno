@@ -50,6 +50,9 @@ module Slaw
         s.gsub!(/^.*Provinsiale Koerant \d+.*$/i, '')
         s.gsub!(/^\s*\d+\s*$/, '')
 
+        # get rid of date lines
+        s.gsub!(/^\d+\s+\w+\s+\d+$/, '')
+
         # get rid of page number lines
         s.gsub!(/^ *page \d+ of \d+ *\n/i, '')
 

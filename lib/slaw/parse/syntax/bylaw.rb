@@ -70,8 +70,12 @@ module Slaw
 
     class Part < Treetop::Runtime::SyntaxNode
       def num
+        heading && heading.num
+      end
+
+      def heading
         if elements.first.is_a? PartHeading
-          elements.first.num
+          elements.first
         else
           nil
         end
@@ -79,7 +83,7 @@ module Slaw
 
       def to_xml(b)
         # do we have a part heading?
-        if elements.first.is_a? PartHeading
+        if heading
           id = "part-#{num}"
 
           # include a chapter number in the id if our parent has one
@@ -88,7 +92,7 @@ module Slaw
           end
 
           b.part(id: id) { |b|
-            elements.first.to_xml(b)
+            heading.to_xml(b)
             elements[1].elements.each { |e| e.to_xml(b) }
           }
         else
@@ -103,9 +107,13 @@ module Slaw
         part_heading_prefix.alphanums.text_value
       end
 
+      def title
+        content.text_value
+      end
+
       def to_xml(b)
         b.num(num)
-        b.heading(content.text_value)
+        b.heading(title)
       end
     end
 
@@ -225,8 +233,8 @@ module Slaw
       end
 
       def title
-        if elements[3].respond_to? :content
-          elements[3].content.text_value
+        if elements[2].respond_to? :content
+          elements[2].content.text_value
         else
           ""
         end

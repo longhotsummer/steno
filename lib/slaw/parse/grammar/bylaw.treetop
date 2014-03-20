@@ -10,7 +10,7 @@ module Slaw
     end
 
     rule preamble
-      naked_statement* <Preamble>
+      preamble_statement* <Preamble>
     end
 
     rule chapter
@@ -49,17 +49,18 @@ module Slaw
     end
 
     rule section_1_title
-      !{ |s| options[:section_number_after_title] }
       # 1. Section title
-      # content
-      section_title_prefix space section_title_content? <SectionTitleType2>
+      # Section content
+      #
+      # Additionally, the section title is optional.
+      !{ |s| options[:section_number_after_title] }
+      section_title_prefix section_title_content? eol? <SectionTitleType2>
     end
 
     rule section_title_content
-      !numbered_statement_prefix content
+      space !numbered_statement_prefix content eol
       # if a section title ends in a non-character or it's really long, it's probably section content
-      !{ |s| s[1].text_value[-1] =~ /[^a-zA-z]/ or s[1].text_value.length > 100 }
-      eol
+      !{ |s| s[2].text_value[-1] =~ /[^a-zA-z]/ or s[2].text_value.length > 100 }
     end
 
     rule section_content
@@ -77,6 +78,10 @@ module Slaw
 
     rule naked_statement
       space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix) content eol <NakedStatement>
+    end
+
+    rule preamble_statement
+      space? !(part_heading_prefix / chapter_heading_prefix / section_title) content eol
     end
 
     ##########

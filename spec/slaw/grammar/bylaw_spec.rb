@@ -112,12 +112,19 @@ EOS
       node = parse :bylaw, <<EOS
 foo
 bar
+(1) stuff
+(2) more stuff
 baz
 1. Section
 (1) hello
 EOS
 
-      node.elements.first.text_value.should == "foo\nbar\nbaz\n"
+      node.elements.first.text_value.should == "foo
+bar
+(1) stuff
+(2) more stuff
+baz
+"
     end
 
     it 'should support an optional preamble' do
@@ -230,6 +237,29 @@ EOS
       section.section_title.title.should == ""
       section.section_title.num.should == "10"
       section.subsections[0].statement.content.text_value.should == "The owner of any premises which is let or sublet to more than one tenant, shall maintain at all times in a clean and sanitary condition every part of such premises as may be used in common by more than one tenant."
+    end
+  end
+
+  #-------------------------------------------------------------------------------
+  # Parts
+
+  context 'parts' do
+    it 'should handle parts and odd section numbers' do
+      subject.options = {section_number_after_title: false}
+      node = parse :bylaw, <<EOS
+PART 1
+PREVENTION AND SUPPRESSION OF HEALTH NUISANCES
+1.
+No owner or occupier of any shop or business premises or vacant land adjoining a shop or business premises shall cause a health nuisance.
+EOS
+
+      part = node.elements[1].elements[0].elements[1].elements[0]
+      part.heading.num.should == "1"
+      part.heading.title.should == "PREVENTION AND SUPPRESSION OF HEALTH NUISANCES"
+
+      section = part.elements[1].elements[0]
+      section.section_title.title.should == ""
+      section.section_title.section_title_prefix.number_letter.text_value.should == "1"
     end
   end
 end
