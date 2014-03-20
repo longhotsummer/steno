@@ -39,6 +39,18 @@ Steno has a grammar which does its best to make sense of a plain text version of
 
 # Developing and contributing
 
+To run tests, use either
+
+`rspec`
+
+to run the specs once off, or use
+
+`guard`
+
+to run them continuously.
+
+## Pull requests
+
 We welcome pull requests!
 
 Steno is a [Sinatra](http://www.sinatrarb.com/) ruby app. To install and run it locally,
