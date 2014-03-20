@@ -58,16 +58,12 @@ module Slaw
       end
     end
 
-    class Frontmatter < Treetop::Runtime::SyntaxNode
-    end
-
     class Preamble < Treetop::Runtime::SyntaxNode
       def to_xml(b)
-        # element[0] is the frontmatter
-        # element[1] is ACT
-        # element[2] is naked_statement collection
-        elements[2].elements.each { |e|
-          b.p(e.content.text_value)
+        elements.each { |e|
+          if not (e.content.text_value =~ /^preamble/i)
+            b.p(e.content.text_value)
+          end
         }
       end
     end

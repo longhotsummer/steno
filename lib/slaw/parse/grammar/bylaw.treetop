@@ -5,18 +5,12 @@ module Slaw
     include Slaw::Parse::GrammarHelpers
 
     rule bylaw
-      preamble?
+      preamble
       chapter+ <Bylaw>
     end
 
     rule preamble
-      frontmatter*
-      preamble_heading
-      naked_statement+ <Preamble>
-    end
-
-    rule frontmatter
-      !(preamble_heading) content eol <Frontmatter>
+      naked_statement* <Preamble>
     end
 
     rule chapter
@@ -81,10 +75,6 @@ module Slaw
 
     ##########
     # prefixes
-
-    rule preamble_heading
-      'PREAMBLE' eol
-    end
 
     rule part_heading_prefix
       ('PART' / 'Part') space alphanums ':'?

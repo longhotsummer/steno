@@ -98,24 +98,38 @@ EOS
   end
 
   describe 'bylaw' do
-    it 'should support an optional preamble' do
-      node = parse :bylaw, <<EOS
+    context 'preamble' do
+      it 'should consider any text at the start to be preamble' do
+        node = parse :bylaw, <<EOS
+foo
+bar
+baz
+1. Section
+(1) hello
+EOS
+
+        node.elements.first.text_value.should == "foo\nbar\nbaz\n"
+      end
+
+      it 'should support an optional preamble' do
+        node = parse :bylaw, <<EOS
 PREAMBLE
 foo
 1. Section
 (1) hello
 EOS
 
-      node.elements.first.text_value.should == "PREAMBLE\nfoo\n"
-    end
+        node.elements.first.text_value.should == "PREAMBLE\nfoo\n"
+      end
 
-    it 'should support no preamble' do
-      node = parse :bylaw, <<EOS
+      it 'should support no preamble' do
+        node = parse :bylaw, <<EOS
 1. Section
 bar
 EOS
 
-      node.elements.first.text_value.should == ""
+        node.elements.first.text_value.should == ""
+      end
     end
 
     it 'should handle section numbers after title' do
