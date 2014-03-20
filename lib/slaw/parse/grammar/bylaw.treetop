@@ -45,19 +45,25 @@ module Slaw
       # Section title
       # 1. Section content
       content eol
-      section_title_prefix space
+      section_title_prefix space <SectionTitleType1>
     end
 
     rule section_1_title
       !{ |s| options[:section_number_after_title] }
       # 1. Section title
       # content
-      section_title_prefix space
-      content eol
+      section_title_prefix space section_title_content? <SectionTitleType2>
+    end
+
+    rule section_title_content
+      !numbered_statement_prefix content
+      # if a section title ends in a non-character or it's really long, it's probably section content
+      !{ |s| s[1].text_value[-1] =~ /[^a-zA-z]/ or s[1].text_value.length > 100 }
+      eol
     end
 
     rule section_content
-      subsection+
+      subsection*
     end
 
     rule subsection
@@ -85,7 +91,7 @@ module Slaw
     end
 
     rule section_title_prefix
-      number_letter '.'
+      number_letter '.'?
     end
 
     rule numbered_statement_prefix

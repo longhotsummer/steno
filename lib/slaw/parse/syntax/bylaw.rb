@@ -152,11 +152,11 @@ module Slaw
 
     class Section < Treetop::Runtime::SyntaxNode
       def num
-        section_title.section_title_prefix.number_letter.text_value
+        section_title.num
       end
 
       def title
-        section_title.content.text_value
+        section_title.title
       end
 
       def subsections
@@ -192,6 +192,43 @@ module Slaw
               index: section_content.interval.first)
         rescue Slaw::Parse::ParseError
           nil
+        end
+      end
+    end
+
+    class SectionTitleType1 < Treetop::Runtime::SyntaxNode
+      # a section title of the form:
+      #
+      # Definitions
+      # 1. In this by-law...
+
+      def num
+        section_title_prefix.number_letter.text_value
+      end
+
+      def title
+        content.text_value
+      end
+    end
+
+    class SectionTitleType2 < Treetop::Runtime::SyntaxNode
+      # a section title of the form:
+      #
+      # 1. Definitions
+      # In this by-law...
+      #
+      # In this format, the title is optional and the section content may
+      # start where we think the title is.
+
+      def num
+        section_title_prefix.number_letter.text_value
+      end
+
+      def title
+        if elements[3].respond_to? :content
+          elements[3].content.text_value
+        else
+          ""
         end
       end
     end
