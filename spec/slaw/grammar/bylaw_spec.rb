@@ -31,7 +31,7 @@ describe Slaw::Parse::Parser do
   describe 'chapters' do
     it 'should handle chapter headers' do
       node = parse :chapter, <<EOS
-Chapter 2
+ChaPTEr 2
 The Chapter Heading
 1. Section
 Hello there
@@ -48,7 +48,7 @@ EOS
   describe 'parts' do
     it 'should handle part headers' do
       node = parse :part, <<EOS
-Part 2
+pART 2
 The Part Heading
 1. Section
 Hello there

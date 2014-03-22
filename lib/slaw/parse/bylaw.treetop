@@ -89,11 +89,11 @@ module Slaw
       # prefixes
 
       rule part_heading_prefix
-        ('PART' / 'Part') space alphanums ':'?
+        'part'i space alphanums ':'?
       end
 
       rule chapter_heading_prefix
-        ('CHAPTER' / 'Chapter') space alphanums
+        'chapter'i space alphanums
       end
 
       rule section_title_prefix
