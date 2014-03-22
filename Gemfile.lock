@@ -117,9 +117,8 @@ GEM
     thread_safe (0.2.0)
       atomic (>= 1.1.7, < 2)
     tilt (1.4.1)
-    treetop (1.4.15)
-      polyglot
-      polyglot (>= 0.3.1)
+    treetop (1.5.3)
+      polyglot (~> 0.3)
     tzinfo (0.3.38)
     url_mount (0.2.1)
       rack
@@ -146,4 +145,4 @@ DEPENDENCIES
   sprockets
   sprockets-helpers
   sprockets-sass
-  treetop (~> 1.4.14)
+  treetop (~> 1.5)

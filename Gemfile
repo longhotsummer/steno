@@ -16,7 +16,7 @@ gem 'sprockets-sass'
 gem 'compass'
 gem 'bootstrap-sass', '~> 3.0.2.0'
 
-gem "treetop", "~> 1.4.14"
+gem "treetop", "~> 1.5"
 gem "builder", "~> 3.2.2"
 gem "nokogiri", "~> 1.6.0"
 gem "oauth2", "~> 0.9.2"

@@ -1,11 +1,11 @@
 require 'treetop'
 
-require 'slaw/parse/syntax/bylaw'
+require 'slaw/parse/nodes'
 
 module Slaw
   module Parse
     class Parser
-      Treetop.load(File.dirname(__FILE__) + "/grammar/bylaw.treetop")
+      Treetop.load(File.dirname(__FILE__) + "/bylaw.treetop")
 
       attr_accessor :options
 

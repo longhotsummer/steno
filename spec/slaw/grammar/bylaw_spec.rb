@@ -1,4 +1,5 @@
 require 'slaw/parse/parser'
+require 'builder'
 
 describe Slaw::Parse::Parser do
   def parse(rule, s)
@@ -17,6 +18,64 @@ describe Slaw::Parse::Parser do
     end
   end
 
+  def to_xml(node)
+    s = ""
+    b = Builder::XmlMarkup.new(target: s)
+    node.to_xml(b)
+    s
+  end
+
+  #-------------------------------------------------------------------------------
+  # Chapters
+  #
+  describe 'chapters' do
+    it 'should handle chapter headers' do
+      node = parse :chapter, <<EOS
+ChaPTEr 2
+The Chapter Heading
+1. Section
+Hello there
+EOS
+      node.num.should == "2"
+      node.heading.title.should == 'The Chapter Heading'
+      to_xml(node).should == "<chapter id=\"chapter-2\"><num>2</num><heading>The Chapter Heading</heading><section id=\"section-1\"><num>1.</num><heading>Section</heading><subsection id=\"section-1.subsection-0\"><content><p>Hello there</p></content></subsection></section></chapter>"
+    end
+  end
+
+  #-------------------------------------------------------------------------------
+  # Parts
+
+  describe 'parts' do
+    it 'should handle part headers' do
+      node = parse :part, <<EOS
+pART 2
+The Part Heading
+1. Section
+Hello there
+EOS
+      node.num.should == "2"
+      node.heading.title.should == 'The Part Heading'
+      to_xml(node).should == "<part id=\"part-2\"><num>2</num><heading>The Part Heading</heading><section id=\"section-1\"><num>1.</num><heading>Section</heading><subsection id=\"section-1.subsection-0\"><content><p>Hello there</p></content></subsection></section></part>"
+    end
+
+    it 'should handle parts and odd section numbers' do
+      subject.options = {section_number_after_title: false}
+      node = parse :bylaw, <<EOS
+PART 1
+PREVENTION AND SUPPRESSION OF HEALTH NUISANCES
+1.
+No owner or occupier of any shop or business premises or vacant land adjoining a shop or business premises shall cause a health nuisance.
+EOS
+
+      part = node.elements[1].elements[0].elements[1].elements[0]
+      part.heading.num.should == "1"
+      part.heading.title.should == "PREVENTION AND SUPPRESSION OF HEALTH NUISANCES"
+
+      section = part.elements[1].elements[0]
+      section.section_title.title.should == ""
+      section.section_title.section_title_prefix.number_letter.text_value.should == "1"
+    end
+  end
 
   #-------------------------------------------------------------------------------
   # Subsections
@@ -241,25 +300,27 @@ EOS
   end
 
   #-------------------------------------------------------------------------------
-  # Parts
+  # Definitions
 
-  context 'parts' do
-    it 'should handle parts and odd section numbers' do
-      subject.options = {section_number_after_title: false}
-      node = parse :bylaw, <<EOS
-PART 1
-PREVENTION AND SUPPRESSION OF HEALTH NUISANCES
-1.
-No owner or occupier of any shop or business premises or vacant land adjoining a shop or business premises shall cause a health nuisance.
+  context 'definitions' do
+    it 'should handle definitions' do
+      node = parse :definitions_section, <<EOS
+The follow terms are defined:
+"foo" means:
+the foo thing;
+"bar" means:
+the bar thing;
 EOS
 
-      part = node.elements[1].elements[0].elements[1].elements[0]
-      part.heading.num.should == "1"
-      part.heading.title.should == "PREVENTION AND SUPPRESSION OF HEALTH NUISANCES"
+      defn = node.definitions.elements[0]
+      defn.term.should == 'foo'
+      defn.content.text_value.should == ' means:'
+      defn.definition.elements[0].content.text_value.should == 'the foo thing;'
 
-      section = part.elements[1].elements[0]
-      section.section_title.title.should == ""
-      section.section_title.section_title_prefix.number_letter.text_value.should == "1"
+      defn = node.definitions.elements[1]
+      defn.term.should == 'bar'
+      defn.content.text_value.should == ' means:'
+      defn.definition.elements[0].content.text_value.should == 'the bar thing;'
     end
   end
 end
