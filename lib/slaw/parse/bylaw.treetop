@@ -7,7 +7,7 @@ module Slaw
 
       rule bylaw
         preamble
-        chapter+ <Bylaw>
+        chapters:chapter+ <Bylaw>
       end
 
       rule preamble
@@ -15,13 +15,13 @@ module Slaw
       end
 
       rule chapter
-        chapter_heading?
-        part+ <Chapter>
+        heading:chapter_heading?
+        parts:part+ <Chapter>
       end
 
       rule part
-        part_heading?
-        section+ <Part>
+        heading:part_heading?
+        sections:section+ <Part>
       end
 
       rule chapter_heading
@@ -55,7 +55,7 @@ module Slaw
         #
         # Additionally, the section title is optional.
         !{ |s| options[:section_number_after_title] }
-        section_title_prefix section_title_content? eol? <SectionTitleType2>
+        section_title_prefix section_title:section_title_content? eol? <SectionTitleType2>
       end
 
       rule section_title_content
@@ -69,8 +69,8 @@ module Slaw
       end
 
       rule subsection
-        (numbered_statement / naked_statement)
-        blocklist? <Subsection>
+        statement:(numbered_statement / naked_statement)
+        blocklist:blocklist? <Subsection>
       end
 
       rule numbered_statement
@@ -119,7 +119,9 @@ module Slaw
         #
         # which aren't subsections, but lists, so force the space at the end
         # of the number to catch this case.
-        ('(' number_letter ')' / dotted_number_2 '.'? space)
+        num:('(' number_letter ')')
+        /
+        num:dotted_number_2 '.'? space
       end
 
       ##########
@@ -127,12 +129,12 @@ module Slaw
 
       rule definitions_section
         space? content eol
-        definition+ <DefinitionsSection>
+        definitions:definition+ <DefinitionsSection>
       end
 
       rule definition
-        space? quotes non_quotes+ quotes content eol
-        (blocklist / definition_statement)* <Definition>
+        space? quotes defined_term:non_quotes+ quotes content eol
+        definition:(blocklist / definition_statement)* <Definition>
       end
 
       rule definition_statement

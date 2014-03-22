@@ -49,13 +49,9 @@ module Slaw
             end
 
             b.body { |b|
-              elements[1].elements.each { |e| e.to_xml(b) }
+              chapters.elements.each { |e| e.to_xml(b) }
             }
           }
-        end
-
-        def preamble
-          elements.first
         end
       end
 
@@ -71,34 +67,26 @@ module Slaw
 
       class Part < Treetop::Runtime::SyntaxNode
         def num
-          heading && heading.num
-        end
-
-        def heading
-          if elements.first.is_a? PartHeading
-            elements.first
-          else
-            nil
-          end
+          heading.empty? ? nil : heading.num
         end
 
         def to_xml(b)
           # do we have a part heading?
-          if heading
+          if not heading.empty?
             id = "part-#{num}"
 
             # include a chapter number in the id if our parent has one
-            if parent.parent.is_a?(Chapter) and parent.parent.num
+            if parent and parent.parent.is_a?(Chapter) and parent.parent.num
               id = "chapter-#{parent.parent.num}.#{id}"
             end
 
             b.part(id: id) { |b|
               heading.to_xml(b)
-              elements[1].elements.each { |e| e.to_xml(b) }
+              sections.elements.each { |e| e.to_xml(b) }
             }
           else
             # no parts
-            elements[1].elements.each { |e| e.to_xml(b) }
+            sections.elements.each { |e| e.to_xml(b) }
           end
         end
       end
@@ -120,30 +108,26 @@ module Slaw
 
       class Chapter < Treetop::Runtime::SyntaxNode
         def num
-          if elements.first.is_a? ChapterHeading
-            elements.first.num
-          else
-            nil
-          end
+          heading.empty? ? nil : heading.num
         end
 
         def to_xml(b)
           # do we have a chapter heading?
-          if elements.first.is_a? ChapterHeading
+          if not heading.empty?
             id = "chapter-#{num}"
 
             # include a part number in the id if our parent has one
-            if parent.parent.is_a?(Part) and parent.parent.num
+            if parent and parent.parent.is_a?(Part) and parent.parent.num
               id = "part-#{parent.parent.num}.#{id}"
             end
 
             b.chapter(id: id) { |b|
-              elements.first.to_xml(b)
-              elements[1].elements.each { |e| e.to_xml(b) }
+              heading.to_xml(b)
+              parts.elements.each { |e| e.to_xml(b) }
             }
           else
             # no chapters
-            elements[1].elements.each { |e| e.to_xml(b) }
+            parts.elements.each { |e| e.to_xml(b) }
           end
         end
       end
@@ -153,9 +137,13 @@ module Slaw
           chapter_heading_prefix.alphanums.text_value
         end
 
+        def title
+          content.text_value
+        end
+
         def to_xml(b)
           b.num(num)
-          b.heading(content.text_value)
+          b.heading(title)
         end
       end
 
@@ -169,7 +157,7 @@ module Slaw
         end
 
         def subsections
-          elements[1].elements
+          section_content.elements
         end
 
         def to_xml(b)
@@ -234,23 +222,11 @@ module Slaw
         end
 
         def title
-          if elements[2].respond_to? :content
-            elements[2].content.text_value
-          else
-            ""
-          end
+          section_title.empty? ? "" : section_title.content.text_value
         end
       end
 
       class Subsection < Treetop::Runtime::SyntaxNode
-        def statement
-          elements[0]
-        end
-
-        def blocklist
-          elements[1]
-        end
-
         def to_xml(b, i, idprefix)
           if statement.is_a?(NumberedStatement)
             attribs = {id: idprefix + statement.num.gsub(/[()]/, '')}
@@ -281,11 +257,7 @@ module Slaw
 
       class NumberedStatement < Treetop::Runtime::SyntaxNode
         def num
-          if numbered_statement_prefix.respond_to? :dotted_number_2
-            numbered_statement_prefix.dotted_number_2.text_value
-          else
-            numbered_statement_prefix.text_value
-          end
+          numbered_statement_prefix.num.text_value
         end
 
         def parentheses?
@@ -336,14 +308,14 @@ module Slaw
         def to_xml(b, idprefix)
           b.list(id: "definitions") { |b| 
             b.intro { |b| b.p(content.text_value) }
-            elements[3].elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
+            definitions.elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
           }
         end
       end
 
       class Definition < Treetop::Runtime::SyntaxNode
         def term
-          elements[2].text_value
+          defined_term.text_value
         end
 
         def term_id
@@ -358,7 +330,7 @@ module Slaw
               b.content { |b| defn_xml(b) }
             }
             
-            elements[6].elements.each_with_index do |child, i|
+            definition.elements.each_with_index do |child, i|
               section_id = id + ".subsection-#{i+1}"
 
               b.subsection(id: section_id) { |b|
