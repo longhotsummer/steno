@@ -178,7 +178,7 @@ module Slaw
 
         # is this a definitions section?
         def definitions?
-          title =~ /^definition/i
+          title =~ /^definition|^interpretation/i
         end
 
         def definitions
