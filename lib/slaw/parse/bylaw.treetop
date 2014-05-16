@@ -5,6 +5,9 @@ module Slaw
     grammar Bylaw
       include Slaw::Parse::GrammarHelpers
 
+      ########
+      # major containers
+
       rule bylaw
         preamble
         chapters:chapter+ <Bylaw>
@@ -24,17 +27,25 @@ module Slaw
         sections:section+ <Part>
       end
 
+      rule section
+        section_title
+        section_content <Section>
+      end
+
+      rule subsection
+        statement:(numbered_statement / naked_statement)
+        blocklist:blocklist? <Subsection>
+      end
+
+      ##########
+      # headings
+
       rule chapter_heading
         space? chapter_heading_prefix eol? space? content eol <ChapterHeading>
       end
 
       rule part_heading
         space? part_heading_prefix eol? space? content eol <PartHeading>
-      end
-
-      rule section
-        section_title
-        section_content <Section>
       end
 
       rule section_title
@@ -64,13 +75,11 @@ module Slaw
         !{ |s| s[2].text_value[-1] =~ /[^a-zA-z]/ or s[2].text_value.length > 100 }
       end
 
+      ##########
+      # minor containers
+
       rule section_content
         subsection*
-      end
-
-      rule subsection
-        statement:(numbered_statement / naked_statement)
-        blocklist:blocklist? <Subsection>
       end
 
       rule numbered_statement
