@@ -323,4 +323,47 @@ EOS
       defn.definition.elements[0].content.text_value.should == 'the bar thing;'
     end
   end
+
+  #-------------------------------------------------------------------------------
+  # schedules
+
+  context 'schedules' do
+    it 'should handle a simple schedule' do
+      node = parse :schedules, <<EOS
+Schedule
+Subject to approval in terms of this By-Law, the erection:
+1. Foo
+2. Bar
+EOS
+
+      sched = node.schedules.elements[0]
+      sched.schedule_title.schedule_heading_prefix.text_value.should == "Schedule"
+      sched.statements.elements[0].content.text_value.should == "Subject to approval in terms of this By-Law, the erection:"
+      sched.statements.elements[1].content.text_value.should == "1. Foo"
+      sched.statements.elements[2].content.text_value.should == "2. Bar"
+    end
+
+    it 'should handle many schedules' do
+      node = parse :schedules, <<EOS
+Schedule "1"
+1. Foo
+2. Bar
+Schedule 2
+Baz
+Boom
+EOS
+
+      sched = node.schedules.elements[0]
+      sched.schedule_title.schedule_heading_prefix.text_value.should == "Schedule"
+      sched.schedule_title.num.text_value.should == "1"
+      sched.statements.elements[0].content.text_value.should == "1. Foo"
+      sched.statements.elements[1].content.text_value.should == "2. Bar"
+
+      sched = node.schedules.elements[1]
+      sched.schedule_title.schedule_heading_prefix.text_value.should == "Schedule"
+      sched.schedule_title.num.text_value.should == "2"
+      sched.statements.elements[0].content.text_value.should == "Baz"
+      sched.statements.elements[1].content.text_value.should == "Boom"
+    end
+  end
 end

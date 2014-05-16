@@ -10,7 +10,8 @@ module Slaw
 
       rule bylaw
         preamble
-        chapters:chapter+ <Bylaw>
+        chapters:chapter+
+        schedules:schedules <Bylaw>
       end
 
       rule preamble
@@ -35,6 +36,15 @@ module Slaw
       rule subsection
         statement:(numbered_statement / naked_statement)
         blocklist:blocklist? <Subsection>
+      end
+
+      rule schedules
+        schedules:schedule* <ScheduleContainer>
+      end
+
+      rule schedule
+        schedule_title
+        statements:schedule_statement* <Schedule>
       end
 
       ##########
@@ -75,8 +85,14 @@ module Slaw
         !{ |s| s[2].text_value[-1] =~ /[^a-zA-z]/ or s[2].text_value.length > 100 }
       end
 
+      rule schedule_title
+        space? schedule_heading_prefix
+        space? "\""? num:alphanums? "\""?
+        eol
+      end
+
       ##########
-      # minor containers
+      # statements
 
       rule section_content
         subsection*
@@ -87,11 +103,15 @@ module Slaw
       end
 
       rule naked_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix) content eol <NakedStatement>
+        space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix / schedule_heading_prefix) content eol <NakedStatement>
       end
 
       rule preamble_statement
         space? !(part_heading_prefix / chapter_heading_prefix / section_title) content eol
+      end
+
+      rule schedule_statement
+        space? (!schedule_heading_prefix) content eol
       end
 
       ##########
@@ -103,6 +123,10 @@ module Slaw
 
       rule chapter_heading_prefix
         'chapter'i space alphanums
+      end
+
+      rule schedule_heading_prefix
+        'schedule'i
       end
 
       rule section_title_prefix

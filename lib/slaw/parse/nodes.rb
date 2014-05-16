@@ -362,6 +362,18 @@ module Slaw
           b.p(content.text_value)
         end
       end
+
+      class ScheduleContainer < Treetop::Runtime::SyntaxNode
+        def to_xml(b)
+          1/0
+        end
+      end
+
+      class Schedule < Treetop::Runtime::SyntaxNode
+        def to_xml(b)
+          1/0
+        end
+      end
     end
   end
 end
