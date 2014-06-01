@@ -111,15 +111,15 @@ module Slaw
       end
 
       rule naked_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix / schedule_heading_prefix) content eol <NakedStatement>
+        space? !(part_heading / chapter_heading / section_title / schedule_heading / numbered_statement_prefix) content eol <NakedStatement>
       end
 
       rule preamble_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title / schedule_heading_prefix) content eol
+        space? !(part_heading / chapter_heading / section_title / schedule_heading) content eol
       end
 
       rule schedule_statement
-        space? (!schedule_heading_prefix) content eol
+        space? (!schedule_heading) content eol
       end
 
       ##########

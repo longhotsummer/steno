@@ -413,7 +413,11 @@ module Slaw
         end
 
         def heading
-          schedule_heading.schedule_title.content.text_value
+          if schedule_heading.schedule_title.respond_to? :content
+            schedule_heading.schedule_title.content.text_value
+          else
+            nil
+          end
         end
 
         def to_xml(b, i)
