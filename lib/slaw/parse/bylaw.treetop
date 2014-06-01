@@ -15,7 +15,7 @@ module Slaw
       end
 
       rule preamble
-        preamble_statement* <Preamble>
+        naked_statement* <Preamble>
       end
 
       rule chapter
@@ -107,11 +107,7 @@ module Slaw
       end
 
       rule naked_statement
-        space? !(part_heading / chapter_heading / section_title / schedule_heading / numbered_statement_prefix) content eol <NakedStatement>
-      end
-
-      rule preamble_statement
-        space? !(part_heading / chapter_heading / section_title / schedule_heading) content eol
+        space? !(part_heading / chapter_heading / section_title / schedule_heading) content eol <NakedStatement>
       end
 
       rule schedule_statement
