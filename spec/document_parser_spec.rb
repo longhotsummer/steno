@@ -175,7 +175,7 @@ XML
 
   it 'should handle a parse with ONLY schedules' do
     s = <<EOS
-Schedule 1
+Schedules
 Foo
 Bar
 EOS
@@ -248,10 +248,9 @@ EOS
           </identification>
         </meta>
         <mainBody>
-          <chapter id="schedule-1">
-            <num>1</num>
-            <heading>Schedule</heading>
-            <section id="schedule-1.section-0">
+          <chapter id="schedules">
+            <heading>Schedules</heading>
+            <section id="schedules.section-0">
               <content>
                 <p>Foo</p>
                 <p>Bar</p>

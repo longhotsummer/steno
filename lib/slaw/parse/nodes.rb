@@ -408,7 +408,8 @@ module Slaw
 
       class Schedule < Treetop::Runtime::SyntaxNode
         def num
-          schedule_title.num.text_value or nil
+          n = schedule_title.num.text_value
+          return (n && !n.empty?) ? n : nil
         end
 
         def heading
@@ -416,8 +417,12 @@ module Slaw
         end
 
         def to_xml(b, i)
-          n = num || i
-          id = "schedule-#{n}"
+          n = num
+          id = if n
+                 "schedule-#{n}"
+               else
+                 "schedules"
+               end
 
           b.chapter(id: id) { |b|
             b.num(num) if num

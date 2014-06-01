@@ -126,7 +126,7 @@ module Slaw
       end
 
       rule schedule_heading_prefix
-        'schedule'i
+        'schedule'i 's'i?
       end
 
       rule section_title_prefix
