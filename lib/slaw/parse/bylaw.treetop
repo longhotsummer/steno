@@ -208,10 +208,6 @@ module Slaw
         [^\n]+ &eol
       end
 
-      rule empty_line
-        space? newline
-      end
-
       ##########
       # terminals
 
@@ -257,6 +253,10 @@ module Slaw
 
       rule space
         [ \t]+
+      end
+
+      rule empty_line
+        space? newline
       end
 
       rule eol
