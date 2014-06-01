@@ -30,11 +30,7 @@ module Slaw
 
       rule section
         section_title
-        section_content <Section>
-      end
-
-      rule section_content
-        subsection*
+        subsections:subsection* <Section>
       end
 
       rule subsection

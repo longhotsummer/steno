@@ -268,7 +268,7 @@ EOS
       section = node.elements[1].elements[0].elements[1].elements[0].elements[1].elements[1]
       section.section_title.title.should == ""
       section.section_title.num.should == "2"
-      section.subsections[0].statement.content.text_value.should == "Notwithstanding the provision of any other By-law or legislation no person shall—"
+      section.subsections.elements[0].statement.content.text_value.should == "Notwithstanding the provision of any other By-law or legislation no person shall—"
     end
 
     it 'should handle sections without titles and with subsections' do
@@ -281,8 +281,8 @@ EOS
       section = node.elements[1].elements[0].elements[1].elements[0].elements[1].elements[0]
       section.section_title.title.should == ""
       section.section_title.num.should == "10"
-      section.subsections[0].statement.num.should == "(1)"
-      section.subsections[0].statement.content.text_value.should == "Transporters must remove medical waste."
+      section.subsections.elements[0].statement.num.should == "(1)"
+      section.subsections.elements[0].statement.content.text_value.should == "Transporters must remove medical waste."
     end
 
     it 'should realise complex section titles are actually section content' do
@@ -295,7 +295,7 @@ EOS
       section = node.elements[1].elements[0].elements[1].elements[0].elements[1].elements[0]
       section.section_title.title.should == ""
       section.section_title.num.should == "10"
-      section.subsections[0].statement.content.text_value.should == "The owner of any premises which is let or sublet to more than one tenant, shall maintain at all times in a clean and sanitary condition every part of such premises as may be used in common by more than one tenant."
+      section.subsections.elements[0].statement.content.text_value.should == "The owner of any premises which is let or sublet to more than one tenant, shall maintain at all times in a clean and sanitary condition every part of such premises as may be used in common by more than one tenant."
     end
   end
 
@@ -318,6 +318,28 @@ EOS
       defn.definition.elements[0].content.text_value.should == 'the foo thing;'
 
       defn = node.definitions.elements[1]
+      defn.term.should == 'bar'
+      defn.content.text_value.should == ' means:'
+      defn.definition.elements[0].content.text_value.should == 'the bar thing;'
+    end
+
+    it 'should permit reparsing of a section with definitions' do
+      sect = parse :section, <<EOS
+1. Section title
+The follow terms are defined:
+"foo" means:
+the foo thing;
+"bar" means:
+the bar thing;
+EOS
+      definitions = sect.definitions.definitions
+
+      defn = definitions.elements[0]
+      defn.term.should == 'foo'
+      defn.content.text_value.should == ' means:'
+      defn.definition.elements[0].content.text_value.should == 'the foo thing;'
+
+      defn = definitions.elements[1]
       defn.term.should == 'bar'
       defn.content.text_value.should == ' means:'
       defn.definition.elements[0].content.text_value.should == 'the bar thing;'
