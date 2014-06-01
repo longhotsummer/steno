@@ -153,7 +153,7 @@ EOS
         <mainBody>
           <chapter id="schedule-1">
             <num>1</num>
-            <heading>The Title of the Schedule</heading>
+            <heading>The title of the schedule</heading>
             <section id="schedule-1.section-0">
               <content>
                 <p>Some lines of text.</p>
@@ -248,7 +248,7 @@ EOS
         </meta>
         <mainBody>
           <chapter id="schedules">
-            <heading>My Cool Schedule</heading>
+            <heading>My cool schedule</heading>
             <section id="schedules.section-0">
               <content>
                 <p>Welcome to this schedule.</p>
