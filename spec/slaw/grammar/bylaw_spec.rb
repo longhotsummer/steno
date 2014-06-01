@@ -7,6 +7,7 @@ describe Slaw::Parse::Parser do
   end
 
   def should_parse(rule, s)
+    s << "\n" unless s.end_with?("\n")
     parser = subject
     tree = parser.parse_bylaw(s, rule)
 

@@ -250,18 +250,11 @@ module Slaw
       end
 
       rule eol
-        newline / end_of_file
+        newline
       end
 
       rule newline
         "\n"
-      end
-
-      ##########
-      # end of file
-
-      rule end_of_file
-        !.
       end
     end
   end

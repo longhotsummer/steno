@@ -78,6 +78,9 @@ module Slaw
 
         s = unwrap_lines(s)
 
+        # ensure string ends with a newline
+        s << "\n" unless s.end_with?("\n")
+
         s
       end
 
