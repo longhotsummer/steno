@@ -56,14 +56,7 @@ module Slaw
         # get rid of page number lines
         s.gsub!(/^ *page \d+ of \d+ *\n/i, '')
 
-        # get rid of empty lines
-        s.gsub!(/^ *\n/, '')
-
-        # compress whitespace
-        s.gsub!(/ {2,}/, ' ')
-
-        # leading and trailing whitespace
-        s.gsub!(/^ +/, '')
+        # trailing whitespace
         s.gsub!(/ +$/, '')
 
         # often we find a section title munged onto the same line as its first statement
@@ -89,8 +82,8 @@ module Slaw
       def unwrap_lines(s)
         lines = s.split(/\n/)
         output = []
-        start_re = /^[a-z]/
-        end_re   = /[a-z0-9]$/
+        start_re = /^\s*[a-z]/
+        end_re   = /[a-z0-9]\s*$/
 
         prev = nil
         lines.each_with_index do |line, i|

@@ -59,7 +59,7 @@ module Slaw
 
       class Preamble < Treetop::Runtime::SyntaxNode
         def to_xml(b)
-          elements.each { |e|
+          statements.elements.each { |e|
             if not (e.content.text_value =~ /^preamble/i)
               b.p(e.content.text_value)
             end

@@ -15,7 +15,8 @@ module Slaw
       end
 
       rule preamble
-        naked_statement* <Preamble>
+        empty_line*
+        statements:naked_statement* <Preamble>
       end
 
       rule chapter
@@ -51,11 +52,13 @@ module Slaw
       # headings
 
       rule chapter_heading
-        space? chapter_heading_prefix eol? space? content eol <ChapterHeading>
+        space? chapter_heading_prefix eol? space? content eol
+        <ChapterHeading>
       end
 
       rule part_heading
-        space? part_heading_prefix eol? space? content eol <PartHeading>
+        space? part_heading_prefix eol? space? content eol
+        <PartHeading>
       end
 
       rule section_title
@@ -76,7 +79,8 @@ module Slaw
         #
         # Additionally, the section title is optional.
         !{ |s| options[:section_number_after_title] }
-        section_title_prefix section_title:section_title_content? eol? <SectionTitleType2>
+        section_title_prefix section_title:section_title_content? eol?
+        <SectionTitleType2>
       end
 
       rule section_title_content
@@ -107,7 +111,8 @@ module Slaw
       end
 
       rule naked_statement
-        space? !(part_heading / chapter_heading / section_title / schedule_heading) content eol <NakedStatement>
+        space? !(part_heading / chapter_heading / section_title / schedule_heading) content eol
+        <NakedStatement>
       end
 
       rule schedule_statement
@@ -182,7 +187,8 @@ module Slaw
       end
 
       rule blocklist_item
-        space? blocklist_item_prefix space content eol <BlocklistItem>
+        space? blocklist_item_prefix space content eol
+        <BlocklistItem>
       end
 
       rule blocklist_item_prefix
@@ -200,6 +206,10 @@ module Slaw
         # anything but a newline, followed by a
         # newline or end of file (without consuming the newline)
         [^\n]+ &eol
+      end
+
+      rule empty_line
+        space? newline
       end
 
       ##########
@@ -251,6 +261,7 @@ module Slaw
 
       rule eol
         newline
+        empty_line*
       end
 
       rule newline
