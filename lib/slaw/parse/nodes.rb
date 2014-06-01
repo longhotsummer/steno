@@ -52,6 +52,8 @@ module Slaw
               chapters.elements.each { |e| e.to_xml(b) }
             }
           }
+
+          schedules.to_xml(b)
         end
       end
 
@@ -360,6 +362,78 @@ module Slaw
       class DefinitionStatement < Treetop::Runtime::SyntaxNode
         def to_xml(b, i, idprefix)
           b.p(content.text_value)
+        end
+      end
+
+      class ScheduleContainer < Treetop::Runtime::SyntaxNode
+        def to_xml(b)
+          return if schedules.elements.empty?
+
+          b.components { |b| 
+            b.component(id: 'component-0') { |b|
+              b.doc(name: 'schedules') { |b|
+                b.meta { |b| 
+                  b.identification(source: "#openbylaws") { |b|
+                    b.FRBRWork { |b|
+                      b.FRBRthis(value: '/za/by-law/locale/1980/name/main/schedules')
+                      b.FRBRuri(value: '/za/by-law/locale/1980/name/schedules')
+                      b.FRBRdate(date: '1980-01-01', name: 'Generation')
+                      b.FRBRauthor(href: '#council', as: '#author')
+                      b.FRBRcountry(value: 'za')
+                    }
+                    b.FRBRExpression { |b|
+                      b.FRBRthis(value: '/za/by-law/locale/1980/name/main//schedules/eng@')
+                      b.FRBRuri(value: '/za/by-law/locale/1980/name/schedules/eng@')
+                      b.FRBRdate(date: '1980-01-01', name: 'Generation')
+                      b.FRBRauthor(href: '#council', as: '#author')
+                      b.FRBRlanguage(language: 'eng')
+                    }
+                    b.FRBRManifestation { |b|
+                      b.FRBRthis(value: '/za/by-law/locale/1980/name/main/schedules/eng@')
+                      b.FRBRuri(value: '/za/by-law/locale/1980/name/schedules/eng@')
+                      b.FRBRdate(date: Time.now.strftime('%Y-%m-%d'), name: 'Generation')
+                      b.FRBRauthor(href: '#openbylaws', as: '#author')
+                    }
+                  }
+                }
+
+                b.mainBody { |b|
+                  schedules.elements.each_with_index { |e, i| e.to_xml(b, i) }
+                }
+              }
+            }
+          }
+        end
+      end
+
+      class Schedule < Treetop::Runtime::SyntaxNode
+        def num
+          n = schedule_heading.num.text_value
+          return (n && !n.empty?) ? n : nil
+        end
+
+        def heading
+          schedule_heading.schedule_title.content.text_value
+        end
+
+        def to_xml(b, i)
+          n = num
+          id = if n
+                 "schedule-#{n}"
+               else
+                 "schedules"
+               end
+
+          b.chapter(id: id) { |b|
+            b.num(num) if num
+            b.heading(heading) if heading
+
+            b.section(id: id + ".section-0") { |b|
+              b.content { |b|
+                statements.elements.each { |e| b.p(e.content.text_value) }
+              }
+            }
+          }
         end
       end
     end

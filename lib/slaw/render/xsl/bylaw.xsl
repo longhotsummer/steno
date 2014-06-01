@@ -9,6 +9,7 @@
 
   <xsl:template match="/">
     <xsl:apply-templates select="a:akomaNtoso/a:act" />
+    <xsl:apply-templates select="a:akomaNtoso/a:components/a:component/a:doc[@name='schedules']" />
   </xsl:template>
   
 </xsl:stylesheet> 

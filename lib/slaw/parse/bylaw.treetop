@@ -5,9 +5,13 @@ module Slaw
     grammar Bylaw
       include Slaw::Parse::GrammarHelpers
 
+      ########
+      # major containers
+
       rule bylaw
         preamble
-        chapters:chapter+ <Bylaw>
+        chapters:chapter*
+        schedules:schedules <Bylaw>
       end
 
       rule preamble
@@ -24,17 +28,34 @@ module Slaw
         sections:section+ <Part>
       end
 
+      rule section
+        section_title
+        section_content <Section>
+      end
+
+      rule subsection
+        statement:(numbered_statement / naked_statement)
+        blocklist:blocklist? <Subsection>
+      end
+
+      rule schedules
+        schedules:schedule* <ScheduleContainer>
+      end
+
+      rule schedule
+        schedule_heading
+        statements:schedule_statement* <Schedule>
+      end
+
+      ##########
+      # headings
+
       rule chapter_heading
         space? chapter_heading_prefix eol? space? content eol <ChapterHeading>
       end
 
       rule part_heading
         space? part_heading_prefix eol? space? content eol <PartHeading>
-      end
-
-      rule section
-        section_title
-        section_content <Section>
       end
 
       rule section_title
@@ -64,13 +85,25 @@ module Slaw
         !{ |s| s[2].text_value[-1] =~ /[^a-zA-z]/ or s[2].text_value.length > 100 }
       end
 
-      rule section_content
-        subsection*
+      rule schedule_heading
+        space? schedule_heading_prefix
+        space? "\""? num:alphanums? "\""? space?
+        eol
+        schedule_title:schedule_title_content?
       end
 
-      rule subsection
-        statement:(numbered_statement / naked_statement)
-        blocklist:blocklist? <Subsection>
+      rule schedule_title_content
+        space? content eol
+
+        # if a schedule title ends in a non-character or it's really long, it's probably content
+        !{ |s| s[1].text_value[-1] =~ /[^a-zA-z]/ or s[1].text_value.length > 100 }
+      end
+
+      ##########
+      # statements
+
+      rule section_content
+        subsection*
       end
 
       rule numbered_statement
@@ -78,11 +111,15 @@ module Slaw
       end
 
       rule naked_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix) content eol <NakedStatement>
+        space? !(part_heading_prefix / chapter_heading_prefix / section_title / numbered_statement_prefix / schedule_heading_prefix) content eol <NakedStatement>
       end
 
       rule preamble_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title) content eol
+        space? !(part_heading_prefix / chapter_heading_prefix / section_title / schedule_heading_prefix) content eol
+      end
+
+      rule schedule_statement
+        space? (!schedule_heading_prefix) content eol
       end
 
       ##########
@@ -94,6 +131,10 @@ module Slaw
 
       rule chapter_heading_prefix
         'chapter'i space alphanums
+      end
+
+      rule schedule_heading_prefix
+        'schedule'i 's'i?
       end
 
       rule section_title_prefix
