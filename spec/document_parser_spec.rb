@@ -415,4 +415,129 @@ XML
     doc.validate_errors.should == []
     doc.validates?.should be_true
   end
+
+
+  it 'should handle whitespace' do
+    doc = subject.parse <<EOS
+PREMABLE
+
+This is a bunch of statements.
+  
+
+
+That do things.
+
+ 
+Chapter 1
+
+A Title
+
+
+1. Section title
+ 
+
+This is section content. And now a list:
+
+
+(a) something,
+
+ 
+(b) something more.
+ 
+2. Second title
+
+Last section.
+ 
+Bye.
+EOS
+    subject.parse_errors.should == []
+
+    doc.xml.should == <<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="#openbylaws">
+        <FRBRWork>
+          <FRBRthis value="/za/by-law/locale/1980/name/main"/>
+          <FRBRuri value="/za/by-law/locale/1980/name"/>
+          <FRBRalias value="By-Law Short Title"/>
+          <FRBRdate date="1980-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/by-law/locale/1980/name/main/eng@"/>
+          <FRBRuri value="/za/by-law/locale/1980/name/eng@"/>
+          <FRBRdate date="1980-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/by-law/locale/1980/name/main/eng@"/>
+          <FRBRuri value="/za/by-law/locale/1980/name/eng@"/>
+          <FRBRdate date="#{Time.now.strftime('%Y-%m-%d')}" name="Generation"/>
+          <FRBRauthor href="#openbylaws" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="1980-01-01" name="Province of Western Cape: Provincial Gazette" number="XXXX" showAs="Province of Western Cape: Provincial Gazette"/>
+      <references source="#this">
+        <TLCOrganization id="openbylaws" href="http://openbylaws.org.za" showAs="openbylaws.org.za"/>
+        <TLCOrganization id="council" href="/ontology/organization/za/council.cape-town" showAs="Cape Town City Council"/>
+        <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
+      </references>
+    </meta>
+    <preamble>
+      <p>PREMABLE</p>
+      <p>This is a bunch of statements.</p>
+      <p>That do things.</p>
+    </preamble>
+    <body>
+      <chapter id="chapter-1">
+        <num>1</num>
+        <heading>A title</heading>
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Section title</heading>
+          <subsection id="section-1.subsection-0">
+            <content>
+              <blockList id="section-1.subsection-0.list0">
+                <listIntroduction>
+This is section content. And now a list:                </listIntroduction>
+                <item id="section-1.subsection-0.list0.a">
+                  <num>(a)</num>
+                  <p>something,</p>
+                </item>
+                <item id="section-1.subsection-0.list0.b">
+                  <num>(b)</num>
+                  <p>something more.</p>
+                </item>
+              </blockList>
+            </content>
+          </subsection>
+        </section>
+        <section id="section-2">
+          <num>2.</num>
+          <heading>Second title</heading>
+          <subsection id="section-2.subsection-0">
+            <content>
+              <p>Last section.</p>
+            </content>
+          </subsection>
+          <subsection id="section-2.subsection-1">
+            <content>
+              <p>Bye.</p>
+            </content>
+          </subsection>
+        </section>
+      </chapter>
+    </body>
+  </act>
+</akomaNtoso>
+XML
+
+    doc.validate!
+    doc.validate_errors.should == []
+    doc.validates?.should be_true
+  end
 end

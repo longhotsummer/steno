@@ -59,7 +59,7 @@ module Slaw
 
       class Preamble < Treetop::Runtime::SyntaxNode
         def to_xml(b)
-          elements.each { |e|
+          statements.elements.each { |e|
             if not (e.content.text_value =~ /^preamble/i)
               b.p(e.content.text_value)
             end
@@ -158,10 +158,6 @@ module Slaw
           section_title.title
         end
 
-        def subsections
-          section_content.elements
-        end
-
         def to_xml(b)
           id = "section-#{num}"
           b.section(id: id) { |b|
@@ -173,7 +169,7 @@ module Slaw
             if definitions? and definitions
               definitions.to_xml(b, idprefix)
             else
-              subsections.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
+              subsections.elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
             end
           }
         end
@@ -187,8 +183,8 @@ module Slaw
           # Parse the definitions section using the definitions grammar
           begin
             @definitions ||= Slaw::Parse::Parser.new.parse_definitions(
-                section_content.input[0...section_content.interval.last],
-                index: section_content.interval.first)
+                subsections.input[0...subsections.interval.last],
+                index: subsections.interval.first)
           rescue Slaw::Parse::ParseError
             nil
           end
