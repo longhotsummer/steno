@@ -10,7 +10,7 @@ module Slaw
 
       rule bylaw
         preamble
-        chapters:chapter+
+        chapters:chapter*
         schedules:schedules <Bylaw>
       end
 
@@ -107,7 +107,7 @@ module Slaw
       end
 
       rule preamble_statement
-        space? !(part_heading_prefix / chapter_heading_prefix / section_title) content eol
+        space? !(part_heading_prefix / chapter_heading_prefix / section_title / schedule_heading_prefix) content eol
       end
 
       rule schedule_statement
