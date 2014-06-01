@@ -70,8 +70,8 @@ XML
 1. Foo
 Stuff and some things.
 Schedule 1
-Foo
-Bar
+The Title of the Schedule
+Some lines of text.
 EOS
     doc = subject.parse(s)
     subject.parse_errors.should == []
@@ -153,11 +153,10 @@ EOS
         <mainBody>
           <chapter id="schedule-1">
             <num>1</num>
-            <heading>Schedule</heading>
+            <heading>The Title of the Schedule</heading>
             <section id="schedule-1.section-0">
               <content>
-                <p>Foo</p>
-                <p>Bar</p>
+                <p>Some lines of text.</p>
               </content>
             </section>
           </chapter>
@@ -175,9 +174,9 @@ XML
 
   it 'should handle a parse with ONLY schedules' do
     s = <<EOS
-Schedules
-Foo
-Bar
+Schedule
+My Cool Schedule
+Welcome to this schedule.
 EOS
     doc = subject.parse(s)
     subject.parse_errors.should == []
@@ -249,11 +248,10 @@ EOS
         </meta>
         <mainBody>
           <chapter id="schedules">
-            <heading>Schedules</heading>
+            <heading>My Cool Schedule</heading>
             <section id="schedules.section-0">
               <content>
-                <p>Foo</p>
-                <p>Bar</p>
+                <p>Welcome to this schedule.</p>
               </content>
             </section>
           </chapter>

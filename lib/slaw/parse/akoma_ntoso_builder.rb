@@ -142,7 +142,10 @@ module Slaw
       def normalise_headings(doc)
         logger.info("Normalising headings")
 
-        doc.xpath('//a:body//a:heading/text()', a: AN).each do |heading|
+        nodes = doc.xpath('//a:body//a:heading/text()', a: AN) +
+                doc.xpath('//a:component/a:doc[@name="schedules"]//a:heading/text()', a: AN)
+
+        nodes.each do |heading|
           heading.content = heading.content.downcase.gsub(/^\w/) { $&.upcase }
         end
       end

@@ -43,7 +43,7 @@ module Slaw
       end
 
       rule schedule
-        schedule_title
+        schedule_heading
         statements:schedule_statement* <Schedule>
       end
 
@@ -85,10 +85,18 @@ module Slaw
         !{ |s| s[2].text_value[-1] =~ /[^a-zA-z]/ or s[2].text_value.length > 100 }
       end
 
-      rule schedule_title
+      rule schedule_heading
         space? schedule_heading_prefix
-        space? "\""? num:alphanums? "\""?
+        space? "\""? num:alphanums? "\""? space?
         eol
+        schedule_title:schedule_title_content?
+      end
+
+      rule schedule_title_content
+        space? content eol
+
+        # if a schedule title ends in a non-character or it's really long, it's probably content
+        !{ |s| s[1].text_value[-1] =~ /[^a-zA-z]/ or s[1].text_value.length > 100 }
       end
 
       ##########

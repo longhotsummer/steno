@@ -408,12 +408,12 @@ module Slaw
 
       class Schedule < Treetop::Runtime::SyntaxNode
         def num
-          n = schedule_title.num.text_value
+          n = schedule_heading.num.text_value
           return (n && !n.empty?) ? n : nil
         end
 
         def heading
-          schedule_title.schedule_heading_prefix.text_value
+          schedule_heading.schedule_title.content.text_value
         end
 
         def to_xml(b, i)
