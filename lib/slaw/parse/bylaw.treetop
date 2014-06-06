@@ -70,7 +70,7 @@ module Slaw
         # Section title
         # 1. Section content
         content eol
-        section_title_prefix space <SectionTitleType1>
+        section_title_prefix whitespace <SectionTitleType1>
       end
 
       rule section_1_title
@@ -107,7 +107,7 @@ module Slaw
       # statements
 
       rule numbered_statement
-        space? numbered_statement_prefix space? (!blocklist_item_prefix content eol)? <NumberedStatement>
+        space? numbered_statement_prefix whitespace? (!blocklist_item_prefix content eol)? <NumberedStatement>
       end
 
       rule naked_statement
@@ -253,6 +253,10 @@ module Slaw
 
       rule space
         [ \t]+
+      end
+
+      rule whitespace
+        [ \t\n]*
       end
 
       rule empty_line
