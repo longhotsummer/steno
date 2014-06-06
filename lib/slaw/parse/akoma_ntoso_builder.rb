@@ -33,6 +33,7 @@ module Slaw
       def preprocess(s)
         # we often get this unicode codepoint in the string, nuke it
         s.gsub!([65532].pack('U*'), '')
+        s.gsub!("", '')
 
         # line endings
         s.gsub!(/\r\n/, "\n")
