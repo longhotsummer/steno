@@ -306,7 +306,7 @@
         return;
       }
 
-      var year = $('[name="doc[meta][pub_date]"').val().split(/-|\//)[0];
+      var year = $('[name="doc[meta][pub_date]"]').val().split(/-|\//)[0];
 
       var branch    = ['steno', region, year, shortname].join('-');
       var filename  = ['by-laws', region, year, shortname + '.xml'].join('/');
