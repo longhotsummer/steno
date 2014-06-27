@@ -88,6 +88,9 @@
 
       $('.editor-controls .find-next', container).on('click', ed.findNext.bind(ed));
       $('.editor-controls .find-prev', container).on('click', ed.findPrevious.bind(ed));
+      $('.editor-controls .toggle-wrap', container).on('click', function(e) {
+        sess.setUseWrapMode(!$(this).hasClass('active'));
+      });
 
       return ed;
     };

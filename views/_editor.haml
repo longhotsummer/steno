@@ -1,7 +1,12 @@
 .editor
   .editor-controls
     .row
-      .col-xs-5.col-xs-offset-7
+      .col-xs-1.col-xs-offset-6
+        .input-group
+          %span.input-group-btn
+            %button.btn.btn-default.toggle-wrap.active(title="Wrap long lines" data-toggle='button')
+              %i.fa.fa-align-left
+      .col-xs-5
         .input-group
           %input.form-control(type="text" name="search" placeholder="Find")
           %span.input-group-btn
