@@ -52,7 +52,7 @@ module Slaw
       # headings
 
       rule chapter_heading
-        space? chapter_heading_prefix eol? space? content eol
+        space? chapter_heading_prefix (whitespace content)? eol
         <ChapterHeading>
       end
 

@@ -32,6 +32,21 @@
         $('ul.steps li:eq(3) a').tab('show');
       });
 
+      $('#doc-meta-title').on('change', function(e) {
+        $('#doc-meta-short_name').val($('#doc-meta-title')
+            .val()
+            .toLowerCase()
+            .replace(/[^\w ]+/g, '')
+            .replace(/[0-9]/g, '')
+            .trim()
+            .replace(/ +/g, '-'));
+      });
+
+      // set gazette name
+      $('#doc-meta-region').on('change', function(e) {
+        $('#doc-meta-pub_name').val($('option:selected', this).data('gazette'));
+      });
+
       // editors
       self.sourceTextEd = self.createEditor('#text-step .editor', 'ace/mode/slaw');
       self.xmlEd = self.createEditor("#xml-step .editor", 'ace/mode/xml');

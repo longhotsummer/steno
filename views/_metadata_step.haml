@@ -5,36 +5,38 @@
       .row
         .col-xs-6
           .form-group
-            %label.col-sm-3.control-label Full title
+            %label.col-sm-3.control-label Municipality
+            .col-sm-3
+              %select#doc-meta-region.form-control(name="doc[meta][region]")
+                - Steno::Region::REGIONS.each_with_index do |region, i|
+                  %option{value: region.code, selected: i==0, data: {Gazette: region.gazette}}&= region.name
+
+          .form-group
+            %label.col-sm-3.control-label Full title of the By-law
             .col-sm-9
-              = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control'
+              = text_field_tag 'doc[meta][title]', placeholder: 'eg. City of Cape Town: How to Have Fun By-law, 2012', class: 'form-control', id: 'doc-meta-title'
           .form-group
-            %label.col-sm-3.control-label Short name
-            .col-sm-6
-              = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control'
+            %label.col-sm-3.control-label Date first published
+            .col-sm-3
+              = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control', value: '2010-01-01', placeholder: 'YYYY-MM-DD'
           .form-group
-            %label.col-sm-3.control-label Gazette
+            %label.col-sm-3.control-label Published in Gazette
             .col-sm-6
-              = text_field_tag 'doc[meta][pub_name]', value: 'Province of Western Cape: Provincial Gazette', class: 'form-control'
+              = text_field_tag 'doc[meta][pub_name]', value: 'Province of Western Cape: Provincial Gazette', class: 'form-control', id: 'doc-meta-pub_name'
             %label.col-sm-1.control-label no.
             .col-sm-2
               = text_field_tag 'doc[meta][pub_number]', placeholder: '1234', class: 'form-control'
-        .col-xs-6
           .form-group
-            %label.col-sm-2.control-label Region
-            .col-sm-3
-              = select_tag 'doc[meta][region]', options: Steno::Region::REGIONS.map { |r| [r.name, r.code] }, selected: Steno::Region::REGIONS.first.code, class: 'form-control'
-          .form-group
-            %label.col-sm-2.control-label Published
-            .col-sm-4
-              = text_field_tag 'doc[meta][pub_date]', type: 'date', class: 'form-control', value: '2010-01-01'
+            %label.col-sm-3.control-label Short name
+            .col-sm-6
+              = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control', id: 'doc-meta-short_name'
 
     %fieldset
       %legend Settings
       .row
         .col-xs-6
           .form-group#section-title-formats
-            %label.col-sm-3.control-label Section title format
+            %label.col-sm-3.control-label What do section titles look like?
             .col-sm-9
               %label.form-control
                 = radio_button_tag 'doc[options][section_number_after_title]', value: '', checked: true
