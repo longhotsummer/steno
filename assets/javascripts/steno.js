@@ -292,7 +292,7 @@
         return;
       }
 
-      var region = $('[name="doc[meta][region]"').val();
+      var region = $('[name="doc[meta][region]"]').val();
       if (!region) {
         alert("Please choose a region for the document.");
         $('ul.steps li:eq(0) a').tab('show');

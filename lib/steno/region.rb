@@ -18,7 +18,7 @@ module Steno
       Region.new(name: 'Buffalo City',  province: "Eastern Cape", council: 'Buffalo City Municipality Council'),
       Region.new(name: 'Cape Town',     province: "Western Cape"),
       Region.new(name: 'Ekurhuleni',    province: "Gauteng", council: 'Ekurhuleni Municipality Council'),
-      Region.new(name: 'Johannesburg',  province: "Gauteng"),
+      Region.new(name: 'Johannesburg',  province: "Gauteng", council: 'City of Johannesburg Metropolity Municipality Council'),
       Region.new(name: 'Mangaung',      province: "Free State", council: 'Mangaung Municipality Council'),
       Region.new(name: 'Nelson Mandela Bay', province: "Eastern Cape", council: 'Nelson Mandela Bay Municipality Council'),
       Region.new(name: 'Tshwane',       province: "Gauteng"),
