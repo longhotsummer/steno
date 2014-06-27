@@ -52,7 +52,7 @@ module Slaw
       # headings
 
       rule chapter_heading
-        space? chapter_heading_prefix (whitespace content)? eol
+        space? chapter_heading_prefix heading:(whitespace content)? eol
         <ChapterHeading>
       end
 
@@ -187,7 +187,7 @@ module Slaw
       end
 
       rule blocklist_item
-        space? blocklist_item_prefix space content eol
+        space? blocklist_item_prefix whitespace content eol
         <BlocklistItem>
       end
 
