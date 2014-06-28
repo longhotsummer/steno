@@ -83,7 +83,7 @@ module Slaw
       def unwrap_lines(s)
         lines = s.split(/\n/)
         output = []
-        start_re = /^\s*[a-z]/i
+        start_re = /^\s*[a-z]/
         end_re   = /[a-z0-9]\s*$/
 
         prev = nil
