@@ -181,6 +181,8 @@ module Slaw
       end
 
       def find_definitions(doc)
+        guess_at_definitions(doc)
+
         terms = {}
         doc.xpath('//a:def', a: AN).each do |defn|
           # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
@@ -192,6 +194,39 @@ module Slaw
         end
 
         terms
+      end
+
+      def guess_at_definitions(doc)
+        doc.xpath('//a:section', a: AN).select do |section|
+          # sections with headings like Definitions
+          heading = section.at_xpath('a:heading', a: AN)
+          heading && heading.content =~ /definitions|interpretation/i
+        end.each do |section|
+          # find items like "foo" means blah...
+          
+          section.xpath('.//a:p|.//a:listIntroduction', a: AN).each do |container|
+            # only if we don't already have a definition here
+            next if container.at_xpath('a:def', a: AN)
+
+            # get first text node
+            text = container.children.first
+            next if (not text or not text.text?)
+
+            match = /^\s*["“”](.+?)["“”]/.match(text.text)
+            if match
+              term = match.captures[0]
+              term_id ||= term.gsub(/[^a-zA-Z0-9_-]/, '_')
+
+              # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
+              defn = doc.create_element('def', term, refersTo: "##{term_id}")
+              rest = match.post_match
+
+              text.before(defn)
+              defn.before(doc.create_text_node('"'))
+              text.content = '"' + rest
+            end
+          end
+        end
       end
       
       def add_terms_to_references(doc, terms)
