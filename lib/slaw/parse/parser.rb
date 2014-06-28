@@ -22,19 +22,6 @@ module Slaw
         tree
       end
 
-      def parse_definitions(source, opts={})
-        parser = BylawParser.new
-        parser.options = options
-
-        opts[:root] = :definitions_section
-
-        tree = parser.parse(source, opts)
-
-        error_from_parser(parser) if tree.nil?
-
-        tree
-      end
-
       def error_from_parser(parser)
         raise Slaw::Parse::ParseError.new(parser.failure_reason || "Couldn't match to grammar",
                                           line: parser.failure_line || 0,

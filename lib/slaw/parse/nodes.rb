@@ -170,28 +170,8 @@ module Slaw
 
             idprefix = "#{id}."
 
-            if definitions? and definitions
-              definitions.to_xml(b, idprefix)
-            else
-              subsections.elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
-            end
+            subsections.elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
           }
-        end
-
-        # is this a definitions section?
-        def definitions?
-          title =~ /^definition|^interpretation/i
-        end
-
-        def definitions
-          # Parse the definitions section using the definitions grammar
-          begin
-            @definitions ||= Slaw::Parse::Parser.new.parse_definitions(
-                subsections.input[0...subsections.interval.last],
-                index: subsections.interval.first)
-          rescue Slaw::Parse::ParseError
-            nil
-          end
         end
       end
 
@@ -303,65 +283,6 @@ module Slaw
             b.num(num)
             b.p(content.text_value)
           }
-        end
-      end
-
-      class DefinitionsSection < Treetop::Runtime::SyntaxNode
-        def to_xml(b, idprefix)
-          b.list(id: "definitions") { |b| 
-            b.intro { |b| b.p(content.text_value) }
-            definitions.elements.each_with_index { |e, i| e.to_xml(b, i, idprefix) }
-          }
-        end
-      end
-
-      class Definition < Treetop::Runtime::SyntaxNode
-        def term
-          defined_term.text_value
-        end
-
-        def term_id
-          @term_id ||= term.gsub(/[^a-zA-Z0-9_-]/, '_')
-        end
-
-        def to_xml(b, i, idprefix)
-          id = "def-term-#{term_id}"
-          b.point(id: id) { |b|
-
-            b.subsection(id: id + ".subsection-0") { |b|
-              b.content { |b| defn_xml(b) }
-            }
-            
-            definition.elements.each_with_index do |child, i|
-              section_id = id + ".subsection-#{i+1}"
-
-              b.subsection(id: section_id) { |b|
-                b.content { |b|
-                  child.to_xml(b, i, section_id + ".")
-                }
-              }
-            end
-          }
-        end
-
-        def defn_xml(b)
-          # "<def refersTo="#term-affected_land" id="adef-term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);
-
-          # use a supplemental builder to construct a tag without indentation
-          s = ""
-          b2 = Builder::XmlMarkup.new(target: s)
-          b2 << '<p>"'
-          b2.def(term, refersTo: "#term-#{term_id}")
-          b2 << '"' + content.text_value
-          b2 << '</p>'
-
-          b << s
-        end
-      end
-
-      class DefinitionStatement < Treetop::Runtime::SyntaxNode
-        def to_xml(b, i, idprefix)
-          b.p(content.text_value)
         end
       end
 

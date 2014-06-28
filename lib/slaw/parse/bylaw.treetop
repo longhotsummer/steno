@@ -163,23 +163,6 @@ module Slaw
       end
 
       ##########
-      # definitions section
-
-      rule definitions_section
-        space? content eol
-        definitions:definition+ <DefinitionsSection>
-      end
-
-      rule definition
-        space? quotes defined_term:non_quotes+ quotes content eol
-        definition:(blocklist / definition_statement)* <Definition>
-      end
-
-      rule definition_statement
-        space? !(quotes) content eol <DefinitionStatement>
-      end
-
-      ##########
       # blocklists
 
       rule blocklist

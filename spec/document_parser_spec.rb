@@ -540,4 +540,87 @@ XML
     doc.validate_errors.should == []
     doc.validates?.should be_true
   end
+
+  it 'should handle definitions' do
+    doc = subject.parse <<EOS
+1. Definitions
+The follow terms are defined:
+"foo" means:
+the foo thing;
+"bar" means:
+the bar thing;
+EOS
+
+    doc.xml.should == <<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="#openbylaws">
+        <FRBRWork>
+          <FRBRthis value="/za/by-law/locale/1980/name/main"/>
+          <FRBRuri value="/za/by-law/locale/1980/name"/>
+          <FRBRalias value="By-Law Short Title"/>
+          <FRBRdate date="1980-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/by-law/locale/1980/name/main/eng@"/>
+          <FRBRuri value="/za/by-law/locale/1980/name/eng@"/>
+          <FRBRdate date="1980-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/by-law/locale/1980/name/main/eng@"/>
+          <FRBRuri value="/za/by-law/locale/1980/name/eng@"/>
+          <FRBRdate date="#{Time.now.strftime('%Y-%m-%d')}" name="Generation"/>
+          <FRBRauthor href="#openbylaws" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <publication date="1980-01-01" name="Province of Western Cape: Provincial Gazette" number="XXXX" showAs="Province of Western Cape: Provincial Gazette"/>
+      <references source="#this">
+        <TLCOrganization id="openbylaws" href="http://openbylaws.org.za" showAs="openbylaws.org.za"/>
+        <TLCOrganization id="council" href="/ontology/organization/za/council.cape-town" showAs="Cape Town City Council"/>
+        <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
+        <TLCTerm id="foo" href="/ontology/term/this.eng.foo" showAs="foo"/>
+        <TLCTerm id="bar" href="/ontology/term/this.eng.bar" showAs="bar"/>
+      </references>
+    </meta>
+    <body>
+      <section id="section-1">
+        <num>1.</num>
+        <heading>Definitions</heading>
+        <subsection id="section-1.subsection-0">
+          <content>
+            <p>The follow terms are defined:</p>
+          </content>
+        </subsection>
+        <subsection id="section-1.subsection-1">
+          <content>
+            <p>"<def refersTo="#foo">foo</def>" means:</p>
+          </content>
+        </subsection>
+        <subsection id="section-1.subsection-2">
+          <content>
+            <p>the <term refersTo="#foo" id="trm0">foo</term> thing;</p>
+          </content>
+        </subsection>
+        <subsection id="section-1.subsection-3">
+          <content>
+            <p>"<def refersTo="#bar">bar</def>" means:</p>
+          </content>
+        </subsection>
+        <subsection id="section-1.subsection-4">
+          <content>
+            <p>the <term refersTo="#bar" id="trm1">bar</term> thing;</p>
+          </content>
+        </subsection>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>
+XML
+  end
 end

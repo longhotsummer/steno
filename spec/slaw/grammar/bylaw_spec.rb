@@ -301,53 +301,6 @@ EOS
   end
 
   #-------------------------------------------------------------------------------
-  # Definitions
-
-  context 'definitions' do
-    it 'should handle definitions' do
-      node = parse :definitions_section, <<EOS
-The follow terms are defined:
-"foo" means:
-the foo thing;
-"bar" means:
-the bar thing;
-EOS
-
-      defn = node.definitions.elements[0]
-      defn.term.should == 'foo'
-      defn.content.text_value.should == ' means:'
-      defn.definition.elements[0].content.text_value.should == 'the foo thing;'
-
-      defn = node.definitions.elements[1]
-      defn.term.should == 'bar'
-      defn.content.text_value.should == ' means:'
-      defn.definition.elements[0].content.text_value.should == 'the bar thing;'
-    end
-
-    it 'should permit reparsing of a section with definitions' do
-      sect = parse :section, <<EOS
-1. Section title
-The follow terms are defined:
-"foo" means:
-the foo thing;
-"bar" means:
-the bar thing;
-EOS
-      definitions = sect.definitions.definitions
-
-      defn = definitions.elements[0]
-      defn.term.should == 'foo'
-      defn.content.text_value.should == ' means:'
-      defn.definition.elements[0].content.text_value.should == 'the foo thing;'
-
-      defn = definitions.elements[1]
-      defn.term.should == 'bar'
-      defn.content.text_value.should == ' means:'
-      defn.definition.elements[0].content.text_value.should == 'the bar thing;'
-    end
-  end
-
-  #-------------------------------------------------------------------------------
   # schedules
 
   context 'schedules' do
