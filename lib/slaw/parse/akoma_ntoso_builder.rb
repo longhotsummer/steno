@@ -215,7 +215,7 @@ module Slaw
             match = /^\s*["“”](.+?)["“”]/.match(text.text)
             if match
               term = match.captures[0]
-              term_id ||= term.gsub(/[^a-zA-Z0-9_-]/, '_')
+              term_id = 'term-' + term.gsub(/[^a-zA-Z0-9_-]/, '_')
 
               # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
               defn = doc.create_element('def', term, refersTo: "##{term_id}")
@@ -224,6 +224,10 @@ module Slaw
               text.before(defn)
               defn.before(doc.create_text_node('"'))
               text.content = '"' + rest
+
+              # adjust the container's id
+              parent = find_up(container, ['blockList', 'point']) || find_up(container, ['subsection', 'section'])
+              parent['id'] = "def-#{term_id}"
             end
           end
         end
@@ -299,9 +303,11 @@ module Slaw
 
       # Look up the parent chain for an element that matches the given
       # node name
-      def find_up(node, name)
+      def find_up(node, names)
+        names = Array(names)
+
         for parent in node.ancestors
-          return parent if parent.name == name
+          return parent if names.include?(parent.name)
         end
 
         nil

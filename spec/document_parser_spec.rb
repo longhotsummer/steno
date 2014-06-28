@@ -584,8 +584,8 @@ EOS
         <TLCOrganization id="openbylaws" href="http://openbylaws.org.za" showAs="openbylaws.org.za"/>
         <TLCOrganization id="council" href="/ontology/organization/za/council.cape-town" showAs="Cape Town City Council"/>
         <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
-        <TLCTerm id="foo" href="/ontology/term/this.eng.foo" showAs="foo"/>
-        <TLCTerm id="bar" href="/ontology/term/this.eng.bar" showAs="bar"/>
+        <TLCTerm id="term-foo" href="/ontology/term/this.eng.foo" showAs="foo"/>
+        <TLCTerm id="term-bar" href="/ontology/term/this.eng.bar" showAs="bar"/>
       </references>
     </meta>
     <body>
@@ -597,24 +597,24 @@ EOS
             <p>The follow terms are defined:</p>
           </content>
         </subsection>
-        <subsection id="section-1.subsection-1">
+        <subsection id="def-term-foo">
           <content>
-            <p>"<def refersTo="#foo">foo</def>" means:</p>
+            <p>"<def refersTo="#term-foo">foo</def>" means:</p>
           </content>
         </subsection>
         <subsection id="section-1.subsection-2">
           <content>
-            <p>the <term refersTo="#foo" id="trm0">foo</term> thing;</p>
+            <p>the <term refersTo="#term-foo" id="trm0">foo</term> thing;</p>
           </content>
         </subsection>
-        <subsection id="section-1.subsection-3">
+        <subsection id="def-term-bar">
           <content>
-            <p>"<def refersTo="#bar">bar</def>" means:</p>
+            <p>"<def refersTo="#term-bar">bar</def>" means:</p>
           </content>
         </subsection>
         <subsection id="section-1.subsection-4">
           <content>
-            <p>the <term refersTo="#bar" id="trm1">bar</term> thing;</p>
+            <p>the <term refersTo="#term-bar" id="trm1">bar</term> thing;</p>
           </content>
         </subsection>
       </section>

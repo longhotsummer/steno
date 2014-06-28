@@ -419,15 +419,15 @@ XML
       subject.guess_at_definitions(doc)
       doc.to_s.should == section(<<XML
         <heading>Definitions</heading>
-        <subsection id="section-1.subsection-1">
+        <subsection id="def-term-authorised_official">
           <content>
-            <p>"<def refersTo="#authorised_official">authorised official</def>" means any official of the Council who has been authorised by it to administer, implement and enforce the provisions of these By-laws;</p>
+            <p>"<def refersTo="#term-authorised_official">authorised official</def>" means any official of the Council who has been authorised by it to administer, implement and enforce the provisions of these By-laws;</p>
           </content>
         </subsection>
         <subsection id="section-1.subsection-2">
           <content>
-            <blockList id="section-1.subsection-2.list2">
-              <listIntroduction>"<def refersTo="#Council">Council</def>" means –                </listIntroduction>
+            <blockList id="def-term-Council">
+              <listIntroduction>"<def refersTo="#term-Council">Council</def>" means –                </listIntroduction>
               <item id="section-1.subsection-2.list2.a">
                 <num>(a)</num>
                 <p>the Metropolitan Municipality of the City of Johannesburg established by Provincial Notice No. 6766 of 2000 dated 1 October 2000, as amended, exercising its legislative and executive authority through its municipal Council; or</p>
