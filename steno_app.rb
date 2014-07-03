@@ -20,6 +20,7 @@ $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/document'
 require 'steno/document_parser'
 require 'steno/helpers'
+require 'steno/importer'
 
 class StenoApp < Sinatra::Base
   set :root,          File.dirname(__FILE__)
@@ -130,6 +131,24 @@ class StenoApp < Sinatra::Base
     end
 
     haml :github_callback, layout: false
+  end
+
+  post '/convert-to-text' do
+    upload = params['file']
+    text = Steno::Importer.new.import_from_upload(upload[:type], upload[:tempfile])
+
+    content_type 'application/json'
+
+    if text.nil?
+      {"error" => "I only know how to import PDF and text files."}.to_json
+    else
+      text = Steno::DocumentParser.new.preprocess(text)
+
+      {
+        "text" => text,
+        "error" => nil,
+      }.to_json
+    end
   end
 
   get '/ping' do
