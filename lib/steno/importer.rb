@@ -16,7 +16,7 @@ module Steno
     end
 
     def import_from_pdf(file)
-      cmd = "#{Importer.pdftotext_path} #{file.path} -"
+      cmd = "#{Importer.pdftotext_path} -enc UTF-8 #{file.path} -"
       logger.info("Executing: #{cmd}")
       stdout, status = Open3.capture2(cmd)
 
@@ -30,5 +30,18 @@ module Steno
     def self.pdftotext_path=(val)
       @@pdftotext_path = val
     end
+
+    def self.set_defaults
+      bin = case RUBY_PLATFORM
+            when /darwin/
+              "pdftotext-mac"
+            else
+              "pdftotext"
+            end
+      path = File.expand_path('../../bin/', File.dirname(__FILE__))
+      self.pdftotext_path = File.join(path, bin)
+    end
+
+    self.set_defaults
   end
 end

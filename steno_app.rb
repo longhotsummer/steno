@@ -52,14 +52,6 @@ class StenoApp < Sinatra::Base
     end
   end
 
-  configure :development do
-    Steno::Importer.pdftotext_path = `which pdftotext`.strip
-  end
-
-  configure :production do
-    Steno::Importer.pdftotext_path = File.expand_path('./bin/pdftotext', File.dirname(__FILE__))
-  end
-
   helpers do
     include Sprockets::Helpers
     include Steno::Helpers
