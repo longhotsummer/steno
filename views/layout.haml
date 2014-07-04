@@ -20,6 +20,25 @@
             Steno for Openbylaws.org.za
 
         %ul.nav.navbar-nav.navbar-right
+          %li.github-login
+            .btn-group.navbar-btn
+              %button.btn.btn-default
+                %i.fa.fa-github
+                Sign in with Github
+
+          %li.github-user
+            .btn-group.navbar-btn
+              %button.btn.btn-default.dropdown-toggle(data-toggle='dropdown')
+                %span.username username
+                %span.caret
+              %ul.dropdown-menu
+                %li
+                  %a.user-repo(href="#" target="_blank")
+                    %i.fa.fa-github
+                    %span.repo repo
+                %li
+                  %a.github-logout(href="#") Sign out
+
           %li
             %a(href="https://github.com/longhotsummer/steno" target="_blank")
               %i.fa.fa-github.fa-lg

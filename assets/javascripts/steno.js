@@ -56,6 +56,9 @@
 
       // dropzone
       self.setupDropzone();
+
+      // github auth
+      self.checkAuth();
     };
 
     /**
@@ -317,7 +320,7 @@
 
       var btn = $('#export-btn').attr('disabled', 'disabled').addClass('spin');
       
-      var exporter = new Steno.GithubExporter();
+      var exporter = new Steno.GithubExporter(self.githubAuth);
       exporter.exportToGithub(branch, filename, filedata, commitmsg, function(success, msg) {
         btn.removeClass('spin').attr('disabled', null);
 
@@ -374,7 +377,43 @@
       self.sourceTextEd.gotoLine(0, 0);
       self.sourceTextEd.focus();
     };
+
+    // see if the user is logged in, and update the display if they are
+    self.checkAuth = function() {
+      self.githubAuth = new Steno.GithubAuth('7aeef0a6887e9e035a65', 'public_repo');
+      // event handlers
+      self.githubAuth.onAuthenticate = self.githubAuth.onAuthenticateFailed = self.setGithubUser;
+
+      self.githubAuth.checkAuthenticated(self.setGithubUser);
+
+      $('header .github-login').on('click', self.login);
+      $('header .github-logout').on('click', self.logout);
+    };
+
+    self.login = function(e) {
+      if (e) e.preventDefault();
+      self.githubAuth.authenticate(function() {});
+    };
+
+    self.logout = function(e) {
+      if (e) e.preventDefault();
+
+      self.githubAuth.clearToken();
+      self.setGithubUser(null);
+    };
+
+    self.setGithubUser = function(user) {
+      if (user) {
+        $('header .github-user .username').text(user.login);
+        $('header .github-user .user-repo').attr('href', user.html_url + '/za-by-laws');
+        $('header .github-user .repo').text(user.login + '/za-by-laws');
+
+        $('header .github-login').hide();
+        $('header .github-user').show();
+      } else {
+        $('header .github-user').hide();
+        $('header .github-login').show();
+      }
+    };
   };
 })(jQuery, window);
-
-

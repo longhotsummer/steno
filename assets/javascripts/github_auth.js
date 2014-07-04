@@ -5,37 +5,54 @@
     self.clientId = clientId;
     self.scope = scope;
 
-    // ensure we're authenticated with github.
-    //
-    // Calls +cb(token)+ on completion.
-    self.authenticate = function(cb) {
+    self.onAuthenticate = null;
+    self.onAuthenticateFailed = null;
+
+    // determine if we're authenticated with github.
+    // Calls cb(user) once done, +user+ is the github
+    // user info if we're authenticated, or null otherwise.
+    self.checkAuthenticated = function(cb) {
       if (self.getToken()) {
         // we have a token, see if it's valid
+
         var github = new Github({
           token: self.getToken(),
           auth: 'oauth'
         });
 
         github.getUser().show(null, function(err, u) {
-          if (u) {
-            // cool, we're authenticated!
-            cb(self.getToken());
-          } else {
-            // ask user to authenticate
-            self.authenticatePopup(cb);
-          }
+          cb(u);
         });
+
       } else {
-        // no token, authenticate
-        self.authenticatePopup(cb);
+        // no token
+        cb(null);
       }
     };
 
-    // open a popup and run the oath pipeline
+    // ensure we're authenticated with github.
+    //
+    // Calls +cb(user)+ on completion.
+    self.authenticate = function(cb) {
+      self.checkAuthenticated(function(user) {
+        if (user) {
+          // cool, we're authenticated!
+          if (self.onAuthenticate) self.onAuthenticate(user);
+          cb(user);
+
+        } else {
+          // no token, authenticate
+          if (self.onAuthenticateFailed) self.onAuthenticateFailed();
+          self.authenticatePopup(cb);
+        }
+      });
+    };
+
+    // open a popup and run the oath pipeline. Calls +cb(user)+ on completion.
     self.authenticatePopup = function(cb) {
       var wnd;
       var url = 'https://github.com/login/oauth/authorize?client_id=' + self.clientId + 
-                '&scope=' + scope +
+                '&scope=' + self.scope +
                 '&state=' + self.newNonce();
 
       // the popup will post a message when it's done
@@ -46,7 +63,16 @@
           var token = e.originalEvent.data.token;
           if (token) {
             self.setToken(token);
-            cb(self.getToken());
+
+            var github = new Github({
+              token: self.getToken(),
+              auth: 'oauth'
+            });
+
+            github.getUser().show(null, function(err, u) {
+              if (self.onAuthenticate) self.onAuthenticate(u);
+              cb(u);
+            });
           } else {
             cb(null);
           }
@@ -85,6 +111,10 @@
 
     self.setToken = function(token) {
       localStorage['steno.github_token'] = token;
+    };
+
+    self.clearToken = function() {
+      localStorage.removeItem('steno.github_token');
     };
 
     self.newNonce = function() {

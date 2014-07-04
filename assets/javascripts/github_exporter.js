@@ -1,6 +1,8 @@
 (function(exports) {
-  exports.Steno.GithubExporter = function() {
+  exports.Steno.GithubExporter = function(auth) {
     var self = this;
+
+    self.auth = auth;
 
     self.exportToGithub = function(branch, filename, data, commitmsg, cb) {
       self.branch = branch;
@@ -21,26 +23,18 @@
     // ensure we have an auth token and setup
     // the github client
     self.ensureAuth = function() {
-      var auth = new Steno.GithubAuth('7aeef0a6887e9e035a65', 'public_repo');
+      self.auth.authenticate(function(user) {
+        if (user) {
+          // authenticated
 
-      auth.authenticate(function(token) {
-        if (token) {
+          self.user = user;
           self.github = new Github({
-            token: token,
+            token: auth.getToken(),
             auth: 'oauth'
           });
-
           self.parentRepo = self.github.getRepo('longhotsummer', 'za-by-laws');
-
-          self.github.getUser().show(null, function(err, user) {
-            if (user) {
-              self.user = user;
-              self.repo = self.github.getRepo(self.user.login, 'za-by-laws');
-              self.ensureRepo();
-            } else {
-              self.writeFailed('Error getting user info: ' + err.error);
-            }
-          });
+          self.repo = self.github.getRepo(self.user.login, 'za-by-laws');
+          self.ensureRepo();
         } else {
           self.writeFailed('You need to login with GitHub.');
         }
