@@ -46,22 +46,28 @@ module Steno
     end
 
     def apply_metadata(metadata)
-      ident = xml_doc.at_xpath('//a:act/a:meta/a:identification', a: AN)
+      for component, xpath in [['main',      '//a:act/a:meta/a:identification'],
+                               ['schedules', '//a:component/a:doc/a:meta/a:identification']] do
+        ident = xml_doc.at_xpath(xpath, a: AN)
+        next if not ident
 
-      # work
-      ident.at_xpath('a:FRBRWork/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/main"
-      ident.at_xpath('a:FRBRWork/a:FRBRuri', a: AN)['value'] = metadata.uri
-      ident.at_xpath('a:FRBRWork/a:FRBRalias', a: AN)['value'] = metadata.title
-      ident.at_xpath('a:FRBRWork/a:FRBRdate', a: AN)['date'] = metadata.date
+        # work
+        ident.at_xpath('a:FRBRWork/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/#{component}"
+        ident.at_xpath('a:FRBRWork/a:FRBRuri', a: AN)['value'] = metadata.uri
+        ident.at_xpath('a:FRBRWork/a:FRBRdate', a: AN)['date'] = metadata.date
+        if component == 'main'
+          ident.at_xpath('a:FRBRWork/a:FRBRalias', a: AN)['value'] = metadata.title
+        end
 
-      # expression
-      ident.at_xpath('a:FRBRExpression/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/main/eng@"
-      ident.at_xpath('a:FRBRExpression/a:FRBRuri', a: AN)['value'] = "#{metadata.uri}/eng@"
-      ident.at_xpath('a:FRBRExpression/a:FRBRdate', a: AN)['date'] = metadata.date
+        # expression
+        ident.at_xpath('a:FRBRExpression/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/#{component}/eng@"
+        ident.at_xpath('a:FRBRExpression/a:FRBRuri', a: AN)['value'] = "#{metadata.uri}/eng@"
+        ident.at_xpath('a:FRBRExpression/a:FRBRdate', a: AN)['date'] = metadata.date
 
-      # manifestation
-      ident.at_xpath('a:FRBRManifestation/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/main/eng@"
-      ident.at_xpath('a:FRBRManifestation/a:FRBRuri', a: AN)['value'] = "#{metadata.uri}/eng@"
+        # manifestation
+        ident.at_xpath('a:FRBRManifestation/a:FRBRthis', a: AN)['value'] = "#{metadata.uri}/#{component}/eng@"
+        ident.at_xpath('a:FRBRManifestation/a:FRBRuri', a: AN)['value'] = "#{metadata.uri}/eng@"
+      end
 
       # publication info
       pub = xml_doc.at_xpath('//a:act/a:meta/a:publication', a: AN)
