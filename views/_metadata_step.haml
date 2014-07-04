@@ -1,9 +1,9 @@
 #metadata-step.tab-pane.active
   = form_tag '/', method: 'post', class: 'form-horizontal', id: 'source-form' do
-    %fieldset
-      %legend By-law information
-      .row
-        .col-xs-6
+    .row
+      .col-xs-6
+        %fieldset
+          %legend By-law information
           .form-group
             %label.col-sm-3.control-label Municipality
             .col-sm-3
@@ -31,10 +31,9 @@
             .col-sm-9
               = text_field_tag 'doc[meta][short_name]', placeholder: 'short-name', class: 'form-control', id: 'doc-meta-short_name'
 
-    %fieldset
-      %legend Settings
-      .row
-        .col-xs-6
+      .col-xs-6
+        %fieldset
+          %legend Settings
           .form-group#section-title-formats
             %label.col-sm-3.control-label What do section titles look like?
             .col-sm-9
@@ -53,7 +52,5 @@
                   1. 
                   %span.text In this by-law, ...
 
-    .row.step-buttons
-      .col-xs-6
-        .col-xs-9.col-xs-offset-3
-          %button.btn.btn-primary.next-step Looks good, next step
+    .step-buttons.pull-right
+      %button.btn.btn-primary.next-step Looks good, next step

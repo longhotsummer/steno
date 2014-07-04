@@ -1,7 +1,14 @@
 .editor
   .editor-controls
     .row
-      .col-xs-1.col-xs-offset-6
+      .col-xs-6
+        - if id == 'source-doc-text'
+          %button.btn.btn-default.import-source
+            %i.fa.fa-file
+            Import document
+          %i.fa.fa-spinner.fa-spin#import-spinner
+
+      .col-xs-1
         .input-group
           %span.input-group-btn
             %button.btn.btn-default.toggle-wrap.active(title="Wrap long lines" data-toggle='button')

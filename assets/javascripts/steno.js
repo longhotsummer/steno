@@ -53,6 +53,9 @@
 
       self.initSyncScrolling($('#source-doc-html'), self.sourceTextEd);
       self.initSyncScrolling($('#xml-doc-html'), self.xmlEd);
+
+      // dropzone
+      self.setupDropzone();
     };
 
     /**
@@ -326,6 +329,52 @@
         }
       });
     };
+
+    self.setupDropzone = function() {
+      // the whole page is a dropzone
+      var dropzone = new Dropzone("#wrapper", {
+        previewsContainer: '#dropzone',
+        maxFilesize: 10,
+        acceptedFiles: 'text/plain,application/pdf',
+        url: '/convert-to-text',
+        clickable: ['button.import-source'],
+      });
+
+      var spinner = $("#import-spinner"),
+          btn = $('button.import-source');
+
+      dropzone
+        .on('addedfile', function(e) {
+          btn.prop('disabled', true);
+          spinner.show();
+        })
+        .on('success', self.fileImported)
+        .on('complete', function(e) {
+          btn.prop('disabled', false);
+          spinner.hide();
+        });
+    };
+
+    self.fileImported = function(file) {
+      var json = $.parseJSON(file.xhr.response);
+
+      if (json.error) {
+        alert(json.error);
+        return;
+      }
+
+      if (self.sourceTextEd.getValue()) {
+        if (!confirm('This will overwrite any existing text. Are you sure?')) {
+          return;
+        }
+      }
+
+      self.sourceTextEd.setValue(json.text);
+      self.sourceTextEd.clearSelection();
+      self.sourceTextEd.gotoLine(0, 0);
+      self.sourceTextEd.focus();
+    };
   };
 })(jQuery, window);
+
 
