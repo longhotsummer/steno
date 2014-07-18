@@ -20,7 +20,20 @@ module Steno
       logger.info("Executing: #{cmd}")
       stdout, status = Open3.capture2(cmd)
 
-      status == 0 ? stdout : nil
+      if status == 0
+        pdf_post_cleanup(stdout)
+      else
+        nil
+      end
+    end
+
+    def pdf_post_cleanup(text)
+      # do general once-off cleanup on pdf output
+
+      # (1) foo; (2) bar
+      text.gsub!(/; \(/, ";\n(")
+
+      text
     end
 
     def self.pdftotext_path
