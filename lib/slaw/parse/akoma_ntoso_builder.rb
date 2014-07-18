@@ -55,7 +55,7 @@ module Slaw
         s.gsub!(/^\d+\s+\w+\s+\d+$/, '')
 
         # get rid of page number lines
-        s.gsub!(/^ *page \d+ of \d+ *\n/i, '')
+        s.gsub!(/^\s*page \d+( of \d+)?\s*\n/i, '')
 
         # trailing whitespace
         s.gsub!(/ +$/, '')
