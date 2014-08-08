@@ -74,7 +74,7 @@
 
       var sess = ed.getSession();
       sess.setMode(mode);
-      sess.setUseWrapMode(true);
+      sess.setUseWrapMode(false);
 
       // setup search bindings
       $('.editor-controls input[name=search]', container).on('keyup', function(event) {

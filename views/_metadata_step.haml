@@ -38,18 +38,18 @@
             %label.col-sm-3.control-label What do section titles look like?
             .col-sm-9
               %label.form-control
-                = radio_button_tag 'doc[options][section_number_after_title]', value: '', checked: true
-                .format
-                  1. Definitions
-                  %br
-                  %span.text In this by-law, ...
-
-              %label.form-control
-                = radio_button_tag 'doc[options][section_number_after_title]', value: 'true'
+                = radio_button_tag 'doc[options][section_number_after_title]', value: 'true', checked: true
                 .format
                   Definitions
                   %br
                   1. 
+                  %span.text In this by-law, ...
+
+              %label.form-control
+                = radio_button_tag 'doc[options][section_number_after_title]', value: ''
+                .format
+                  1. Definitions
+                  %br
                   %span.text In this by-law, ...
 
     .step-buttons.pull-right
