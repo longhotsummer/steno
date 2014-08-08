@@ -33,6 +33,14 @@ module Steno
       # (1) foo; (2) bar
       text.gsub!(/; \(/, ";\n(")
 
+      # (1) foo; and (2) bar
+      # (1) foo; or (2) bar
+      text.gsub!(/; (and|or) \(/, "; \\1\n(")
+
+      # "foo" means ...; "bar" means
+      # repeat this replacement as often as necessary until it no longer matches
+      text.gsub!(/; (["”“][^"”“]+?["”“] means)/, ";\n\\1")
+
       text
     end
 
