@@ -1,7 +1,7 @@
-require 'slaw/parse/akoma_ntoso_builder'
+require 'slaw/builder'
 require 'builder'
 
-describe Slaw::Parse::AkomaNtosoBuilder do
+describe Slaw::Builder do
   def parse(rule, s)
     subject.text_to_syntax_tree(s, rule)
   end

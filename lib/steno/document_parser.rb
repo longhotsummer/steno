@@ -2,7 +2,7 @@ require 'json'
 require 'time'
 require 'logging'
 
-require 'slaw/parse/akoma_ntoso_builder'
+require 'slaw/builder'
 require 'slaw/cleanser'
 require 'slaw/render/transforms'
 
@@ -111,7 +111,7 @@ module Steno
     protected
 
     def builder
-      @builder ||= Slaw::Parse::AkomaNtosoBuilder.new
+      @builder ||= Slaw::Builder.new
     end
   end
 end
