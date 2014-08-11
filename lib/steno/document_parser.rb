@@ -3,7 +3,6 @@ require 'time'
 require 'logging'
 
 require 'slaw/parse/akoma_ntoso_builder'
-require 'slaw/parser'
 require 'slaw/cleanser'
 require 'slaw/render/transforms'
 
@@ -67,12 +66,12 @@ module Steno
       @source_text = preprocess(@source_text)
 
       root = :bylaw
+      builder.parse_options = @options || {}
       logger.info("Parsing #{root}...")
 
-      parser = Slaw::Parser.new
-      parser.options = @options || {}
       begin
-        tree = parser.parse_bylaw(@source_text, root)
+        # transform text into AST
+        tree = builder.text_to_syntax_tree(@source_text, root)
 
         # transform the AST into AkomaNtoso XML
         xml = builder.xml_from_syntax_tree(tree)

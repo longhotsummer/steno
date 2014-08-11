@@ -1,18 +1,17 @@
-require 'slaw/parser'
+require 'slaw/parse/akoma_ntoso_builder'
 require 'builder'
 
-describe Slaw::Parser do
+describe Slaw::Parse::AkomaNtosoBuilder do
   def parse(rule, s)
-    subject.parse_bylaw(s, rule)
+    subject.text_to_syntax_tree(s, rule)
   end
 
   def should_parse(rule, s)
     s << "\n" unless s.end_with?("\n")
-    parser = subject
-    tree = parser.parse_bylaw(s, rule)
+    tree = subject.text_to_syntax_tree(s, rule)
 
     if not tree
-      raise Exception.new(parser.failure_reason || "Couldn't match to grammar") if tree.nil?
+      raise Exception.new(subject.failure_reason || "Couldn't match to grammar") if tree.nil?
     else
       # count an assertion
       tree.should_not be_nil
@@ -60,7 +59,7 @@ EOS
     end
 
     it 'should handle parts and odd section numbers' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 PART 1
 PREVENTION AND SUPPRESSION OF HEALTH NUISANCES
@@ -214,7 +213,7 @@ EOS
 
   context 'sections' do
     it 'should handle section numbers after title' do
-      subject.options = {section_number_after_title: true}
+      subject.parse_options = {section_number_after_title: true}
       node = parse :bylaw, <<EOS
 Section
 1. (1) hello
@@ -226,7 +225,7 @@ EOS
     end
 
     it 'should handle section numbers before title' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 1. Section
 (1) hello
@@ -238,7 +237,7 @@ EOS
     end
 
     it 'should handle section numbers without a dot' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 1 A section
 (1) hello
@@ -256,7 +255,7 @@ EOS
     end
 
     it 'should handle sections without titles' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 1. No owner or occupier of any shop or business premises or vacant land, blah blah
 2. Notwithstanding the provision of any other By-law or legislation no person shall—
@@ -273,7 +272,7 @@ EOS
     end
 
     it 'should handle sections without titles and with subsections' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 10. (1) Transporters must remove medical waste.
 (2) Without limiting generality, stuff.
@@ -287,7 +286,7 @@ EOS
     end
 
     it 'should realise complex section titles are actually section content' do
-      subject.options = {section_number_after_title: false}
+      subject.parse_options = {section_number_after_title: false}
       node = parse :bylaw, <<EOS
 10. The owner of any premises which is let or sublet to more than one tenant, shall maintain at all times in a clean and sanitary condition every part of such premises as may be used in common by more than one tenant.
 11. No person shall keep, cause or suffer to be kept any factory or trade premises so as to cause or give rise to smells or effluvia that constitute a health nuisance.

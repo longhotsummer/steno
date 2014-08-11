@@ -1,17 +1,44 @@
 require 'builder'
 require 'nokogiri'
+require 'treetop'
 
 require 'logging'
 
 require 'slaw/namespaces'
-require 'slaw/parse/blocklists'
 require 'slaw/nokogiri_helpers'
+require 'slaw/parse/blocklists'
+require 'slaw/parse/nodes'
+require 'slaw/parse/error'
 
 module Slaw
   module Parse
     class AkomaNtosoBuilder
       include Slaw::Namespaces
       include Logging
+
+      Treetop.load(File.dirname(__FILE__) + "/bylaw.treetop")
+
+      attr_accessor :parse_options
+
+      def initialize()
+        @parse_options = {}
+      end
+
+      # Try to parse plain text into a syntax tree
+      def text_to_syntax_tree(text, root=:bylaw)
+        parser = Slaw::Parse::BylawParser.new
+        parser.options = @parse_options
+
+        tree = parser.parse(text, {root: root})
+
+        if tree.nil?
+          raise Slaw::Parse::ParseError.new(parser.failure_reason || "Couldn't match to grammar",
+                                            line: parser.failure_line || 0,
+                                            column: parser.failure_column || 0)
+        end
+
+        tree
+      end
 
       # Generate an XML document from the given syntax tree.
       def xml_from_syntax_tree(tree)
