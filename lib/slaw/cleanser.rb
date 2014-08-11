@@ -26,6 +26,7 @@ module Slaw
     def reformat(s)
       s = unbreak_lines(s)
       s = break_lines(s)
+      s = strip_toc(s)
       s = enforce_newline(s)
     end
 
@@ -127,6 +128,32 @@ module Slaw
       end
 
       output.join("\n")
+    end
+
+    # do our best to remove table of contents at the start,
+    # it really confuses the grammer
+    def strip_toc(s)
+      # first, try to find 'TABLE OF CONTENTS' anywhere within the first 4K of text,
+      if toc_start = s[0..4096].match(/TABLE OF CONTENTS/i)
+
+        # grab the first non-blank line after that, it's our end-of-TOC marker
+        if eol = s.match(/^(.+?)$/, toc_start.end(0))
+          marker = eol[0]
+
+          # search for the first line that is a prefix of marker (or vv), and delete
+          # everything in between
+          posn = eol.end(0)
+          while m = s.match(/^(.+?)$/, posn)
+            if marker.start_with?(m[0]) or m[0].start_with?(marker)
+              return s[0...toc_start.begin(0)] + s[m.begin(0)..-1]
+            end
+
+            posn = m.end(0)
+          end
+        end
+      end
+
+      s
     end
   end
 end
