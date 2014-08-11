@@ -361,37 +361,6 @@ XML
     end
   end
 
-  describe '#unwrap_lines' do
-    it 'should unwrap lines' do
-      s = """
-8.2.3 an additional fee or tariff, which is
-to be determined by the City in its
-sole discretion, in respect of additional
-costs incurred or services.
-8.3 In the event that a person qualifies for
-a permit, but has motivated in writing
-the inability to pay the fee contemplated."""
-
-      subject.unwrap_lines(s).should == """
-8.2.3 an additional fee or tariff, which is to be determined by the City in its sole discretion, in respect of additional costs incurred or services.
-8.3 In the event that a person qualifies for a permit, but has motivated in writing the inability to pay the fee contemplated."""
-    end
-
-    it 'should not unwrap section headers' do
-      s = """
-8.4.3 must be a South African citizen, failing which, must be in possession of
-a valid work permit which includes, but is not limited to, a refugee
-permit; and
-8.4.4 must not employ and actively utilise the services of more than 20
-(twenty) persons."""
-
-      subject.unwrap_lines(s).should == """
-8.4.3 must be a South African citizen, failing which, must be in possession of a valid work permit which includes, but is not limited to, a refugee permit; and
-8.4.4 must not employ and actively utilise the services of more than 20
-(twenty) persons."""
-    end
-  end
-
   describe '#guess_at_definitions' do
     it 'should find definitions in p elements' do
       doc = xml2doc(section(<<XML
