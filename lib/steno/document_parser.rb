@@ -4,6 +4,7 @@ require 'logging'
 
 require 'slaw/parse/akoma_ntoso_builder'
 require 'slaw/parse/parser'
+require 'slaw/cleanser'
 require 'slaw/render/transforms'
 
 require 'steno/document'
@@ -93,7 +94,12 @@ module Steno
 
     # Clean up the source text
     def preprocess(source_text)
-      builder.preprocess(source_text)
+      cleanser = Slaw::Cleanser.new
+
+      source_text = cleanser.cleanup(source_text)
+      source_text = cleanser.reformat(source_text)
+
+      source_text
     end
 
     # post-process the XML

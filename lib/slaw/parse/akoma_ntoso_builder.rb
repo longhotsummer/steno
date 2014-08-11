@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'builder'
 require 'nokogiri'
 
@@ -28,80 +26,6 @@ module Slaw
         }
 
         s
-      end
-
-      def preprocess(s)
-        # we often get this unicode codepoint in the string, nuke it
-        s.gsub!([65532].pack('U*'), '')
-        s.gsub!("", '')
-
-        # line endings
-        s.gsub!(/\r\n/, "\n")
-        s.gsub!(/\r/, "\n")
-
-        # change weird quotes to normal ones
-        s.gsub!(/‘‘|’’|''/, '"')
-
-        # tabs to spaces
-        s.gsub!(/\t/, ' ')
-
-        # nuke any line to do with Sabinet and the government printer
-        s.gsub!(/^.*Sabinet.*Government Printer.*$/i, '')
-        s.gsub!(/^.*Provincial Gazette \d+.*$/i, '')
-        s.gsub!(/^.*Provinsiale Koerant \d+.*$/i, '')
-        s.gsub!(/^\s*\d+\s*$/, '')
-
-        # get rid of date lines
-        s.gsub!(/^\d+\s+\w+\s+\d+$/, '')
-
-        # get rid of page number lines
-        s.gsub!(/^\s*page \d+( of \d+)?\s*\n/i, '')
-
-        # trailing whitespace
-        s.gsub!(/ +$/, '')
-
-        # often we find a section title munged onto the same line as its first statement
-        # eg:
-        # foo bar. New section title 62. (1) For the purpose
-        s.gsub!(/\. ([^.]+) (\d+\. \(1\) )/, ".\n" + '\1' + "\n" + '\2')
-        # New section title 62. (1) For the purpose
-        s.gsub!(/(\w) (\d+\. \(1\) )/, '\1' + "\n" + '\2')
-
-        # whitespace on either side
-        s.strip!
-
-        s = unwrap_lines(s)
-
-        # ensure string ends with a newline
-        s << "\n" unless s.end_with?("\n")
-
-        s
-      end
-
-      # Preprocessor that finds likely candidates for unnecessarily wrapped lines
-      # and unwraps them
-      def unwrap_lines(s)
-        lines = s.split(/\n/)
-        output = []
-        start_re = /^\s*[a-z]/
-        end_re   = /[a-z0-9]\s*$/
-
-        prev = nil
-        lines.each_with_index do |line, i|
-          if i == 0
-            output << line
-          else
-            prev = output[-1]
-
-            if line =~ start_re and prev =~ end_re
-              output[-1] = prev + ' ' + line
-            else
-              output << line
-            end
-          end
-        end
-
-        output.join("\n")
       end
 
       def parse_xml(xml)

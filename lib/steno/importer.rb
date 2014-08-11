@@ -1,18 +1,21 @@
 require 'open3'
 
 require 'logging'
+require 'slaw/cleanser'
 
 module Steno
   class Importer
     include Logging
 
     def import_from_upload(mimetype, file)
-      case mimetype
-      when "text/plain"
-        file.read()
-      when "application/pdf"
-        import_from_pdf(file)
-      end
+      text = case mimetype
+             when "text/plain"
+               file.read()
+             when "application/pdf"
+               import_from_pdf(file)
+             end
+
+      cleanup(text) if text
     end
 
     def import_from_pdf(file)
@@ -21,25 +24,18 @@ module Steno
       stdout, status = Open3.capture2(cmd)
 
       if status == 0
-        pdf_post_cleanup(stdout)
+        stdout
       else
         nil
       end
     end
 
-    def pdf_post_cleanup(text)
+    def cleanup(text)
       # do general once-off cleanup on pdf output
+      cleanser = Slaw::Cleanser.new
 
-      # (1) foo; (2) bar
-      text.gsub!(/; \(/, ";\n(")
-
-      # (1) foo; and (2) bar
-      # (1) foo; or (2) bar
-      text.gsub!(/; (and|or) \(/, "; \\1\n(")
-
-      # "foo" means ...; "bar" means
-      # repeat this replacement as often as necessary until it no longer matches
-      text.gsub!(/; (["”“][^"”“]+?["”“] means)/, ";\n\\1")
+      text = cleanser.cleanup(text)
+      text = cleanser.reformat(text)
 
       text
     end
