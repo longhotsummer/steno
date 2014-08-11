@@ -3,7 +3,7 @@ require 'time'
 require 'logging'
 
 require 'slaw/parse/akoma_ntoso_builder'
-require 'slaw/parse/parser'
+require 'slaw/parser'
 require 'slaw/cleanser'
 require 'slaw/render/transforms'
 
@@ -69,7 +69,7 @@ module Steno
       root = :bylaw
       logger.info("Parsing #{root}...")
 
-      parser = Slaw::Parse::Parser.new
+      parser = Slaw::Parser.new
       parser.options = @options || {}
       begin
         tree = parser.parse_bylaw(@source_text, root)

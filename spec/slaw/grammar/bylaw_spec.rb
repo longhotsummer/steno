@@ -1,7 +1,7 @@
-require 'slaw/parse/parser'
+require 'slaw/parser'
 require 'builder'
 
-describe Slaw::Parse::Parser do
+describe Slaw::Parser do
   def parse(rule, s)
     subject.parse_bylaw(s, rule)
   end
