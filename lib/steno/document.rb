@@ -106,7 +106,7 @@ module Steno
 
     protected
     def builder
-      @builder ||= Slaw::Parse::AkomaNtosoBuilder.new
+      @builder ||= Slaw::Builder.new
     end
   end
 end
