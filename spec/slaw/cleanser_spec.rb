@@ -3,6 +3,12 @@ require 'spec_helper'
 require 'slaw/cleanser'
 
 describe Slaw::Cleanser do
+  describe '#remove_empty_lines' do
+    it 'should remove empty lines' do
+      subject.remove_empty_lines("foo\n  \n\n  bar\n\n\nbaz\n").should == "foo\n  bar\nbaz"
+    end
+  end
+
   describe '#unbreak_lines' do
     it 'should unbreak simple lines' do
       subject.unbreak_lines("""
@@ -34,7 +40,20 @@ permit; and
     it 'should break nested lists' do
       subject.break_lines('stored, if known; (b) the number of trolleys').should == "stored, if known;\n(b) the number of trolleys"
 
+      subject.break_lines("(5) The officer-in-Charge may – (a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or\n(b) 30 days after publishing a general").should == "(5) The officer-in-Charge may –\n(a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or\n(b) 30 days after publishing a general"
+
+      subject.break_lines("(2) No person may – (a) plant, cut or remove plants, shrubs or flowers on a grave without the permission of the officer-in-charge; (b) plant, cut or remove plants, shrubs or flowers on the berm section; or").should == "(2) No person may –\n(a) plant, cut or remove plants, shrubs or flowers on a grave without the permission of the officer-in-charge;\n(b) plant, cut or remove plants, shrubs or flowers on the berm section; or"
+
       subject.break_lines('(b) its successor in title; or (c) a structure or person exercising a delegated power or carrying out an instruction, where any power in these By-laws, has been delegated or sub-delegated or an instruction given as contemplated in, section 59 of the Local Government: Municipal Systems Act, 2000 (Act No. 32 of 2000); or (d) a service provider fulfilling a responsibility under these By-laws, assigned to it in terms of section 81(2) of the Local Government: Municipal Systems Act, 2000, or any other law, as the case may be;').should == "(b) its successor in title; or\n(c) a structure or person exercising a delegated power or carrying out an instruction, where any power in these By-laws, has been delegated or sub-delegated or an instruction given as contemplated in, section 59 of the Local Government: Municipal Systems Act, 2000 (Act No. 32 of 2000); or\n(d) a service provider fulfilling a responsibility under these By-laws, assigned to it in terms of section 81(2) of the Local Government: Municipal Systems Act, 2000, or any other law, as the case may be;"
+    end
+
+    it 'should break at likely subsections' do
+      subject.break_lines('(c) place a metal cot on any grave. (3) A person may only erect, place or leave, an object or decoration on a grave during the first 30 days following the burial. (4) Natural or artificial flowers contained in receptacles may be placed on a grave at any time, but in a grave within a berm section or with a headstone, such flowers may only be placed in the socket provided. (5) The officer-in-Charge may – (a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or').should == "(c) place a metal cot on any grave.\n(3) A person may only erect, place or leave, an object or decoration on a grave during the first 30 days following the burial.\n(4) Natural or artificial flowers contained in receptacles may be placed on a grave at any time, but in a grave within a berm section or with a headstone, such flowers may only be placed in the socket provided.\n(5) The officer-in-Charge may – (a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or"
+    end
+
+    it 'should break lines at likely section titles' do
+      subject.break_lines('foo bar. New section title 62. (1) For the purpose').should == "foo bar.\nNew section title\n62. (1) For the purpose"
+      subject.break_lines('New section title 62. (1) For the purpose').should == "New section title\n62. (1) For the purpose"
     end
 
     it 'should clean up wrapped definition lines after pdf' do

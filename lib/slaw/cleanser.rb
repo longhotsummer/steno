@@ -32,6 +32,10 @@ module Slaw
 
     # ------------------------------------------------------------------------
 
+    def remove_empty_lines(s)
+      s.gsub(/\n\s*$/, '')
+    end
+
     # line endings
     def correct_newlines(s)
       s.gsub(/\r\n/, "\n")\
@@ -92,11 +96,17 @@ module Slaw
       s = s.gsub(/(\w) (\d+\. \(1\) )/, '\1' + "\n" + '\2')
 
       # (1) foo; (2) bar
-      s = s.gsub(/; \(/, ";\n(")
+      # (1) foo. (2) bar
+      s = s.gsub(/(\w{3,}[;.]) (\([0-9a-z]+\))/, "\\1\n\\2")
 
       # (1) foo; and (2) bar
       # (1) foo; or (2) bar
       s = s.gsub(/; (and|or) \(/, "; \\1\n(")
+
+      # The officer-in-Charge may – (a) remove all withered natural... \n(b)
+      # We do this last, because by now we should have reconised that (b) should already
+      # be on a new line.
+      s = s.gsub(/ (\(a\) .+?\n\(b\))/, "\n\\1")
 
       # "foo" means ...; "bar" means
       s = s.gsub(/; (["”“][^"”“]+?["”“] means)/, ";\n\\1")

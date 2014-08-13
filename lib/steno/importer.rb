@@ -35,6 +35,7 @@ module Steno
       cleanser = Slaw::Cleanser.new
 
       text = cleanser.cleanup(text)
+      text = cleanser.remove_empty_lines(text)
       text = cleanser.reformat(text)
 
       text
