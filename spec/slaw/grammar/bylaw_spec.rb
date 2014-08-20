@@ -123,7 +123,24 @@ EOS
                   )
       node.statement.content.should be_nil
       node.blocklist.elements.first.num.should == "(a)"
-      node.blocklist.elements.first.content.text_value.should == "one"
+      node.blocklist.elements.first.content.should == "one"
+    end
+
+    it 'should handle a blocklist that dives straight into another list' do
+      node = parse(:subsection, <<EOS
+        (1) here's my really cool list,
+        (a) one
+        (b) (i) single
+        (ii) double
+EOS
+                  )
+      node.statement.content.text_value.should == "here's my really cool list,"
+      node.blocklist.elements.first.num.should == "(a)"
+      node.blocklist.elements.first.content.should == "one"
+      node.blocklist.elements[1].num.should == "(b)"
+      node.blocklist.elements[1].content.should be_nil
+      node.blocklist.elements[2].num.should == "(i)"
+      node.blocklist.elements[2].content.should == "single"
     end
 
     context 'dotted numbers' do
@@ -145,10 +162,10 @@ EOS
                     )
         node.statement.content.text_value.should == "foo"
         node.blocklist.elements.first.num.should == "9.9.1"
-        node.blocklist.elements.first.content.text_value.should == "item1"
+        node.blocklist.elements.first.content.should == "item1"
 
         node.blocklist.elements[2].num.should == "9.9.2.1"
-        node.blocklist.elements[2].content.text_value.should == "item3"
+        node.blocklist.elements[2].content.should == "item3"
       end
     end
   end

@@ -278,10 +278,15 @@ module Slaw
           blocklist_item_prefix.text_value
         end
 
+        def content
+          # TODO this really seems a bit odd
+          item_content.content.text_value if respond_to? :item_content and item_content.respond_to? :content
+        end
+
         def to_xml(b, idprefix)
           b.item(id: idprefix + num.gsub(/[()]/, '')) { |b|
             b.num(num)
-            b.p(content.text_value)
+            b.p(content) if content
           }
         end
       end

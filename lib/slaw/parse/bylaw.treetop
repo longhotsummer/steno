@@ -170,7 +170,7 @@ module Slaw
       end
 
       rule blocklist_item
-        space? blocklist_item_prefix whitespace content eol
+        space? blocklist_item_prefix whitespace? item_content:(!blocklist_item_prefix content eol)?
         <BlocklistItem>
       end
 
