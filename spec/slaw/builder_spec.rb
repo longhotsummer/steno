@@ -165,6 +165,64 @@ XML
 
     # -------------------------------------------------------------------------
 
+    it 'should handle (u) (v) and (x) correctly' do
+      doc = xml2doc(subsection(<<XML
+            <blockList id="section-10.1.lst0">
+              <item id="section-10.1.lst0.t">
+                <num>(t)</num>
+                <p>foo</p>
+              </item>
+              <item id="section-10.1.lst0.u">
+                <num>(u)</num>
+                <p>item-i</p>
+              </item>
+              <item id="section-10.1.lst0.v">
+                <num>(v)</num>
+                <p>item-ii</p>
+              </item>
+              <item id="section-10.1.lst0.w">
+                <num>(w)</num>
+                <p>item-ii</p>
+              </item>
+              <item id="section-10.1.lst0.x">
+                <num>(x)</num>
+                <p>item-ii</p>
+              </item>
+            </blockList>
+XML
+      ))
+
+      subject.nest_blocklists(doc)
+      doc.to_s.should == subsection(<<XML
+            <blockList id="section-10.1.lst0">
+              <item id="section-10.1.lst0.t">
+                <num>(t)</num>
+                <p>foo</p>
+              </item>
+              <item id="section-10.1.lst0.u">
+                <num>(u)</num>
+                <p>item-i</p>
+              </item>
+              <item id="section-10.1.lst0.v">
+                <num>(v)</num>
+                <p>item-ii</p>
+              </item>
+              <item id="section-10.1.lst0.w">
+                <num>(w)</num>
+                <p>item-ii</p>
+              </item>
+              <item id="section-10.1.lst0.x">
+                <num>(x)</num>
+                <p>item-ii</p>
+              </item>
+            </blockList>
+XML
+      )
+    end
+
+
+    # -------------------------------------------------------------------------
+
     it 'should handle (j) correctly' do
       doc = xml2doc(subsection(<<XML
               <blockList id="section-28.3.list2">

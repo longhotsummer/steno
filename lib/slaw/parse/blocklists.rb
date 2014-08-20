@@ -43,7 +43,7 @@ module Slaw
         sublist_count = 0
 
         while item and item.name == 'item'
-          number_format = guess_number_format(item)
+          number_format = guess_number_format(item, number_format)
           break unless number_format
 
           if number_format != our_number_format
@@ -102,7 +102,7 @@ module Slaw
         end
       end
 
-      def self.guess_number_format(item)
+      def self.guess_number_format(item, prev_format=nil)
         return nil unless item.num
 
         prev = item.previous_element
@@ -131,6 +131,8 @@ module Slaw
           else
             NumberingFormat.i
           end
+        when "(u)", "(v)", "(x)"
+          prev_format
         when /^\([ivx]+/
           NumberingFormat.i
         when /^\([a-z][a-z]/
