@@ -127,7 +127,7 @@ module Slaw
           #     - there is not a next item, or
           #     - the next item is something other than (ii)
           if prev and prev.num =~ /^\(h/ and (!nxt or nxt.num != "(ii)")
-            @number_format
+            NumberingFormat.a
           else
             NumberingFormat.i
           end

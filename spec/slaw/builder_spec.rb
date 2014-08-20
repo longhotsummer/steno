@@ -165,6 +165,81 @@ XML
 
     # -------------------------------------------------------------------------
 
+    it 'should handle (j) correctly' do
+      doc = xml2doc(subsection(<<XML
+              <blockList id="section-28.3.list2">
+                <item id="section-28.3.list2.g">
+                  <num>(g)</num>
+                  <p>all <term refersTo="#term-memorial_work" id="trm381">memorial work</term> up to 150 mm in thickness must be securely attached to the base;</p>
+                </item>
+                <item id="section-28.3.list2.h">
+                  <num>(h)</num>
+                  <p>all the components of <term refersTo="#term-memorial_work" id="trm382">memorial work</term> must be completed before being brought into a <term refersTo="#term-cemetery" id="trm383">cemetery</term>;</p>
+                </item>
+                <item id="section-28.3.list2.i">
+                  <num>(i)</num>
+                  <p>footstones must consist of one solid piece;</p>
+                </item>
+                <item id="section-28.3.list2.j">
+                  <num>(j)</num>
+                  <p>in all cases where <term refersTo="#term-memorial_work" id="trm384">memorial work</term> rests on a base -</p>
+                </item>
+                <item id="section-28.3.list2.i">
+                  <num>(i)</num>
+                  <p>such <term refersTo="#term-memorial_work" id="trm385">memorial work</term> must have a foundation;</p>
+                </item>
+                <item id="section-28.3.list2.ii">
+                  <num>(ii)</num>
+                  <p>such <term refersTo="#term-memorial_work" id="trm386">memorial work</term> must be set with cement mortar;</p>
+                </item>
+                <item id="section-28.3.list2.iii">
+                  <num>(iii)</num>
+                  <p>the bottom base of a single <term refersTo="#term-memorial_work" id="trm387">memorial work</term> must not be less than 900mm long 220 mm wide x 250 mm thick and that of a double <term refersTo="#term-memorial_work" id="trm388">memorial work</term> not less than 2 286 mm long x 200 mm wide x 250 mm thick; and</p>
+                </item>
+              </blockList>
+XML
+      ))
+
+      subject.nest_blocklists(doc)
+      doc.to_s.should == subsection(<<XML
+            <blockList id="section-28.3.list2">
+              <item id="section-28.3.list2.g">
+                <num>(g)</num>
+                <p>all <term refersTo="#term-memorial_work" id="trm381">memorial work</term> up to 150 mm in thickness must be securely attached to the base;</p>
+              </item>
+              <item id="section-28.3.list2.h">
+                <num>(h)</num>
+                <p>all the components of <term refersTo="#term-memorial_work" id="trm382">memorial work</term> must be completed before being brought into a <term refersTo="#term-cemetery" id="trm383">cemetery</term>;</p>
+              </item>
+              <item id="section-28.3.list2.i">
+                <num>(i)</num>
+                <p>footstones must consist of one solid piece;</p>
+              </item>
+              <item id="section-28.3.list2.j">
+                <num>(j)</num>
+                <blockList id="section-28.3.list2.j.list0">
+                  <listIntroduction>in all cases where <term refersTo="#term-memorial_work" id="trm384">memorial work</term> rests on a base -</listIntroduction>
+                  <item id="section-28.3.list2.j.list0.i">
+                    <num>(i)</num>
+                    <p>such <term refersTo="#term-memorial_work" id="trm385">memorial work</term> must have a foundation;</p>
+                  </item>
+                  <item id="section-28.3.list2.j.list0.ii">
+                    <num>(ii)</num>
+                    <p>such <term refersTo="#term-memorial_work" id="trm386">memorial work</term> must be set with cement mortar;</p>
+                  </item>
+                  <item id="section-28.3.list2.j.list0.iii">
+                    <num>(iii)</num>
+                    <p>the bottom base of a single <term refersTo="#term-memorial_work" id="trm387">memorial work</term> must not be less than 900mm long 220 mm wide x 250 mm thick and that of a double <term refersTo="#term-memorial_work" id="trm388">memorial work</term> not less than 2 286 mm long x 200 mm wide x 250 mm thick; and</p>
+                  </item>
+                </blockList>
+              </item>
+            </blockList>
+XML
+      )
+    end
+
+    # -------------------------------------------------------------------------
+
     it 'should handle deeply nested lists' do
       doc = xml2doc(subsection(<<XML
         <blockList id="list0">
