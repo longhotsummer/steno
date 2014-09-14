@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/cross_origin'
 require 'newrelic_rpm'
 
 require 'padrino-helpers'
@@ -35,6 +36,7 @@ class StenoApp < Sinatra::Base
   enable :logging
 
   register Padrino::Helpers
+  register Sinatra::CrossOrigin
 
   configure do
     # Setup Sprockets
@@ -216,6 +218,52 @@ class StenoApp < Sinatra::Base
         "error" => nil,
       }.to_json
     end
+  end
+
+  # search
+  get '/search' do
+    cross_origin
+    content_type 'application/json'
+
+    if not params[:q]
+      return {
+        hits: {
+          total: 0,
+        },
+        took: 0,
+      }.to_json
+    end
+
+    es = Elasticsearch::Client.new
+    es.transport.reload_connections!
+
+    results = es.search(index: 'openbylaws.org.za', body: {
+      query: {
+        multi_match: {
+          query: params[:q],
+          type: 'cross_fields',
+          fields: ['title', 'content'],
+        }
+      },
+      fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url'],
+      highlight: {
+        fields: {
+          content: {
+            fragment_size: 80,
+            number_of_fragments: 2,
+          }
+        },
+        pre_tags: ['<mark>'],
+        post_tags: ['</mark>'],
+      },
+      from: 0,
+      size: 20,
+      sort: {
+        '_score' => {order: 'desc'}
+      }
+    })
+
+    return results.to_json
   end
 
   get '/ping' do
