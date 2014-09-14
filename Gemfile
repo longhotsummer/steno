@@ -24,6 +24,10 @@ gem "nokogiri", "~> 1.6.0"
 gem "oauth2", "~> 0.9.2"
 gem "newrelic_rpm", "~> 3.7"
 
+# for search
+gem 'sinatra-cross_origin', '~> 0.3.2'
+gem 'elasticsearch', '~> 1.0.5'
+
 gem "log4r"
 
 group :development do
