@@ -37,6 +37,7 @@ class Indexer
           content: {type: 'string', analyzer: 'english'},
           published_on: {type: 'date', format: 'dateOptionalTime'},
           region: {type: 'string', index: 'not_analyzed'},
+          region_name: {type: 'string', index: 'not_analyzed'},
           repealed: {type: 'boolean'},
         }
       }
@@ -48,6 +49,7 @@ class Indexer
 
     for bylaw in bylaws
       id = bylaw.id_uri.gsub('/', '-')
+      region = bylaw.region.gsub('-', ' ').split.map(&:capitalize).join(' ')
 
       @es.index(index: @ix, type: @type, id: id, body: {
         frbr_uri: bylaw.id_uri,
@@ -55,6 +57,7 @@ class Indexer
         title: bylaw.short_title,
         content: bylaw.body.text,
         region: bylaw.region,
+        region_name: region,
         published_on: bylaw.publication['date'],
         repealed: bylaw.repealed?,
       })

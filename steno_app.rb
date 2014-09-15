@@ -245,19 +245,23 @@ class StenoApp < Sinatra::Base
           fields: ['title', 'content'],
         }
       },
-      fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url'],
+      fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url', 'region_name'],
       highlight: {
+        order: "score",
         fields: {
           content: {
             fragment_size: 80,
             number_of_fragments: 2,
+          },
+          title: {
+            number_of_fragments: 0, # entire field
           }
         },
         pre_tags: ['<mark>'],
         post_tags: ['</mark>'],
       },
       from: 0,
-      size: 20,
+      size: 10,
       sort: {
         '_score' => {order: 'desc'}
       }
