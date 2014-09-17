@@ -23,6 +23,7 @@ Log4r::Logger.new('Slaw').add(outputter)
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/region'
 require 'steno/helpers'
+require 'steno/search'
 
 class StenoApp < Sinatra::Base
   set :root,          File.dirname(__FILE__)
@@ -234,38 +235,7 @@ class StenoApp < Sinatra::Base
       }.to_json
     end
 
-    es = Elasticsearch::Client.new
-    es.transport.reload_connections!
-
-    results = es.search(index: 'openbylaws.org.za', body: {
-      query: {
-        multi_match: {
-          query: params[:q],
-          type: 'cross_fields',
-          fields: ['title', 'content'],
-        }
-      },
-      fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url', 'region_name'],
-      highlight: {
-        order: "score",
-        fields: {
-          content: {
-            fragment_size: 80,
-            number_of_fragments: 2,
-          },
-          title: {
-            number_of_fragments: 0, # entire field
-          }
-        },
-        pre_tags: ['<mark>'],
-        post_tags: ['</mark>'],
-      },
-      from: 0,
-      size: 10,
-      sort: {
-        '_score' => {order: 'desc'}
-      }
-    })
+    results = Steno::Search.searcher.search(params[:q])
 
     return results.to_json
   end
