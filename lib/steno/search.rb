@@ -1,4 +1,4 @@
-require 'slaw'
+require 'steno/elasticsearch'
 
 module Steno
   class Search
@@ -13,7 +13,7 @@ module Steno
     ]
 
     def self.searcher
-      @@searcher ||= Slaw::ElasticSearchSupport.new(*ELASTICSEARCH_PARAMS)
+      @@searcher ||= Steno::ElasticSearchSupport.new(*ELASTICSEARCH_PARAMS)
     end
   end
 end

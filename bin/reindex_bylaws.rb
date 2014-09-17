@@ -2,10 +2,12 @@
 
 require 'json'
 require 'log4r'
+require 'slaw'
 
 outputter = Log4r::StderrOutputter.new('stderr')
 outputter.formatter = Log4r::PatternFormatter.new(pattern: '%d %c %m')
 Log4r::Logger.new('Slaw').add(outputter)
+Log4r::Logger.new('Steno').add(outputter)
 
 $:.unshift(File.join(File.dirname(__FILE__), '../lib'))
 require 'steno/search'
