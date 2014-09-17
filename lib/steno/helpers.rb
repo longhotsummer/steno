@@ -1,9 +1,9 @@
 module Steno
   module Helpers
-    include Slaw::Namespaces
+    include Slaw::Namespace
 
     def toc_items(doc)
-      doc.at_xpath('/a:akomaNtoso/a:act/a:body', a: AN).elements
+      doc.at_xpath('/a:akomaNtoso/a:act/a:body', a: NS).elements
     end
   end
 end

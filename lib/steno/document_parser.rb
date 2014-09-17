@@ -1,10 +1,7 @@
 require 'json'
 require 'time'
-require 'logging'
 
-require 'slaw/builder'
-require 'slaw/cleanser'
-require 'slaw/render/transforms'
+require 'slaw'
 
 require 'steno/document'
 require 'steno/region'
@@ -47,7 +44,7 @@ module Steno
   end
 
   class DocumentParser
-    include Logging
+    include Slaw::Logging
 
     attr_accessor :metadata
     attr_reader :source_text
@@ -93,7 +90,7 @@ module Steno
 
     # Clean up the source text
     def preprocess(source_text)
-      cleanser = Slaw::Cleanser.new
+      cleanser = Slaw::Parse::Cleanser.new
 
       source_text = cleanser.cleanup(source_text)
       source_text = cleanser.reformat(source_text)
@@ -111,7 +108,7 @@ module Steno
     protected
 
     def builder
-      @builder ||= Slaw::Builder.new
+      @builder ||= Slaw::Parse::Builder.new
     end
   end
 end
