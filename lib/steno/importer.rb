@@ -1,11 +1,8 @@
 require 'open3'
 
-require 'logging'
-require 'slaw/cleanser'
-
 module Steno
   class Importer
-    include Logging
+    include Slaw::Logging
 
     def import_from_upload(mimetype, file)
       text = case mimetype
@@ -32,7 +29,7 @@ module Steno
 
     def cleanup(text)
       # do general once-off cleanup on pdf output
-      cleanser = Slaw::Cleanser.new
+      cleanser = Slaw::Parse::Cleanser.new
 
       text = cleanser.cleanup(text)
       text = cleanser.remove_empty_lines(text)
