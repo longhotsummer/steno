@@ -2,7 +2,7 @@
 source "https://rubygems.org"
 ruby '2.1.1'
 
-gem 'slaw', '~> 0.1.2'
+gem 'slaw', '~> 0.1.3'
 
 gem "sinatra"
 gem "sinatra-support"

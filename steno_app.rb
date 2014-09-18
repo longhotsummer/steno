@@ -20,7 +20,6 @@ $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/document'
 require 'steno/document_parser'
 require 'steno/helpers'
-require 'steno/importer'
 
 class StenoApp < Sinatra::Base
   set :root,          File.dirname(__FILE__)
@@ -50,6 +49,16 @@ class StenoApp < Sinatra::Base
       config.public_path = public_folder
       config.debug       = true if development?
     end
+
+    # find the pdftotext binary
+    bin = case RUBY_PLATFORM
+          when /darwin/
+            "pdftotext-mac"
+          else
+            "pdftotext"
+          end
+    path = File.expand_path('bin', File.dirname(__FILE__))
+    Slaw::Extract::Extractor.pdftotext_path = File.join(path, bin)
   end
 
   helpers do
@@ -134,10 +143,17 @@ class StenoApp < Sinatra::Base
   end
 
   post '/convert-to-text' do
-    upload = params['file']
-    text = Steno::Importer.new.import_from_upload(upload[:type], upload[:tempfile])
-
     content_type 'application/json'
+    upload = params['file']
+
+    # extract it
+    extractor = Slaw::Extract::Extractor.new
+    text = case upload[:type]
+           when "text/plain"
+             extractor.extract_from_text(upload[:tempfile].path)
+           when "application/pdf"
+             extractor.extract_from_pdf(upload[:tempfile].path)
+           end
 
     if text.nil?
       {"error" => "I only know how to import PDF and text files."}.to_json
