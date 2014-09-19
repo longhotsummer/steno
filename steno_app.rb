@@ -10,6 +10,9 @@ require 'sprockets-sass'
 require 'bootstrap-sass'
 require 'oauth2'
 
+require 'slaw'
+require 'slaw/za/bylaw_generator'
+
 # Setup logging
 outputter = Log4r::StderrOutputter.new('stderr')
 outputter.formatter = Log4r::PatternFormatter.new(pattern: '%d %c %m')
@@ -18,7 +21,7 @@ Log4r::Logger.new('Slaw').add(outputter)
 
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/document'
-require 'steno/document_parser'
+require 'steno/region'
 require 'steno/helpers'
 
 class StenoApp < Sinatra::Base
@@ -71,19 +74,29 @@ class StenoApp < Sinatra::Base
   end
 
   post "/parse" do
-    parser = Steno::DocumentParser.new
-    parser.metadata = Steno::Metadata.new(params[:doc][:meta])
-    parser.options = {
+    content_type "application/json"
+
+    generator = Slaw::ZA::BylawGenerator.new
+    generator.parser.options = {
       section_number_after_title: params[:doc][:options][:section_number_after_title].present?
     }
 
-    doc = parser.parse(params[:doc][:source_text])
+    begin
+      errors = []
+      bylaw = generator.generate_from_text(params[:doc][:source_text])
 
-    content_type "application/json"
+      # TODO: remove this juggling between Slaw::ByLaw and Steno::Document
+
+      doc = Steno::Document.new
+      doc.xml_doc = bylaw.doc
+      doc.apply_metadata(Steno::Metadata.new(params[:doc][:meta]))
+    rescue Slaw::Parse::ParseError => e
+      errors << e
+    end
+
     {
-      "source_text" => parser.source_text,
-      "parse_errors" => parser.parse_errors,
-      "xml" => doc ? doc.xml : nil,
+      "parse_errors" => errors,
+      "xml" => doc.xml,
     }.to_json
   end
 
@@ -158,8 +171,6 @@ class StenoApp < Sinatra::Base
     if text.nil?
       {"error" => "I only know how to import PDF and text files."}.to_json
     else
-      text = Steno::DocumentParser.new.preprocess(text)
-
       {
         "text" => text,
         "error" => nil,

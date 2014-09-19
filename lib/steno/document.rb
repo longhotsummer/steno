@@ -5,6 +5,42 @@ require 'nokogiri'
 require 'slaw'
 
 module Steno
+  class Metadata
+    attr_accessor :title
+    attr_accessor :short_name
+
+    attr_accessor :region
+
+    attr_accessor :pub_name
+    attr_accessor :pub_number
+    attr_accessor :pub_date
+
+    FIELDS = %w(title short_name pub_name pub_number pub_date region)
+
+    def initialize(hash=nil)
+      # load values from hash
+      if hash
+        FIELDS.each do |attr|
+          self.send("#{attr}=", hash[attr]) if hash[attr]
+        end
+
+        self.pub_date = Time.parse(pub_date) if pub_date.present?
+      end
+    end
+  
+    def year
+      pub_date && pub_date.strftime('%Y')
+    end
+
+    def date
+      pub_date && pub_date.strftime('%Y-%m-%d')
+    end
+
+    def uri
+      "/za/by-law/#{@region || 'region'}/#{year || 'year'}/#{@short_name}"
+    end
+  end
+
   class Document
     include Slaw::Logging
     include Slaw::Namespace

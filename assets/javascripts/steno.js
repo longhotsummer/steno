@@ -107,9 +107,6 @@
     self.parsedSource = function(data) {
       console.log(data);
 
-      // update the source text
-      self.setSourceText(data.source_text);
-
       if (!self.setParseErrors(data.parse_errors)) {
         // no errors,/ kick of a background render
         self.renderSourceOutput(data.xml);
@@ -376,6 +373,8 @@
       self.sourceTextEd.clearSelection();
       self.sourceTextEd.gotoLine(0, 0);
       self.sourceTextEd.focus();
+
+      $('#parse-btn').click();
     };
 
     // see if the user is logged in, and update the display if they are
