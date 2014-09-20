@@ -129,6 +129,19 @@ class StenoApp < Sinatra::Base
     }.to_json
   end
 
+  post "/cleanup" do
+    text = params[:text]
+
+    cleanser = Slaw::Parse::Cleanser.new
+    text = cleanser.cleanup(text)
+    text = cleanser.reformat(text)
+
+    content_type "application/json"
+    {
+      "text" => text,
+    }.to_json
+  end
+
   post "/sanitise" do
     bylaw = Slaw::ByLaw.new
     bylaw.parse(params[:doc][:xml])
@@ -177,7 +190,7 @@ class StenoApp < Sinatra::Base
     haml :github_callback, layout: false
   end
 
-  post '/convert-to-text' do
+  post '/extract' do
     content_type 'application/json'
     upload = params['file']
 
