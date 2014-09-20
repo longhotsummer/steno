@@ -105,18 +105,13 @@ class StenoApp < Sinatra::Base
       if region = Steno::Region.for_code(meta[:region])
         council['showAs'] = region.council
       end
-
-      # TODO: remove this juggling between Slaw::ByLaw and Steno::Document
-
-      doc = Steno::Document.new
-      doc.xml_doc = bylaw.doc
     rescue Slaw::Parse::ParseError => e
       errors << e
     end
 
     {
       "parse_errors" => errors,
-      "xml" => doc.xml,
+      "xml" => bylaw && bylaw.to_xml(indent: 2)
     }.to_json
   end
 
@@ -135,27 +130,34 @@ class StenoApp < Sinatra::Base
   end
 
   post "/sanitise" do
-    doc = Steno::Document.new
-    doc.xml = params[:doc][:xml]
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
 
-    doc.postprocess!
+    generator = Slaw::ZA::BylawGenerator.new
+    generator.builder.postprocess(bylaw.doc)
 
     content_type "application/json"
     {
-      "xml" => doc.xml
+      "xml" => bylaw.to_xml(indent: 2)
     }.to_json
   end
 
   post "/validate" do
-    doc = Steno::Document.new
-    doc.xml = params[:doc][:xml]
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
 
-    doc.validate!
+    errors = bylaw.validate.map do |e|
+      {
+        message: e.to_s,
+        line: e.line,
+        column: e.column,
+      }
+    end
 
     content_type "application/json"
     {
-      "validate_errors" => doc.validate_errors,
-      "validates" => doc.validates?
+      "validate_errors" => errors,
+      "validates" => errors.empty?
     }.to_json
   end
 
