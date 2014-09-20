@@ -95,3 +95,12 @@ header {
 .render-label {
   display: none;
 }
+
+#error-box {
+  position: fixed;
+  top: 10px;
+  width: 30%;
+  left: 35%;
+  z-index: 1000;
+  display: none;
+}

@@ -15,6 +15,9 @@
     self.syncScrolling = true;
 
     self.init = function() {
+      $(document).ajaxError(self.ajaxError);
+      $('#error-box .close').on('click', function() { $('#error-box').hide(); });
+
       $('#parse-btn').on('click', self.parseSource);
       $('#render-btn').on('click', self.checkAndRenderXml);
       $('#export-btn').on('click', self.exportToGitHub);
@@ -60,6 +63,11 @@
 
       // github auth
       self.checkAuth();
+    };
+
+    self.ajaxError = function(event, jqxhr, settings, exception) {
+      $('#error-box .text').text(jqxhr.status == 500 ? 'Whoops, something went wrong.' : exception);
+      $('#error-box').show();
     };
 
     /**
