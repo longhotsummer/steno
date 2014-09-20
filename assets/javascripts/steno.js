@@ -18,6 +18,7 @@
       $('#parse-btn').on('click', self.parseSource);
       $('#render-btn').on('click', self.checkAndRenderXml);
       $('#export-btn').on('click', self.exportToGitHub);
+      $('#cleanup-btn').on('click', self.cleanupSource);
 
       $('#metadata-step button.next-step').on('click', function(e) {
         e.preventDefault();
@@ -182,7 +183,7 @@
     self.parseSource = function(e) {
       e.preventDefault();
 
-      var btn = $('#parse-btn').attr('disabled', 'disabled').addClass('spin');
+      var btn = $('#parse-btn').prop('disabled', true).addClass('spin');
       var data = $('#source-form').serializeArray();
       data.push({name: 'doc[source_text]', value: self.sourceTextEd.getValue()});
 
@@ -191,7 +192,7 @@
         data: data,
         success: self.parsedSource,
         complete: function() {
-          btn.removeClass('spin').attr('disabled', null);
+          btn.removeClass('spin').prop('disabled', false);
         }
       });
     };
@@ -204,6 +205,28 @@
           var perc = node.scrollTop() / node[0].scrollHeight;
           var line = Math.floor(editor.getSession().getLength() * perc);
           editor.scrollToLine(line, false, true);
+        }
+      });
+    };
+
+    /**
+     * Clean up the source text
+     */
+    self.cleanupSource = function(e) {
+      e.preventDefault();
+
+      var btn = $('#cleanup-btn').prop('disabled', true),
+          spinner = $("#import-spinner").show();
+
+      $.ajax('/cleanup', {
+        method: 'POST',
+        data: [{name: 'text', value: self.sourceTextEd.getValue()}],
+        success: function(data) {
+          self.setSourceText(data.text);
+        },
+        complete: function() {
+          spinner.hide();
+          btn.prop('disabled', false);
         }
       });
     };
@@ -231,7 +254,7 @@
      * Validate and render the XML editor contents.
      */
     self.checkAndRenderXml = function() {
-      var btn = $('#render-btn').attr('disabled', 'disabled').addClass('spin');
+      var btn = $('#render-btn').prop('disabled', true).addClass('spin');
 
       $.ajax('/sanitise', {
         method: 'POST',
@@ -251,12 +274,12 @@
               self.xmlEd.focus();
             },
             complete: function() {
-              btn.removeClass('spin').attr('disabled', null);
+              btn.removeClass('spin').prop('disabled', false);
             }
           });
         },
         error: function() {
-          btn.removeClass('spin').attr('disabled', null);
+          btn.removeClass('spin').prop('disabled', false);
         }
       });
     };
@@ -315,11 +338,11 @@
       var filename  = ['by-laws', region, year, shortname + '.xml'].join('/');
       var commitmsg = 'Steno export of ' + name + ' of ' + year;
 
-      var btn = $('#export-btn').attr('disabled', 'disabled').addClass('spin');
+      var btn = $('#export-btn').prop('disabled', true).addClass('spin');
       
       var exporter = new Steno.GithubExporter(self.githubAuth);
       exporter.exportToGithub(branch, filename, filedata, commitmsg, function(success, msg) {
-        btn.removeClass('spin').attr('disabled', null);
+        btn.removeClass('spin').prop('disabled', false);
 
         if (success) {
           var url = exporter.getExportedUrl();
@@ -336,7 +359,7 @@
         previewsContainer: '#dropzone',
         maxFilesize: 10,
         acceptedFiles: 'text/plain,application/pdf',
-        url: '/convert-to-text',
+        url: '/extract',
         clickable: ['button.import-source'],
       });
 

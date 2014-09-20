@@ -20,7 +20,6 @@ Log4r::Logger.new('Steno').add(outputter)
 Log4r::Logger.new('Slaw').add(outputter)
 
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
-require 'steno/document'
 require 'steno/region'
 require 'steno/helpers'
 
@@ -85,57 +84,93 @@ class StenoApp < Sinatra::Base
       errors = []
       bylaw = generator.generate_from_text(params[:doc][:source_text])
 
-      # TODO: remove this juggling between Slaw::ByLaw and Steno::Document
+      meta = params[:doc][:meta]
 
-      doc = Steno::Document.new
-      doc.xml_doc = bylaw.doc
-      doc.apply_metadata(Steno::Metadata.new(params[:doc][:meta]))
+      bylaw.title = meta[:title]
+      bylaw.date = meta[:pub_date]
+      bylaw.year = meta[:pub_date].split('-')[0]
+      bylaw.name = meta[:short_name]
+      bylaw.region = meta[:region]
+
+      bylaw.published!(
+        name: meta[:pub_name],
+        date: meta[:pub_date],
+        number: meta[:pub_number],
+      )
+
+      # set council manually
+      council = bylaw.doc.at_css('#council')
+      council['href'] = "/ontology/organization/za/council.#{meta[:region]}"
+      if region = Steno::Region.for_code(meta[:region])
+        council['showAs'] = region.council
+      end
     rescue Slaw::Parse::ParseError => e
       errors << e
     end
 
     {
       "parse_errors" => errors,
-      "xml" => doc.xml,
+      "xml" => bylaw && bylaw.to_xml(indent: 2)
     }.to_json
   end
 
   post "/render" do
-    doc = Steno::Document.new
-    doc.xml = (params[:doc] || {})[:xml]
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
 
-    @doc = doc.xml_doc
+    html = Slaw::Render::HTMLRenderer.new.render(bylaw.doc, '/root/')
+    @doc = bylaw.doc
     toc_html = haml(:toc, layout: false)
 
     content_type "application/json"
     {
-      "html" => doc.render,
+      "html" => html,
       "toc"  => toc_html,
     }.to_json
   end
 
-  post "/sanitise" do
-    doc = Steno::Document.new
-    doc.xml = params[:doc][:xml]
+  post "/cleanup" do
+    text = params[:text]
 
-    doc.postprocess!
+    cleanser = Slaw::Parse::Cleanser.new
+    text = cleanser.cleanup(text)
+    text = cleanser.reformat(text)
 
     content_type "application/json"
     {
-      "xml" => doc.xml
+      "text" => text,
+    }.to_json
+  end
+
+  post "/sanitise" do
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
+
+    generator = Slaw::ZA::BylawGenerator.new
+    generator.builder.postprocess(bylaw.doc)
+
+    content_type "application/json"
+    {
+      "xml" => bylaw.to_xml(indent: 2)
     }.to_json
   end
 
   post "/validate" do
-    doc = Steno::Document.new
-    doc.xml = params[:doc][:xml]
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
 
-    doc.validate!
+    errors = bylaw.validate.map do |e|
+      {
+        message: e.to_s,
+        line: e.line,
+        column: e.column,
+      }
+    end
 
     content_type "application/json"
     {
-      "validate_errors" => doc.validate_errors,
-      "validates" => doc.validates?
+      "validate_errors" => errors,
+      "validates" => errors.empty?
     }.to_json
   end
 
@@ -155,7 +190,7 @@ class StenoApp < Sinatra::Base
     haml :github_callback, layout: false
   end
 
-  post '/convert-to-text' do
+  post '/extract' do
     content_type 'application/json'
     upload = params['file']
 

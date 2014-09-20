@@ -1,7 +1,7 @@
 .editor
   .editor-controls
     .row
-      .col-xs-6
+      .col-xs-5
         - if id == 'source-doc-text'
           %button.btn.btn-default.import-source
             %i.fa.fa-file
@@ -9,10 +9,11 @@
           %i.fa.fa-spinner.fa-spin#import-spinner
 
       .col-xs-1
-        .input-group
-          %span.input-group-btn
-            %button.btn.btn-default.toggle-wrap(title="Wrap long lines" data-toggle='button')
-              %i.fa.fa-align-left
+        %button.btn.btn-default#cleanup-btn(title="Clean up")
+          %i.fa.fa-magic
+      .col-xs-1
+        %button.btn.btn-default.toggle-wrap(title="Wrap long lines" data-toggle='button')
+          %i.fa.fa-align-left
       .col-xs-5
         .input-group
           %input.form-control(type="text" name="search" placeholder="Find")
