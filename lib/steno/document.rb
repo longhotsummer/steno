@@ -6,7 +6,6 @@ require 'slaw'
 
 module Steno
   class Metadata
-    attr_accessor :title
     attr_accessor :short_name
 
     attr_accessor :region
@@ -15,7 +14,7 @@ module Steno
     attr_accessor :pub_number
     attr_accessor :pub_date
 
-    FIELDS = %w(title short_name pub_name pub_number pub_date region)
+    FIELDS = %w(short_name pub_name pub_number pub_date region)
 
     def initialize(hash=nil)
       # load values from hash
@@ -88,9 +87,6 @@ module Steno
         ident.at_xpath('a:FRBRWork/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}"
         ident.at_xpath('a:FRBRWork/a:FRBRuri', a: NS)['value'] = metadata.uri
         ident.at_xpath('a:FRBRWork/a:FRBRdate', a: NS)['date'] = metadata.date
-        if component == 'main'
-          ident.at_xpath('a:FRBRWork/a:FRBRalias', a: NS)['value'] = metadata.title
-        end
 
         # expression
         ident.at_xpath('a:FRBRExpression/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}/eng@"

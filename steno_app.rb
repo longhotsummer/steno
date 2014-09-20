@@ -85,6 +85,8 @@ class StenoApp < Sinatra::Base
       errors = []
       bylaw = generator.generate_from_text(params[:doc][:source_text])
 
+      bylaw.title = params[:doc][:meta][:title]
+
       # TODO: remove this juggling between Slaw::ByLaw and Steno::Document
 
       doc = Steno::Document.new
