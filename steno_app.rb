@@ -85,19 +85,31 @@ class StenoApp < Sinatra::Base
       errors = []
       bylaw = generator.generate_from_text(params[:doc][:source_text])
 
-      bylaw.title = params[:doc][:meta][:title]
-      bylaw.date = params[:doc][:meta][:pub_date]
+      meta = params[:doc][:meta]
+
+      bylaw.title = meta[:title]
+      bylaw.date = meta[:pub_date]
+      bylaw.year = meta[:pub_date].split('-')[0]
+      bylaw.name = meta[:short_name]
+      bylaw.region = meta[:region]
+
       bylaw.published!(
-        name: params[:doc][:meta][:pub_name],
-        date: params[:doc][:meta][:pub_date],
-        number: params[:doc][:meta][:pub_number],
+        name: meta[:pub_name],
+        date: meta[:pub_date],
+        number: meta[:pub_number],
       )
+
+      # set council manually
+      council = bylaw.doc.at_css('#council')
+      council['href'] = "/ontology/organization/za/council.#{meta[:region]}"
+      if region = Steno::Region.for_code(meta[:region])
+        council['showAs'] = region.council
+      end
 
       # TODO: remove this juggling between Slaw::ByLaw and Steno::Document
 
       doc = Steno::Document.new
       doc.xml_doc = bylaw.doc
-      doc.apply_metadata(Steno::Metadata.new(params[:doc][:meta]))
     rescue Slaw::Parse::ParseError => e
       errors << e
     end
