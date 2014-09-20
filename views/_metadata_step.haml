@@ -6,7 +6,7 @@
           %legend By-law information
           .form-group
             %label.col-sm-3.control-label Municipality
-            .col-sm-3
+            .col-sm-4
               %select#doc-meta-region.form-control(name="doc[meta][region]")
                 - Steno::Region::REGIONS.each_with_index do |region, i|
                   %option{value: region.code, selected: i==0, data: {Gazette: region.gazette}}&= region.name
