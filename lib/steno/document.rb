@@ -28,10 +28,6 @@ module Steno
       pub_date && pub_date.strftime('%Y')
     end
 
-    def date
-      pub_date && pub_date.strftime('%Y-%m-%d')
-    end
-
     def uri
       "/za/by-law/#{@region || 'region'}/#{year || 'year'}/#{@short_name}"
     end
@@ -83,12 +79,10 @@ module Steno
         # work
         ident.at_xpath('a:FRBRWork/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}"
         ident.at_xpath('a:FRBRWork/a:FRBRuri', a: NS)['value'] = metadata.uri
-        ident.at_xpath('a:FRBRWork/a:FRBRdate', a: NS)['date'] = metadata.date
 
         # expression
         ident.at_xpath('a:FRBRExpression/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}/eng@"
         ident.at_xpath('a:FRBRExpression/a:FRBRuri', a: NS)['value'] = "#{metadata.uri}/eng@"
-        ident.at_xpath('a:FRBRExpression/a:FRBRdate', a: NS)['date'] = metadata.date
 
         # manifestation
         ident.at_xpath('a:FRBRManifestation/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}/eng@"

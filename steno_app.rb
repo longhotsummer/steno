@@ -86,6 +86,7 @@ class StenoApp < Sinatra::Base
       bylaw = generator.generate_from_text(params[:doc][:source_text])
 
       bylaw.title = params[:doc][:meta][:title]
+      bylaw.date = params[:doc][:meta][:pub_date]
       bylaw.published!(
         name: params[:doc][:meta][:pub_name],
         date: params[:doc][:meta][:pub_date],
