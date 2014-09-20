@@ -20,7 +20,6 @@ Log4r::Logger.new('Steno').add(outputter)
 Log4r::Logger.new('Slaw').add(outputter)
 
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
-require 'steno/document'
 require 'steno/region'
 require 'steno/helpers'
 
@@ -116,15 +115,16 @@ class StenoApp < Sinatra::Base
   end
 
   post "/render" do
-    doc = Steno::Document.new
-    doc.xml = (params[:doc] || {})[:xml]
+    bylaw = Slaw::ByLaw.new
+    bylaw.parse(params[:doc][:xml])
 
-    @doc = doc.xml_doc
+    html = Slaw::Render::HTMLRenderer.new.render(bylaw.doc, '/root/')
+    @doc = bylaw.doc
     toc_html = haml(:toc, layout: false)
 
     content_type "application/json"
     {
-      "html" => doc.render,
+      "html" => html,
       "toc"  => toc_html,
     }.to_json
   end
