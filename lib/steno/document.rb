@@ -9,12 +9,9 @@ module Steno
     attr_accessor :short_name
 
     attr_accessor :region
-
-    attr_accessor :pub_name
-    attr_accessor :pub_number
     attr_accessor :pub_date
 
-    FIELDS = %w(short_name pub_name pub_number pub_date region)
+    FIELDS = %w(short_name pub_date region)
 
     def initialize(hash=nil)
       # load values from hash
@@ -97,12 +94,6 @@ module Steno
         ident.at_xpath('a:FRBRManifestation/a:FRBRthis', a: NS)['value'] = "#{metadata.uri}/#{component}/eng@"
         ident.at_xpath('a:FRBRManifestation/a:FRBRuri', a: NS)['value'] = "#{metadata.uri}/eng@"
       end
-
-      # publication info
-      pub = xml_doc.at_xpath('//a:act/a:meta/a:publication', a: NS)
-      pub["number"] = metadata.pub_number
-      pub["showAs"] = pub["name"] = metadata.pub_name
-      pub["date"] = metadata.date
 
       # council
       council = xml_doc.at_css('#council')
