@@ -2,7 +2,11 @@
   %li{class: child.name}
     - case child.name
     - when "chapter"
-      Chapter #{h child.num} - #{h child.heading}
+      - if child.in_schedules?
+        Schedule
+      - else
+        Chapter
+      #{h child.num} - #{h child.heading}
     - when "part"
       Part #{h child.num} - #{h child.heading}
     - when "section"
