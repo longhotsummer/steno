@@ -1,3 +1,10 @@
 %ol
   - items = toc_items(@doc)
   = partial 'toc_container', engine: :haml, locals: {items: items}
+
+  - if @schedules
+    %li.schedules
+      Schedules
+      - if @schedules.toc_container?
+        %ol
+          = partial 'toc_container', engine: :haml, locals: {items: @schedules.toc_children}

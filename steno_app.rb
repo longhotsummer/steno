@@ -118,7 +118,12 @@ class StenoApp < Sinatra::Base
     bylaw = Slaw::ByLaw.new
     bylaw.parse(params[:doc][:xml])
 
-    html = Slaw::Render::HTMLRenderer.new.render(bylaw.doc, '/root/')
+    renderer = Slaw::Render::HTMLRenderer.new
+    html = renderer.render(bylaw.doc, '/root/')
+    if @schedules = bylaw.schedules
+      html += " " + renderer.render_node(@schedules, '/root/')
+    end
+
     @doc = bylaw.doc
     toc_html = haml(:toc, layout: false)
 
