@@ -1,4 +1,5 @@
 require 'sinatra'
+require 'sinatra/cross_origin'
 require 'newrelic_rpm'
 
 require 'padrino-helpers'
@@ -22,6 +23,7 @@ Log4r::Logger.new('Slaw').add(outputter)
 $:.unshift(File.join(File.dirname(__FILE__), 'lib'))
 require 'steno/region'
 require 'steno/helpers'
+require 'steno/search'
 
 class StenoApp < Sinatra::Base
   set :root,          File.dirname(__FILE__)
@@ -35,6 +37,7 @@ class StenoApp < Sinatra::Base
   enable :logging
 
   register Padrino::Helpers
+  register Sinatra::CrossOrigin
 
   configure do
     # Setup Sprockets
@@ -216,6 +219,25 @@ class StenoApp < Sinatra::Base
         "error" => nil,
       }.to_json
     end
+  end
+
+  # search
+  get '/search' do
+    cross_origin
+    content_type 'application/json'
+
+    if not params[:q]
+      return {
+        hits: {
+          total: 0,
+        },
+        took: 0,
+      }.to_json
+    end
+
+    results = Steno::Search.searcher.search(params[:q])
+
+    return results.to_json
   end
 
   get '/ping' do
