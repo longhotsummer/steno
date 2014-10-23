@@ -32,7 +32,6 @@ module Steno
     end
 
     def reindex!(docs, &block)
-      define_mapping!
       index_documents!(docs, &block)
     end
 
