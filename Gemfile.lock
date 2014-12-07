@@ -111,7 +111,7 @@ GEM
     sinatra-cross_origin (0.3.2)
     sinatra-support (1.2.2)
       sinatra (>= 1.0)
-    slaw (0.3.0)
+    slaw (0.3.2)
       builder (~> 3.2.2)
       log4r (~> 1.1.10)
       nokogiri (~> 1.6.0)
@@ -158,7 +158,7 @@ DEPENDENCIES
   sinatra
   sinatra-cross_origin (~> 0.3.2)
   sinatra-support
-  slaw (~> 0.3.0)
+  slaw (~> 0.3.2)
   sprockets
   sprockets-helpers
   sprockets-sass
