@@ -235,7 +235,7 @@ class StenoApp < Sinatra::Base
       }.to_json
     end
 
-    results = Steno::Search.searcher.search(params[:q])
+    results = Steno::Search.searcher.search(params[:q], 0, 10, params[:region_name])
 
     return results.to_json
   end

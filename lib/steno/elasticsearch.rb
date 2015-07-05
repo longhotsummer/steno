@@ -75,7 +75,10 @@ module Steno
       })
     end
 
-    def search(q, from=0, size=10)
+    def search(q, from=0, size=10, region_name=nil)
+      filters = {}
+      filters = {term: {region_name: region_name}} if region_name
+
       @es.search(index: @ix, body: {
         query: {
           multi_match: {
@@ -84,9 +87,18 @@ module Steno
             fields: ['title', 'content'],
           }
         },
-        fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url', 'region_name'],
+        fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url', 'region_name', 'region'],
+        from: from,
+        size: size,
+        sort: {'_score' => {order: 'desc'}},
+        # filter after searching so filtering doesn't impact aggs
+        post_filter: filters,
+        # count by region name
+        aggs: {region_names: {terms: {field: 'region_name'}}},
         highlight: {
           order: "score",
+          pre_tags: ['<mark>'],
+          post_tags: ['</mark>'],
           fields: {
             content: {
               fragment_size: 80,
@@ -96,14 +108,7 @@ module Steno
               number_of_fragments: 0, # entire field
             }
           },
-          pre_tags: ['<mark>'],
-          post_tags: ['</mark>'],
         },
-        from: from,
-        size: size,
-        sort: {
-          '_score' => {order: 'desc'}
-        }
       })
     end
   end
