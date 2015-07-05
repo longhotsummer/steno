@@ -26,7 +26,7 @@ gem "newrelic_rpm", "~> 3.7"
 
 # for search
 gem 'sinatra-cross_origin', '~> 0.3.2'
-gem 'elasticsearch', '~> 1.0.5'
+gem 'elasticsearch', '~> 1.0.12'
 
 gem "log4r"
 

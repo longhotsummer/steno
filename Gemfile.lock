@@ -18,12 +18,12 @@ GEM
       fssm (>= 0.2.7)
       sass (~> 3.1)
     diff-lcs (1.2.5)
-    elasticsearch (1.0.5)
-      elasticsearch-api (= 1.0.5)
-      elasticsearch-transport (= 1.0.5)
-    elasticsearch-api (1.0.5)
+    elasticsearch (1.0.12)
+      elasticsearch-api (= 1.0.12)
+      elasticsearch-transport (= 1.0.12)
+    elasticsearch-api (1.0.12)
       multi_json
-    elasticsearch-transport (1.0.5)
+    elasticsearch-transport (1.0.12)
       faraday
       multi_json
     faraday (0.9.0)
@@ -144,7 +144,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.0.2.0)
   builder (~> 3.2.2)
   compass
-  elasticsearch (~> 1.0.5)
+  elasticsearch (~> 1.0.12)
   guard-rspec
   haml
   log4r
