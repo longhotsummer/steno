@@ -18,8 +18,8 @@ module Steno
       @mapping = {
         frbr_uri:     {type: 'string', index: 'not_analyzed'},
         url:          {type: 'string', index: 'not_analyzed'},
-        title:        {type: 'string', analyzer: 'english'},
-        content:      {type: 'string', analyzer: 'english'},
+        title:        {type: 'string', analyzer: 'english', index_options: 'offsets'},
+        content:      {type: 'string', analyzer: 'english', index_options: 'offsets'},
         published_on: {type: 'date', format: 'dateOptionalTime'},
         region:       {type: 'string', index: 'not_analyzed'},
         region_name:  {type: 'string', index: 'not_analyzed'},
@@ -79,14 +79,37 @@ module Steno
       filters = {}
       filters = {term: {region_name: region_name}} if region_name
 
+      # We do two queries, one is a general term query across the fields,
+      # the other is a phrase query. At the very least, items *must*
+      # match the term search, and items are preferred if they
+      # also match the phrase search.
+      query = {
+        bool: {
+          must: {
+            # best across all the fields
+            multi_match: {
+              query: q,
+              type: 'best_fields',
+              fields: ['title', 'content'],
+              # this helps skip stopwords, see
+              # http://www.elasticsearch.org/blog/stop-stopping-stop-words-a-look-at-common-terms-query/
+              cutoff_frequency: 0.0007,
+              operator: 'and',
+            },
+          },
+          should: {
+            # try to match to a phrase
+            multi_match: {
+              query: q,
+              fields: ['title', 'content'],
+              type: 'phrase',
+            },
+          },
+        }
+      }
+
       @es.search(index: @ix, body: {
-        query: {
-          multi_match: {
-            query: q,
-            type: 'cross_fields',
-            fields: ['title', 'content'],
-          }
-        },
+        query: query,
         fields: ['frbr_uri', 'repealed', 'published_on', 'title', 'url', 'region_name', 'region'],
         from: from,
         size: size,
@@ -101,8 +124,8 @@ module Steno
           post_tags: ['</mark>'],
           fields: {
             content: {
-              fragment_size: 80,
-              number_of_fragments: 2,
+              fragment_size: 40,
+              number_of_fragments: 1,
             },
             title: {
               number_of_fragments: 0, # entire field
