@@ -77,7 +77,7 @@ module Steno
 
     def search(q, from=0, size=10, region_name=nil)
       filters = {}
-      filters = {term: {region_name: region_name}} if region_name
+      filters = {term: {region_name: region_name}} if region_name and not region_name.empty?
 
       # We do two queries, one is a general term query across the fields,
       # the other is a phrase query. At the very least, items *must*
