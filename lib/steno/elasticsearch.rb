@@ -119,12 +119,12 @@ module Steno
         # count by region name
         aggs: {region_names: {terms: {field: 'region_name'}}},
         highlight: {
-          order: "score",
           pre_tags: ['<mark>'],
           post_tags: ['</mark>'],
+          order: "score",
+          no_match_size: 0,
           fields: {
             content: {
-              fragment_size: 40,
               number_of_fragments: 1,
             },
             title: {
